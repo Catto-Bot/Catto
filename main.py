@@ -26,7 +26,6 @@ async def on_ready():
     print("The bot is ready")
         
     
-
 @bot.command(name="greet")
 async def greet(ctx):
     """
@@ -41,7 +40,7 @@ async def joke(ctx):
     """
     await ctx.channel.send("Your mama so fat, kadota is jealous of her")
 
-bot.add_command(coinflip.roll_dice)
+bot.add_command(coinflip.coin_flip)
 bot.add_command(meme.meme)
 
 
