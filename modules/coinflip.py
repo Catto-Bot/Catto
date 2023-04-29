@@ -12,9 +12,21 @@ import requests
 
 
 
+# @commands.command(name="flip")
+# async def coin_flip(ctx,member:commands.MemberConverter):  
+#     list=["Heads","Tails"]
+#     result1 = random.choice(list)
+#     result2 = random.choice(list)
+#     await ctx.channel.send(f" You got {result1} and {member.mention} got {result2}")
+
+
+
 @commands.command(name="flip")
-async def coin_flip(ctx,member:commands.MemberConverter):  
-    list=["Heads","Tails"]
+async def coin_flip(ctx, member: commands.MemberConverter = None):
+    list = ["Heads", "Tails"]
     result1 = random.choice(list)
-    result2 = random.choice(list)
-    await ctx.channel.send(f" You got {result1} and {member.mention} got {result2}")
+    if member:
+        result2 = random.choice(list)
+        await ctx.channel.send(f"You got {result1} and {member.mention} got {result2}")
+    else:
+        await ctx.channel.send(f"You got {result1}")
