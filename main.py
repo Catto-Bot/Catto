@@ -46,13 +46,17 @@ async def joke(ctx):
     """
     await ctx.channel.send("Your mama so fat, kadota is jealous of her")
 
-
+@bot.command(name="aryn")
+async def aryn(ctx):
+    """
+    This is a joke
+    """
+    await ctx.channel.send("GOAT")
 
     
-
     
 
-bot.run("MTEwMTcxNTM3OTY5NDM1ODY0MA.G2JC0m.eLBwxnDVS17jxnkXFlcsgcmHlrv_F-G4BoK4zU")
+bot.run("MTEwMTcxNTM3OTY5NDM1ODY0MA.Go7P68.BtjSbVsDhrapZ8mfHuJY3vavhpBbJSUCl5OQoU")
 
 
 
