@@ -23,7 +23,7 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
-    print("The bot is ready omg omg omg")
+    print("The bot is ready")
         
 @bot.event
 async def on_message(message):
