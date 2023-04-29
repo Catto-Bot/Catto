@@ -42,6 +42,7 @@ async def joke(ctx):
 
 bot.add_command(coinflip.coin_flip)
 bot.add_command(meme.meme)
+bot.add_command(dice.rolldice)
 
 
 bot.run(DISCORD_KEY)
