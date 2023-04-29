@@ -25,15 +25,6 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 async def on_ready():
     print("The bot is ready")
         
-@bot.event
-async def on_message(message):
-    if message.content.startswith("http"):
-        await message.delete()
-        await message.channel.send("You cannot use links here!")
-    if message.content.startswith("kadota"):
-        await message.channel.send("gayo hatti ko chak ma")
-    await bot.process_commands(message)
-
     
 
 @bot.command(name="greet")
@@ -52,6 +43,7 @@ async def joke(ctx):
 
 bot.add_command(coinflip.roll_dice)
 bot.add_command(meme.meme)
+bot.add_command(dice.rolldice)
 
 
 bot.run(DISCORD_KEY)
