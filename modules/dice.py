@@ -7,5 +7,5 @@ import random
 @commands.command(name="rolldice")
 async def rolldice(ctx):
     dice_roll = random.randint(1,6)
-    await ctx.channel.send(f"You rolled a {dice_roll}")
+    await ctx.channel.send(f" bahaha You rolled a {dice_roll}")
 
