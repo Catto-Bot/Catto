@@ -2,6 +2,12 @@
 import discord
 from discord.ext import commands
 from discord import Intents
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DISCORD_KEY= os.getenv('DISCORD_ID')
 #from discord import app_commands
 
 #------------------------INITIALIZING THE BOT-------------------------------------------------#
@@ -14,8 +20,6 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 #tree = app_commands.CommandTree(bot)
 #..
-
-
 
 @bot.event
 async def on_ready():
@@ -54,9 +58,10 @@ async def aryn(ctx):
     await ctx.channel.send("GOAT")
 
     
+
     
 
-bot.run("MTEwMTcxNTM3OTY5NDM1ODY0MA.Go7P68.BtjSbVsDhrapZ8mfHuJY3vavhpBbJSUCl5OQoU")
+bot.run("MTEwMTcxNTM3OTY5NDM1ODY0MA.G2JC0m.eLBwxnDVS17jxnkXFlcsgcmHlrv_F-G4BoK4zU")
 
 
 
