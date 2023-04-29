@@ -13,13 +13,13 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 
 #tree = app_commands.CommandTree(bot)
-
+#..
 
 
 
 @bot.event
 async def on_ready():
-    print("The bot is ready")
+    print("The bot is ready omg omg omg")
         
 @bot.event
 async def on_message(message):
