@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-
+from modules import coinflip,meme,dice,qutoes
 load_dotenv()
 
 DISCORD_KEY= os.getenv('DISCORD_ID')
@@ -49,6 +49,10 @@ async def joke(ctx):
     This is a joke
     """
     await ctx.channel.send("Your mama so fat, kadota is jealous of her")
+
+bot.add_command(coinflip.roll_dice)
+bot.add_command(meme.meme)
+
 
 bot.run(DISCORD_KEY)
 
