@@ -4,7 +4,8 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-from modules import coinflip,meme,dice,qutoes,gambler
+from modules import coinflip,meme,dice,qutoes,gambler,fight
+
 load_dotenv()
 
 DISCORD_KEY= os.getenv('DISCORD_ID')
@@ -54,6 +55,10 @@ bot.add_command(gambler.balance)
 bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
+bot.add_command(gambler.test)
+
+bot.add_command(fight.button)
+
 
 
 
