@@ -8,11 +8,11 @@ import requests
 @commands.command(name="flip")
 async def coin_flip(ctx, member: commands.MemberConverter = None):
     
-    list = ["Heads", "Tails"]
-    result1 = random.choice(list)
+    lists = ["Heads", "Tails"]
+    result1 = random.choice(lists)
 
     if member:
-        result2 = random.choice(list)
+        result2 = random.choice(lists)
         embed=discord.Embed(title="Coin Flip", description=f"You got {result1} and {member.mention} got {result2}",color=0x333333)
         await ctx.send(embed=embed)
 
