@@ -16,7 +16,7 @@ async def rolldice(ctx, member: commands.MemberConverter = None):
         elif dice_roll2 > dice_roll:
             outcome_msg += f"\n {member.name} WON!!!"
         else:
-            outcome_msg += " draw"
+            outcome_msg += " \nDRAW!!!"
 
         embed = discord.Embed(title=f"{ctx.author.name} VS {member.name}", description=outcome_msg, color=discord.Color.red())
         await ctx.send(embed=embed)
