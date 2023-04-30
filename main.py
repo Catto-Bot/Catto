@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-from modules import coinflip,meme,dice,qutoes
+from modules import coinflip,meme,dice,qutoes,gambler
 load_dotenv()
 
 DISCORD_KEY= os.getenv('DISCORD_ID')
@@ -25,7 +25,7 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 async def on_ready():
     print("The bot is ready")
         
-
+    
 @bot.command(name="greet")
 async def greet(ctx):
     """
@@ -40,11 +40,21 @@ async def joke(ctx):
     """
     await ctx.channel.send("Your mama so fat, kadota is jealous of her")
 
+
+
 bot.add_command(coinflip.coin_flip)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
-bot.add_command(dice.quotes)
-bot.add_command(dice.quote)
+bot.add_command(qutoes.quotes)
+bot.add_command(qutoes.quote)
+
+#gmabler
+bot.add_command(gambler.daily)
+bot.add_command(gambler.balance)
+bot.add_command(gambler.monie)
+bot.add_command(gambler.bet)
+bot.add_command(gambler.steal)
+
 
 
 bot.run(DISCORD_KEY)
