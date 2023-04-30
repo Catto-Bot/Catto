@@ -64,7 +64,7 @@ async def balance(ctx):
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
     if user_id not in catomonie:
-        embed = discord.embed(description="Use !monie to create a wallet first!")
+        embed = discord.Embed(description="Use !monie to create a wallet first!")
         await ctx.send(embed=embed)
     else:
         balance = catomonie[user_id]["coins"]
@@ -160,11 +160,11 @@ async def steal(ctx, username: discord.Member):
 
 
         if user_id not in catomonie:
-            embed = discord.embed(description="Use !monie to create a wallet first!")
+            embed = discord.Embed(description="Use !monie to create a wallet first!")
             await ctx.send(embed=embed)
             return
         if steal_id not in catomonie:
-            embed = discord.embed(description=f'{member} have not created their wallet yet!')
+            embed = discord.Embed(description=f'{member} have not created their wallet yet!')
             await ctx.send(embed=embed)
             return
         if catomonie[user_id]["coins"] < 1000:
