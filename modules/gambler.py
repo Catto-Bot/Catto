@@ -198,18 +198,14 @@ async def steal(ctx, username: discord.Member):
         print(err)
 
 
-@commands.command(name="test")
-async def test(ctx):
-    embed= discord.Embed(title="Kadota vs Ghost")
-    embed1=discord.Embed(title="Kadota got 6")
-    embed2=discord.Embed(title="Ghost got 2")
-    embed1.set_image(url="https://www.iloveimg.com/img/iloveimg/social/en-US/converttojpg.jpg")
-    embed2.set_image(url="https://www.iloveimg.com/img/iloveimg/social/en-US/converttojpg.jpg")
-    embed2.set_footer(text="Kadota Won!!")
-    await ctx.send(embeds=[embed,embed1,embed2])
 
-
-
+@commands.command(name="heheh")
+async def heheh(ctx):
+    embed = discord.Embed(title="Kadota", description="Ghost le kadota ko bhitra chiraicha", color=discord.Color.red()) 
+    embed.set_image(url="https://media.discordapp.net/attachments/931798485479596052/1101486373577424916/image.png?width=1214&height=683")   
+    embed.set_footer(text="Ghost ko chirena")
+    embed.set_author(name="hello", url="https://media.discordapp.net/attachments/931798485479596052/1101486373577424916/image.png?width=1214&height=683")
+    await ctx.send(embed=embed)
 
 
 
