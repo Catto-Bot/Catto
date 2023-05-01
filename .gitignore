@@ -1,3 +1,4 @@
 .env
 modules/__pycache__/
 gamblerdata
+responses.db
