@@ -57,6 +57,12 @@ bot.add_command(gambler.balance)
 bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
+bot.add_command(gambler.test)
+
+bot.add_command(fight.button)
+
+bot.add_command(chat.learn)
+bot.add_command(chat.c)
 
 
 
