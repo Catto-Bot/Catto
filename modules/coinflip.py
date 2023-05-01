@@ -15,7 +15,6 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
         result2 = random.choice(lists)
         embed=discord.Embed(title="Coin Flip", description=f"You got {result1} and {member.mention} got {result2}",color=0x333333)
         await ctx.send(embed=embed)
-
     else:
         embed=discord.Embed(title="Coin Flip",description=f"You got {result1}",color=0x333333)
         await ctx.send(embed=embed)
