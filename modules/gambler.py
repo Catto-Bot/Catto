@@ -200,7 +200,16 @@ async def steal(ctx, username: discord.Member):
 
 @commands.command(name="test")
 async def test(ctx):
-    await ctx.send("Hello", allowed_mentions=discord.AllowedMentions(users=False))
+    embed= discord.Embed(title="Kadota vs Ghost")
+    embed1=discord.Embed(title="Kadota got 6")
+    embed2=discord.Embed(title="Ghost got 2")
+    embed1.set_image(url="https://www.iloveimg.com/img/iloveimg/social/en-US/converttojpg.jpg")
+    embed2.set_image(url="https://www.iloveimg.com/img/iloveimg/social/en-US/converttojpg.jpg")
+    embed2.set_footer(text="Kadota Won!!")
+    await ctx.send(embeds=[embed,embed1,embed2])
+
+
+
 
 
 
