@@ -33,6 +33,26 @@ async def quote(ctx, category =""):
     except:
         await ctx.channel.send(f"I am down myself 🥲")
 
+@commands.command(name="devjoke")
+async def devjoke(ctx):
+    try:
+        api_url= "https://backend-omega-seven.vercel.app/api/getjoke"
+        response  = requests.get(api_url)
+        data = response.json()[0]
+        question = data['question']
+        punchline = data['punchline']
+        embed = discord.Embed(title=f'{question}', color=0x555555)
+        devjoke = await ctx.channel.send(embed = embed)
+
+        await asyncio.sleep(3)
+
+        await devjoke.delete()
+        embed = discord.Embed(title=f"{question} \n {punchline}", color=0x666666)
+        devjoke = await ctx.channel.send(embed = embed)
+
+    except:
+        print("hello")
+
 
 async def trivia(ctx, bot):
         api_url ="https://opentdb.com/api.php?amount=1&type=boolean"
@@ -79,3 +99,5 @@ async def trivia(ctx, bot):
             embed = discord.Embed(title='Nobody reacted in time 😔', color=0xff0000)
             await ctx.send(embed = embed)
             await trivia.delete()
+
+
