@@ -47,6 +47,7 @@ bot.add_command(coinflip.coin_flip)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
 bot.add_command(qutoes.quote)
+bot.add_command(qutoes.devjoke)
 @bot.command(name = 'trivia')
 async def play(ctx):
     await qutoes.trivia(ctx, bot)
