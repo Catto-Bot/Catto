@@ -2,8 +2,6 @@
 import discord
 from discord.ext import commands
 import random
-import aiohttp
-import io
 
 # dice_images = [
 #    "https://tinyurl.com/yx2zmam4", #dice1
