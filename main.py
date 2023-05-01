@@ -19,24 +19,12 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 
 
-conn = sqlite3.connect('responses.db')
-cursor = conn.cursor()
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS responses
-                (input_text TEXT PRIMARY KEY, response_text TEXT)''')
-
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS blacklist
-                (word TEXT PRIMARY KEY)''')
 
 @bot.event
 async def on_ready():
     print("The bot is ready")
 
-@bot.event
-async def on_bot_close():
-    cursor.close()
-    conn.close()
+
         
     
 
