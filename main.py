@@ -50,7 +50,7 @@ bot.add_command(gambler.test)
 bot.add_command(fight.button)
 
 bot.add_command(chat.learn)
-
+bot.add_command(chat.c)
 
 
 
