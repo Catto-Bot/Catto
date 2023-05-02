@@ -62,7 +62,11 @@ bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
 bot.add_command(gambler.test)
 
-bot.add_command(fight.button)
+bot.add_command(gifs.hug)
+bot.add_command(gifs.slap)
+bot.add_command(gifs.kiss)
+bot.add_command(gifs.lick)
+bot.add_command(gifs.bite)
 
 bot.add_command(chat.learn)
 bot.add_command(chat.c)
