@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-from modules import coinflip,meme,dice,qutoes,gambler
+from modules import coinflip,meme,dice,qutoes,gambler,chat
 load_dotenv()
 
 DISCORD_KEY= os.getenv('DISCORD_ID')
@@ -43,6 +43,7 @@ async def joke(ctx):
 
 
 bot.add_command(coinflip.coin_flip)
+bot.add_command(coinflip.rps_game)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
 bot.add_command(qutoes.quote)
@@ -57,9 +58,9 @@ bot.add_command(gambler.balance)
 bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
-bot.add_command(gambler.test)
 
-bot.add_command(fight.button)
+
+
 
 bot.add_command(chat.learn)
 bot.add_command(chat.c)

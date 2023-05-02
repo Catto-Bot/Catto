@@ -4,6 +4,7 @@ from discord.ext import commands
 import random
 import requests
 
+#COINFLIP
 
 @commands.command(name="flip")
 async def coin_flip(ctx, member: commands.MemberConverter = None):
@@ -19,5 +20,29 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
         embed=discord.Embed(title="Coin Flip",description=f"You got {result1}",color=0x333333)
         await ctx.send(embed=embed)
 
+
+#RPS
+
+@commands.command(name="rps")
+async def rps_game(ctx,user_choice):
+
+    list=["rock","paper","scissors"]
+    bot_choice=random.choice(list)
+
+    if (user_choice.lower() not in list):
+        await ctx.send("Please type rock, paper or scissors")
+
+    
+    if(user_choice==bot_choice):
+        result="It's a draw. Try again"
+    elif (user_choice=="rock" and bot_choice=="scissors" ) or (user_choice=="paper" and bot_choice=="rock") or (user_choice=="scissors" and bot_choice=="paper"):
+        result="You Win!"
+    else:
+        result="You lose!"
+
+    embed=discord.Embed(title="Rock Paper Scissors", description=f'The bot chose {bot_choice}. {result}',color=0x333333)
+    await ctx.send(embed=embed)
+
+    
 
 
