@@ -39,16 +39,18 @@ async def devjoke(ctx):
         api_url= "https://backend-omega-seven.vercel.app/api/getjoke"
         response  = requests.get(api_url)
         data = response.json()[0]
+        print(data)
         question = data['question']
         punchline = data['punchline']
         embed = discord.Embed(title=f'{question}', color=0x555555)
         devjoke = await ctx.channel.send(embed = embed)
 
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
 
-        await devjoke.delete()
         embed = discord.Embed(title=f"{question} \n {punchline}", color=0x666666)
-        devjoke = await ctx.channel.send(embed = embed)
+        devjoke = await devjoke.edit(embed = embed)
+        await devjoke.add_reaction("👍")
+        await devjoke.add_reaction("👎")
 
     except:
         print("hello")
@@ -101,3 +103,18 @@ async def trivia(ctx, bot):
             await trivia.delete()
 
 
+
+
+@commands.command(name = "dadjoke")
+async def dadjoke(ctx):
+    try:
+        api_url = 'https://icanhazdadjoke.com/slack'
+        response = requests.get(api_url)
+        d = response.json()
+       
+        daddy=d['attachments'][0]['fallback']
+
+        embed = discord.Embed(title=f'{daddy}', color=0x555555)
+        await ctx.send(embed = embed)
+    except:
+        await ctx.channel.send("My dad left me like your left to buy milk 😁")
