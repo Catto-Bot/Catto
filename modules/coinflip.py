@@ -29,7 +29,9 @@ async def rps_game(ctx,user_choice):
     list=["rock","paper","scissors"]
     bot_choice=random.choice(list)
 
-    if (user_choice.lower() not in list):
+    user_choice=user_choice.lower()
+
+    if (user_choice not in list):
         await ctx.send("Please type rock, paper or scissors")
 
     
