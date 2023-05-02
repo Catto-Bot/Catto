@@ -44,11 +44,12 @@ async def devjoke(ctx):
         embed = discord.Embed(title=f'{question}', color=0x555555)
         devjoke = await ctx.channel.send(embed = embed)
 
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
 
-        await devjoke.delete()
         embed = discord.Embed(title=f"{question} \n {punchline}", color=0x666666)
-        devjoke = await ctx.channel.send(embed = embed)
+        devjoke = await devjoke.edit(embed = embed)
+        await devjoke.add_reaction("👍")
+        await devjoke.add_reaction("👎")
 
     except:
         print("hello")
@@ -99,5 +100,4 @@ async def trivia(ctx, bot):
             embed = discord.Embed(title='Nobody reacted in time 😔', color=0xff0000)
             await ctx.send(embed = embed)
             await trivia.delete()
-
 
