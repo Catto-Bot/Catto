@@ -58,6 +58,15 @@ async def ticketsetup(ctx):
                                     name=f"{user.name}'s ticket",
                                     category=category
                                 )
+                                channel = ctx.bot.get_channel(text_channel.id)
+                                usermention = await channel.send(user.mention)
+                                await usermention.delete()
+                                embed= discord.Embed(title=f"Ticket With The Name {user.name} Has Been Created ", description=f"{user.mention}, Ping A Staff Or An Admin If You Need Help.", color=discord.Color.dark_gray())
+                                embed.set_footer(text="Thank You For Using Caticket")
+                                await channel.send(embed=embed)
+                               
+                                
+
                                 await text_channel.set_permissions(
                                     user, 
                                     read_messages=True, 
