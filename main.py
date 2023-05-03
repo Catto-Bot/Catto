@@ -64,6 +64,7 @@ bot.add_command(chat.c)
 
 
 bot.add_command(ticket.ticketsetup)
+bot.add_command(ticket.deleteticket)
 
 
 
