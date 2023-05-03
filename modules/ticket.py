@@ -64,9 +64,6 @@ async def ticketsetup(ctx):
                                 embed= discord.Embed(title=f"Ticket With The Name {user.name} Has Been Created ", description=f"{user.mention}, Ping A Staff Or An Admin If You Need Help.", color=discord.Color.dark_gray())
                                 embed.set_footer(text="Thank You For Using Caticket")
                                 await channel.send(embed=embed)
-                               
-                                
-
                                 await text_channel.set_permissions(
                                     user, 
                                     read_messages=True, 
@@ -77,6 +74,7 @@ async def ticketsetup(ctx):
                                     read_messages=False, 
                                     send_messages=False
                                 )
+
                                 tickets[user.id] = text_channel.id
                         else:
                             await ctx.send("Invalid reaction. Please start over.")
@@ -94,6 +92,24 @@ async def ticketsetup(ctx):
     except asyncio.TimeoutError:
         await ctx.send("You didn't react in time. Please start over.")
 
+@commands.command(name="deleteticket")
+@commands.has_permissions(administrator=True)
+async def deleteticket(ctx):
+    sure = await ctx.send("Are you sure you want to delete this channel?")
+    await sure.add_reaction("👍")
+    await sure.add_reaction("👎")
+    def check(reaction, user):
+        return user == ctx.author and reaction.message.id == sure.id and str(reaction.emoji) in ["👍", "👎"]
+    
+    try:
+        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+        if str(reaction.emoji) == "👍":
+            await ctx.send("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await ctx.channel.delete()
+        else:
+            await sure.delete()
+    except Exception as err:
+        await ctx.send("An error ocurred while deleting the channel")
 
 @ticketsetup.error
 async def ticketsetup_error(ctx, error):
