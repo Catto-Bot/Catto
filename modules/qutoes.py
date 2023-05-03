@@ -8,6 +8,11 @@ import asyncio
 
 API_KEY ='aEIxt6NSkJGib80neq+dRg==p1ytbEYfgbfg9zBW'
 
+
+##############################################################################################
+# Trash Quotes
+##############################################################################################
+
 @commands.command(name="quote")
 async def quote(ctx, category =""):
     try:
@@ -33,13 +38,16 @@ async def quote(ctx, category =""):
     except:
         await ctx.channel.send(f"I am down myself 🥲")
 
+########################################################################################################################
+# DEV JOKE
+########################################################################################################################
+
 @commands.command(name="devjoke")
 async def devjoke(ctx):
     try:
         api_url= "https://backend-omega-seven.vercel.app/api/getjoke"
         response  = requests.get(api_url)
         data = response.json()[0]
-        print(data)
         question = data['question']
         punchline = data['punchline']
         embed = discord.Embed(title=f'{question}', color=0x555555)
@@ -56,7 +64,12 @@ async def devjoke(ctx):
         print("hello")
 
 
-async def trivia(ctx, bot):
+
+################################################################################################
+# Trivia #
+################################################################################################
+@commands.command(name = "trivia")
+async def trivia(ctx):
         api_url ="https://opentdb.com/api.php?amount=1&type=boolean"
         d = json.loads(
         requests.get(api_url).text
@@ -78,13 +91,13 @@ async def trivia(ctx, bot):
 
         def check(reaction, user):
             return (
-                user != bot.user
+                user != ctx.bot.user
                 and reaction.message.id == trivia.id
                 and str(reaction.emoji) in ["🟩", "❌"]
             )
 
         try:
-            reaction, user = await bot.wait_for(
+            reaction, user = await ctx.bot.wait_for(
                 "reaction_add", timeout=20.0, check=check
             )
             if str(reaction.emoji) == ans['correct']:
@@ -104,7 +117,9 @@ async def trivia(ctx, bot):
 
 
 
-
+######################################################################################################
+# Dad joke #
+######################################################################################################
 @commands.command(name = "dadjoke")
 async def dadjoke(ctx):
     try:
