@@ -29,10 +29,12 @@ async def learn(ctx, *, input_str:str):
         embed2.set_footer(text="Thank You For Using Catto Chat Bot!")
         embed2.set_thumbnail(url="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/clans/42744725/3c1e97d35e46102992ab5e5799ea2425dbd83566.png")
         await ctx.send(embed=embed2)
+        await ctx.send(err)
 
 @commands.command(name="c", aliases=["s","talk","chat","t"])
-async def c(ctx, input_text: str):
-    cursor.execute('SELECT response_text FROM responses WHERE input_text=?', (input_text.lower(),))
+async def c(ctx, *input_text: str):
+    input_text = ' '.join(input_text)
+    cursor.execute('SELECT response_text FROM responses WHERE input_text = ?', (input_text.lower(),))
     result = cursor.fetchone()
     if result is not None:
         embed = discord.Embed(description=result[0], color=discord.Color.dark_gray())
@@ -41,6 +43,11 @@ async def c(ctx, input_text: str):
         embed=discord.Embed(title="Error!", description="What Do I Say Here?", color=discord.Color.dark_gray())
         embed.set_footer(text='!learn [input sentence] "|" [output sentence]')
         await ctx.send(embed=embed)
+
+
+
+
+               
 
         
 

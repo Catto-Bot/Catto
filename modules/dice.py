@@ -2,6 +2,8 @@
 import discord
 from discord.ext import commands
 import random
+import requests
+
 
 # dice_images = [
 #    "https://tinyurl.com/yx2zmam4", #dice1
@@ -44,3 +46,23 @@ async def rolldice(ctx, member: commands.MemberConverter = None):
         embed = discord.Embed(title ="DICE ROLL RESULTS",description =f"You rolled a {dice_roll}! ", color=0x333333)
         embed.set_thumbnail(url=dice_img_url)
         await ctx.send(embed = embed)
+
+@commands.command(name="animeQuote")
+async def animeQuote(ctx):
+    try:
+        api_url = 'https://animechan.vercel.app/api/random'
+        response = requests.get(api_url)
+        aniQuote = response.json()
+        animeName = aniQuote['anime']
+        
+        aniChara = aniQuote ['character']
+        
+        mainQuote = aniQuote['quote']
+        
+
+        embed = discord.Embed(title=f"Anime Name: {animeName}",description= f"'{mainQuote}'", color=0x555555 )
+        embed.set_footer(text=f"-{aniChara}")
+        await ctx.send(embed = embed )
+    except:
+    
+       await ctx.send( f"TATAKAE!🕊️- Eren Yeager" )
