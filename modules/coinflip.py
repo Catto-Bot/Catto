@@ -40,10 +40,12 @@ async def rps_game(ctx,user_choice):
     elif (user_choice=="rock" and bot_choice=="scissors" ) or (user_choice=="paper" and bot_choice=="rock") or (user_choice=="scissors" and bot_choice=="paper"):
         result="You Win!"
     else:
-        result="You lose!"
+        result="You lose 😢"
 
     embed=discord.Embed(title="Rock Paper Scissors", description=f'The bot chose {bot_choice}. {result}',color=0x333333)
     await ctx.send(embed=embed)
+
+    
 
     
 
