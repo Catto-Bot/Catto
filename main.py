@@ -4,7 +4,10 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket
+
+
+
 
 
 load_dotenv()
@@ -20,27 +23,14 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 
-#tree = app_commands.CommandTree(bot)
-#..
+
 
 @bot.event
 async def on_ready():
     print("The bot is ready")
-        
+      
     
-@bot.command(name="greet")
-async def greet(ctx):
-    """
-    This is a greet command
-    """
-    await ctx.channel.send("good morning")
 
-@bot.command(name="joke")
-async def joke(ctx):
-    """
-    This is a joke
-    """
-    await ctx.channel.send("Your mama so fat, kadota is jealous of her")
 
 
 
@@ -56,11 +46,12 @@ async def play(ctx):
 
 #gmabler
 bot.add_command(gambler.daily)
+bot.add_command(gambler.weekly)
 bot.add_command(gambler.balance)
 bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
-bot.add_command(gambler.test)
+
 
 bot.add_command(gifs.hug)
 bot.add_command(gifs.slap)
@@ -70,6 +61,15 @@ bot.add_command(gifs.bite)
 
 bot.add_command(chat.learn)
 bot.add_command(chat.c)
+
+
+bot.add_command(ticket.ticketsetup)
+
+
+
+
+
+
 
 
 

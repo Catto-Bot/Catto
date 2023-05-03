@@ -19,17 +19,48 @@ async def daily(ctx):
     lastClaimed = catomonie[user_id]["last_claimed"]
     currentTime = time.time()
     if currentTime - lastClaimed >= 86400:
-        catomonie[user_id]["coins"] += 100
+        catomonie[user_id]["coins"] += 500
         catomonie[user_id]["last_claimed"] = currentTime
         with open("gamblerdata/catomonie.json", "w") as final:
             json.dump(catomonie, final)
-        embed=discord.Embed(title=f"{user_name}'s Daily Reward", description="You earned 100 catomonie!", color=0x777777)
+        embed=discord.Embed(title=f"{user_name}'s Daily Reward", description="You earned 500 catomonie!", color=0x777777)
         embed.set_footer(text="Thank you for playing catto gamble!")
         await ctx.send(embed=embed)
     else:
         timeleft = currentTime - lastClaimed
         timeleft = 24 - round(timeleft/3600) 
         embed=discord.Embed(title=f"Catto Gamble", description=f"You can claim catomonie once every 24 hours! \n {timeleft} hours until you can claim again!", color=0x333333)
+        await ctx.send(embed=embed)
+
+
+@commands.command(name="weekly")
+async def weekly(ctx):
+    try:
+        with open("gamblerdata/catomonie.json", "r") as f:
+            catomonie = json.load(f)
+    except:
+        catomonie = {}
+    user_id = str(ctx.author.id)
+    user_name = str(ctx.author)
+    if user_id not in catomonie:
+        embed = discord.Embed(description="Use !monie to create a wallet first", color=0x555555)
+        await ctx.send(embed=embed)
+    last_claimed_weekly = catomonie.get(user_id, {}).get("last_claimed_weekly", 0)
+    current_time = time.time()
+    if current_time - last_claimed_weekly >= 604800:
+        catomonie[user_id] = catomonie.get(user_id, {})
+        catomonie[user_id]["coins"] = catomonie[user_id].get("coins", 0) + 10000
+        catomonie[user_id]["last_claimed_weekly"] = current_time
+        with open("gamblerdata/catomonie.json", "w") as f:
+            json.dump(catomonie, f)
+        embed = discord.Embed(title=f"{user_name}'s Weekly Reward", description="You earned 10,000 catomonie!", color=0x777777)
+        embed.set_footer(text="Thank you for playing catto gamble!")
+        await ctx.send(embed=embed)
+    else:
+        time_left = 604800 - (current_time - last_claimed_weekly)
+        days = time_left // 86400
+        hours = (time_left - days * 86400) // 3600
+        embed = discord.Embed(title=f"Catto Gamble", description=f"You can claim catomonie once a week!\n {int(days)} days and {int(hours)} hours until you can claim again!", color=0x333333)
         await ctx.send(embed=embed)
 
         
@@ -48,7 +79,7 @@ async def monie(ctx):
         await ctx.send(embed=embed)
     else:
         embed = discord.Embed(title="Welcome to Catto Gamble", description="Start playing by using !gamble and claim your daily coins with !daily", color=0x555555)
-        catomonie[user_id] = {"coins": 0, "last_claimed": 0, "Username": user_name}
+        catomonie[user_id] = {"coins": 0, "last_claimed": 0,"last_claimed_weekly": 0, "Username": user_name}
         with open("gamblerdata/catomonie.json", "w") as final:
             json.dump(catomonie, final)
         await ctx.send(embed=embed)
