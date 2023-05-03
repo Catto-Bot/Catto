@@ -65,3 +65,5 @@ async def animeQuote(ctx):
         await ctx.send(embed = embed )
     except:
        embed = discord.Embed(title="TATAKAE!🕊️" color=0x555555 )
+       embed.set_footer(text="Eren Yeager")
+       await ctx.send(embed = embed )
