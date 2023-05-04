@@ -70,8 +70,9 @@ bot.add_command(chat.c)
 bot.add_command(ticket.ticketsetup)
 bot.add_command(ticket.deleteticket)
 
-bot.add_command(valostats.maps)
+
 bot.add_command(valostats.vstats)
+bot.add_command(valostats.maps)
 
 
 

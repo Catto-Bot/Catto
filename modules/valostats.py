@@ -21,7 +21,6 @@ async def maps(ctx):
 @commands.command(name="vstats")
 async def vstats(ctx, name):
     username,tag = name.split('#')
-    print(f"Your username is {username} and your tag is {tag}")
     response = requests.get(f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tag}").text
     rankresponse = requests.get(f"https://api.henrikdev.xyz/valorant/v1/mmr/ap/{username}/{tag}").text
     valorant_stats = json.loads(response)
@@ -38,6 +37,19 @@ async def vstats(ctx, name):
     embed.set_footer(text=f"Last Updated: {parse['last_update']} ")
     embed.set_thumbnail(url=images["small"])
     await ctx.send(embed=embed)
+
+
+@vstats.error
+async def vstats_error(ctx,name):
+    embed= discord.Embed(title="Error!", description=f"Error While Retrieving Data. Please Try Again Later")
+    embed.add_field(inline=False, name="Format", value="The Correct Format is !vstats (username#tagline)")
+    embed.set_footer(text="Thank You For Using Catto!")
+    await ctx.send(embed=embed)
+
+
+
+
+
 
 
 
