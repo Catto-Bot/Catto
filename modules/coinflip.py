@@ -56,13 +56,16 @@ async def announce(ctx,*,message:str):
         await ctx.message.delete()
 
 
-
-
 @announce.error
 async def announce_error(ctx,message:str):
         embed1 = discord.Embed(title="ERROR", description="You Don't Have The Required Permission To Use This Command", color=discord.Color.red())
         embed1.set_footer(text="Invite This Bot To Your Server To Access This Command")
-        await ctx.send(embed=embed1)
+        err = await ctx.send(embed=embed1)
+        await ctx.message.delete()
+        await err.delete(delay=5)
+        
+        
+
 
         
 
