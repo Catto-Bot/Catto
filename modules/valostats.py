@@ -14,5 +14,31 @@ async def maps(ctx):
         if 'displayName' in map_data and map_data['displayName']:
             display_names.append(map_data['displayName'])
 
-    await ctx.send(display_names)
+    random = await ctx.send(display_names)
+    await random.delete()
+
+
+@commands.command(name="vstats")
+async def vstats(ctx, name):
+    username,tag = name.split('#')
+    print(f"Your username is {username} and your tag is {tag}")
+    response = requests.get(f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tag}").text
+    rankresponse = requests.get(f"https://api.henrikdev.xyz/valorant/v1/mmr/ap/{username}/{tag}").text
+    valorant_stats = json.loads(response)
+    rank_stats = json.loads(rankresponse)
+    parse = valorant_stats['data']
+    rankparse = rank_stats['data']
+    images = rankparse["images"]
+    cards = parse['card']
+    embed = discord.Embed(
+        title=f"{parse['name']} #{parse['tag']}",
+        description=f"Account level: {parse['account_level']}"
+    )
+    embed.set_image(url=cards["wide"])
+    embed.set_footer(text=f"Last Updated: {parse['last_update']} ")
+    embed.set_thumbnail(url=images["small"])
+    await ctx.send(embed=embed)
+
+
+
     
