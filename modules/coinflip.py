@@ -55,9 +55,9 @@ async def announce(ctx,*,message:str):
     await ctx.send(f'@everyone\n {message}')
     await ctx.message.delete()
 
-    @announce.error
-    async def announce_error(ctx):
-        await ctx.send("YOu are not an admin")
+@announce.error
+async def announce_error(ctx):
+    await ctx.send("YOu are not an admin")
 
     
 
