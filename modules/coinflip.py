@@ -21,6 +21,7 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
         await ctx.send(embed=embed)
 
 
+
 #RPS
 
 @commands.command(name="rps")
@@ -46,14 +47,39 @@ async def rps_game(ctx,user_choice):
     await ctx.send(embed=embed)
 
 
+
+
 #announce
 
 @commands.command(name="announce")
 @commands.has_permissions(administrator=True)
 async def announce(ctx,*,message:str):
-        
-        await ctx.send(f'@everyone\n {message}')
-        await ctx.message.delete()
+
+    await ctx.message.delete()
+    embed=discord.Embed(title="Would you like to embed this announcement?")
+    announce_msg = await ctx.send(embed=embed)
+    await announce_msg.add_reaction("✅")
+    await announce_msg.add_reaction("❌")
+    await announce_msg.delete(delay=5)
+
+    def check(reaction, user):
+        return user == ctx.author and reaction.message.id == announce_msg.id and str(reaction.emoji) in ["✅", "❌"]
+    
+    try:
+        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+
+        if str(reaction.emoji) == "✅":
+            everyone= await ctx.send('@everyone')
+            await everyone.delete()
+            embed=discord.Embed(title="Announcement",description=f'{message}',color=0x333333)
+            embed.set_footer(text="@everyone")
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(f'@everyone\n {message}')
+    
+    except:
+        no_response_del=await ctx.send("You did not respond in time")
+        await no_response_del.delete(delay=5)
 
 
 @announce.error
