@@ -4,7 +4,8 @@ from discord.ext import commands
 from discord import Intents
 import os
 from dotenv import load_dotenv
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket
+import json
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats
 
 
 
@@ -28,7 +29,9 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 @bot.event
 async def on_ready():
     print("The bot is ready")
-      
+
+
+
     
 
 
@@ -66,6 +69,8 @@ bot.add_command(chat.c)
 
 bot.add_command(ticket.ticketsetup)
 bot.add_command(ticket.deleteticket)
+
+bot.add_command(valostats.maps)
 
 
 

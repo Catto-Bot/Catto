@@ -44,7 +44,7 @@ async def kiss(ctx, member: commands.MemberConverter = None):
         embed.set_footer(text="Thank You For Using Catto! :D")
         await ctx.send(embed=embed)
     else:
-         embed = discord.Embed(title="You Can't Kiss Yourself( ಥ۝ಥ )")
+         embed = discord.Embed(title="You Can't Kiss Yourself! ( ಥ۝ಥ )")
          embed.set_footer(text="Next Time Mention A User To Kiss :D")
          await ctx.send(embed=embed)
 
@@ -58,7 +58,7 @@ async def bite(ctx, member: commands.MemberConverter = None):
         embed.set_footer(text="Thank You For Using Catto! :D")
         await ctx.send(embed=embed)
     else:
-         embed = discord.Embed(title="You Bit Yourself( ಥ۝ಥ )")
+         embed = discord.Embed(title="You Bit Yourself! ( ಥ۝ಥ )")
          embed.set_image(url="https://media.tenor.com/D7XNyUe6Q7UAAAAS/hit-self-kitten.gif")
          embed.set_footer(text="Next Time Mention A User To Kiss :D")
          await ctx.send(embed=embed)
@@ -73,7 +73,7 @@ async def lick(ctx, member: commands.MemberConverter = None):
         embed.set_footer(text="Thank You For Using Catto! :D")
         await ctx.send(embed=embed)
     else:
-         embed = discord.Embed(title="You Licked Yourself ♥‿♥")
+         embed = discord.Embed(title="You Licked Yourself! ♥‿♥")
          embed.set_image(url="https://media.tenor.com/6StCIWYFkOcAAAAC/adalfarus-adal.gif")
          embed.set_footer(text="Next Time Mention A User To Lick :D")
          await ctx.send(embed=embed)
