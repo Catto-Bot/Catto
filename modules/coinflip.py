@@ -45,6 +45,20 @@ async def rps_game(ctx,user_choice):
     embed=discord.Embed(title="Rock Paper Scissors", description=f'The bot chose {bot_choice}. {result}',color=0x333333)
     await ctx.send(embed=embed)
 
+
+#announce
+
+@commands.command(name="announce")
+@commands.has_permissions(administrator=True)
+async def announce(ctx,*,message:str):
+
+    await ctx.send(f'@everyone\n {message}')
+    await ctx.message.delete()
+
+    @announce.error
+    async def announce_error(ctx):
+        await ctx.send("YOu are not an admin")
+
     
 
     

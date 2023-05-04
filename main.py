@@ -39,8 +39,10 @@ async def on_ready():
 
 bot.add_command(coinflip.coin_flip)
 bot.add_command(coinflip.rps_game)
+bot.add_command(coinflip.announce)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
+bot.add_command(dice.animeQuote)
 bot.add_command(qutoes.quote)
 bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
