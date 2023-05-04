@@ -51,13 +51,20 @@ async def rps_game(ctx,user_choice):
 @commands.command(name="announce")
 @commands.has_permissions(administrator=True)
 async def announce(ctx,*,message:str):
+        
+        await ctx.send(f'@everyone\n {message}')
+        await ctx.message.delete()
 
-    await ctx.send(f'@everyone\n {message}')
-    await ctx.message.delete()
 
-    @announce.error
-    async def announce_error(ctx):
-        await ctx.send("YOu are not an admin")
+
+
+@announce.error
+async def announce_error(ctx,message:str):
+        embed1 = discord.Embed(title="ERROR", description="You Don't Have The Required Permission To Use This Command", color=discord.Color.red())
+        embed1.set_footer(text="Invite This Bot To Your Server To Access This Command")
+        await ctx.send(embed=embed1)
+
+        
 
     
 
