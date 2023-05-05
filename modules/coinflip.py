@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 import random
 import requests
-
+import asyncio
 #COINFLIP
 
 @commands.command(name="flip")
@@ -66,13 +66,13 @@ async def announce(ctx,*,message:str):
         return user == ctx.author and reaction.message.id == announce_msg.id and str(reaction.emoji) in ["✅", "❌"]
     
     try:
-        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=5.0, check=check)
 
         if str(reaction.emoji) == "✅":
             await announce_msg.delete()
             everyone= await ctx.send('@everyone')
             await everyone.delete()
-            embed=discord.Embed(title="Announcement",description=f'{message}',color=0x333333)
+            embed=discord.Embed(title="Announcement 🔊",description=f'\n{message}',color=0x333333)
             embed.set_footer(text="@everyone")
             await ctx.send(embed=embed)
             return
@@ -81,10 +81,11 @@ async def announce(ctx,*,message:str):
             await ctx.send(f'@everyone\n {message}')
             return
     
-    except Exception as err:
+    except asyncio.TimeoutError:
         no_response_del=await ctx.send("You did not respond in time")
-        await no_response_del.delete(delay=5)
-        print(err)
+        await asyncio.sleep(5)
+        await no_response_del.delete()
+
 
 
 @announce.error
