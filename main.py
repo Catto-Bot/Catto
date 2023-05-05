@@ -5,7 +5,7 @@ from discord import Intents
 import os
 from dotenv import load_dotenv
 import json
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight
 
 
 
@@ -32,7 +32,7 @@ async def on_ready():
 
 
 
-    
+
 
 
 
@@ -73,6 +73,10 @@ bot.add_command(ticket.deleteticket)
 
 bot.add_command(valostats.vstats)
 bot.add_command(valostats.maps)
+
+bot.add_command(avatar.avatar)
+
+bot.add_command(fight.fight)
 
 
 
