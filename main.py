@@ -49,7 +49,10 @@ bot.add_command(qutoes.quote)
 bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
 bot.add_command(qutoes.trivia)
-00000
+bot.add_command(qutoes.insult)
+bot.add_command(qutoes.dark)
+bot.add_command(qutoes.spooky)
+
 #gmabler
 bot.add_command(gambler.daily)
 bot.add_command(gambler.weekly)
