@@ -5,7 +5,7 @@ from discord import Intents
 import os
 from dotenv import load_dotenv
 import json
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime
 
 
 
@@ -42,9 +42,7 @@ bot.add_command(coinflip.rps_game)
 bot.add_command(coinflip.announce)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
-bot.add_command(dice.animeQuote)
 bot.add_command(dice.cat)
-bot.add_command(dice.anime)
 bot.add_command(qutoes.quote)
 bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
@@ -64,6 +62,20 @@ bot.add_command(gifs.slap)
 bot.add_command(gifs.kiss)
 bot.add_command(gifs.lick)
 bot.add_command(gifs.bite)
+bot.add_command(gifs.bully)
+bot.add_command(gifs.blush)
+bot.add_command(gifs.cry)
+bot.add_command(gifs.cuddle)
+bot.add_command(gifs.smug)
+bot.add_command(gifs.bonk)
+bot.add_command(gifs.pat)
+bot.add_command(gifs.handhold)
+bot.add_command(gifs.nom)
+bot.add_command(gifs.kill)
+bot.add_command(gifs.kick)
+bot.add_command(gifs.wink)
+bot.add_command(gifs.poke)
+
 
 bot.add_command(chat.learn)
 bot.add_command(chat.c)
@@ -80,9 +92,9 @@ bot.add_command(avatar.avatar)
 
 bot.add_command(fight.fight)
 
-
-
-
+bot.add_command(anime.animeQuote)
+bot.add_command(anime.anime)
+bot.add_command(anime.suggestanime)
 
 
 
