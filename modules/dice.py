@@ -66,3 +66,61 @@ async def animeQuote(ctx):
     except:
     
        await ctx.send( f"TATAKAE!🕊️- Eren Yeager" )
+
+@commands.command(name="cat")
+async def cat(ctx):
+    try:
+        headers = {
+            'x-api-key': 'live_KtxHNMT5p5HcQscmbtQDrBcXXqpEVLEVQM5dKo68Is1vPqNEC27l9b1CIWZWFY5E'
+        }
+        api_url = 'https://api.thecatapi.com/v1/images/search'
+        response = requests.get(api_url, headers = headers)
+        data = response.json()
+        cat = (data[0]['url'])
+     
+        await ctx.send(cat)
+    except:
+        await ctx.send("Can't find cute cat image :(")
+
+
+@commands.command(name="anime")
+async def anime(ctx):
+    try:
+        category = ["waifu",
+"neko",
+"shinobu",
+"megumin",
+"bully",
+"cuddle",
+"cry",
+"hug",
+"awoo",
+"kiss",
+"lick",
+"pat",
+"smug",
+"bonk",
+"yeet",
+"blush",
+"smile",
+"wave",
+"highfive",
+"handhold",
+"nom",
+"bite",
+"glomp",
+"slap",
+"kill",
+"kick",
+"happy",
+"wink",
+"poke",
+"dance",
+"cringe"]
+        api_url = f'https://api.waifu.pics/sfw/{random.choice(category)}'
+        response = requests.get(api_url)
+        data = response.json()
+        await ctx.send(data['url'])
+
+    except:
+        print("Error")
