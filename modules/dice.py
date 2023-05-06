@@ -47,25 +47,6 @@ async def rolldice(ctx, member: commands.MemberConverter = None):
         embed.set_thumbnail(url=dice_img_url)
         await ctx.send(embed = embed)
 
-@commands.command(name="animeQuote")
-async def animeQuote(ctx):
-    try:
-        api_url = 'https://animechan.vercel.app/api/random'
-        response = requests.get(api_url)
-        aniQuote = response.json()
-        animeName = aniQuote['anime']
-        
-        aniChara = aniQuote ['character']
-        
-        mainQuote = aniQuote['quote']
-        
-
-        embed = discord.Embed(title=f"Anime Name: {animeName}",description= f"'{mainQuote}'", color=0x555555 )
-        embed.set_footer(text=f"-{aniChara}")
-        await ctx.send(embed = embed )
-    except:
-    
-       await ctx.send( f"TATAKAE!🕊️- Eren Yeager" )
 
 @commands.command(name="cat")
 async def cat(ctx):
@@ -83,44 +64,3 @@ async def cat(ctx):
         await ctx.send("Can't find cute cat image :(")
 
 
-@commands.command(name="anime")
-async def anime(ctx):
-    try:
-        category = ["waifu",
-"neko",
-"shinobu",
-"megumin",
-"bully",
-"cuddle",
-"cry",
-"hug",
-"awoo",
-"kiss",
-"lick",
-"pat",
-"smug",
-"bonk",
-"yeet",
-"blush",
-"smile",
-"wave",
-"highfive",
-"handhold",
-"nom",
-"bite",
-"glomp",
-"slap",
-"kill",
-"kick",
-"happy",
-"wink",
-"poke",
-"dance",
-"cringe"]
-        api_url = f'https://api.waifu.pics/sfw/{random.choice(category)}'
-        response = requests.get(api_url)
-        data = response.json()
-        await ctx.send(data['url'])
-
-    except:
-        print("Error")
