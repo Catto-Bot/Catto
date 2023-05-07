@@ -41,8 +41,10 @@ async def vstats(ctx, name):
 
 @vstats.error
 async def vstats_error(ctx,name):
+    with open('prefixes.json', 'r') as f: 
+        prefixes = json.load(f)
     embed= discord.Embed(title="Error!", description=f"Error While Retrieving Data. Please Try Again Later")
-    embed.add_field(inline=False, name="Format", value="The Correct Format is !vstats (username#tagline)")
+    embed.add_field(inline=False, name="Format", value=f"The Correct Format is {prefixes[str(ctx.guild.id)]}vstats (username#tagline)")
     embed.set_footer(text="Thank You For Using Catto!")
     await ctx.send(embed=embed)
 

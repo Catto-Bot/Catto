@@ -251,5 +251,9 @@ async def steal_error(ctx, error):
 
 @bet.error
 async def bet_error(ctx, error):
-        embed = discord.Embed(title="Error! Wrong Format", description="The Correct format is !bet (number) (money)", color=discord.Color.red())
+        with open('prefixes.json', 'r') as f: 
+            prefixes = json.load(f)
+        embed = discord.Embed(title="Error! Wrong Format", description=f"The Correct format is {prefixes[str(ctx.guild.id)]}bet (number) (money)", color=discord.Color.red())
         await ctx.send(embed=embed)
+
+

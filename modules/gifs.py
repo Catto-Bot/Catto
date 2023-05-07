@@ -292,3 +292,4 @@ async def poke(ctx, member: commands.MemberConverter = None):
         embed = discord.Embed(title=f"{ctx.author.display_name} poked themselves! (＾◡＾)っ", color=discord.Color.dark_gray())
         embed.set_image(url="https://media.tenor.com/cVMA5TtZ_3oAAAAS/baymax-poke.gif")
         await ctx.send(embed=embed)
+

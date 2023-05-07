@@ -5,7 +5,7 @@ from discord import Intents
 import os
 from dotenv import load_dotenv
 import json
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime,prefix
 
 
 
@@ -16,12 +16,21 @@ load_dotenv()
 DISCORD_KEY= os.getenv('DISCORD_ID')
 #from discord import app_commands
 
-#------------------------INITIALIZING THE BOT-------------------------------------------------#
+def get_prefix(bot, message): 
+    try:
+        with open('prefixes.json', 'r') as f: 
+            prefixes = json.load(f) 
+        return prefixes[str(message.guild.id)] 
+    except:
+        prefixes = {}
+
+
+
 
 intents = discord.Intents.all()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
 
 
 
@@ -31,7 +40,25 @@ async def on_ready():
     print("The bot is ready")
 
 
+@bot.event
+async def on_guild_join(guild): 
+    with open('prefixes.json', 'r') as f: 
+        prefixes = json.load(f) 
 
+    prefixes[str(guild.id)] = '>'
+
+    with open('prefixes.json', 'w') as f:
+        json.dump(prefixes, f, indent=4) 
+
+@bot.event
+async def on_guild_remove(guild):
+    with open('prefixes.json', 'r') as f: 
+        prefixes = json.load(f)
+
+    prefixes.pop(str(guild.id)) 
+
+    with open('prefixes.json', 'w') as f: 
+        json.dump(prefixes, f, indent=4)
 
 
 
@@ -96,6 +123,9 @@ bot.add_command(avatar.avatar)
 bot.add_command(fight.fight)
 
 bot.add_command(anime.animeQuote)
+
+bot.add_command(prefix.setprefix)
+bot.add_command(prefix.prefix)
 
 
 
