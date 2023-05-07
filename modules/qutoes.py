@@ -133,3 +133,66 @@ async def dadjoke(ctx):
         await ctx.send(embed = embed)
     except:
         await ctx.channel.send("My dad left me like your left to buy milk 😁")
+
+
+####################################################################################
+#Insult
+####################################################################################
+@commands.command(nmae ="insult")
+async def insult(ctx):
+        try: 
+            api_url= 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
+            response = requests.get(api_url)
+            d = response.json()
+            insult = html.unescape(d['insult'])
+            embed = discord.Embed(title=f'{insult}', color=0x555555)
+            print(d)
+            await ctx.send(embed = embed)
+        except:
+            print('Hello')
+
+
+#####################################################################
+#Dark
+#####################################################################
+@commands.command(name ="dark")
+async def dark(ctx):
+        try: 
+            api_url= f'https://v2.jokeapi.dev/joke/Dark?type=twopart'
+            response = requests.get(api_url)
+            d = response.json()
+            setup = html.unescape(d["setup"])
+            delivery = html.unescape(d["delivery"])
+            embed = discord.Embed(title=f'{setup}', color=0x555555)
+            darkjoke = await ctx.channel.send(embed = embed)
+
+            await asyncio.sleep(3)
+
+            embed = discord.Embed(title=f"{setup} \n {delivery}", color=0x666666)
+            darkjoke = await darkjoke.edit(embed = embed)
+            await darkjoke.add_reaction("👍")
+            await darkjoke.add_reaction("👎")
+            
+        except Exception as err:
+            print(err)
+
+@commands.command(name ="spooky")
+async def spooky(ctx):
+        try: 
+            api_url= f'https://v2.jokeapi.dev/joke/Spooky?type=twopart'
+            response = requests.get(api_url)
+            d = response.json()
+            setup = html.unescape(d["setup"])
+            delivery = html.unescape(d["delivery"])
+            embed = discord.Embed(title=f'{setup}', color=0x555555)
+            darkjoke = await ctx.channel.send(embed = embed)
+
+            await asyncio.sleep(3)
+
+            embed = discord.Embed(title=f"{setup} \n {delivery}", color=0x666666)
+            darkjoke = await darkjoke.edit(embed = embed)
+            await darkjoke.add_reaction("👍")
+            await darkjoke.add_reaction("👎")
+            
+        except Exception as err:
+            print(err)
