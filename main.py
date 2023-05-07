@@ -93,7 +93,6 @@ bot.add_command(avatar.avatar)
 bot.add_command(fight.fight)
 
 bot.add_command(anime.animeQuote)
-bot.add_command(anime.anime)
 bot.add_command(anime.suggestanime)
 
 
