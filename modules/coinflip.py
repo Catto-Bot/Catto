@@ -108,7 +108,7 @@ async def joke(ctx):
     
 
     except:
-        print()
+        print("error")
 
 
         
