@@ -95,6 +95,22 @@ async def announce_error(ctx,message:str):
         err = await ctx.send(embed=embed1)
         await ctx.message.delete()
         await err.delete(delay=5)
+
+
+
+
+#jokes
+
+@commands.command(name="jokes",aliases=["joke"])
+async def joke(ctx):
+    try:
+        api_url='https://icanhazdadjoke.com/slack'
+    
+
+    except:
+        print("error")
+
+
         
         
 
