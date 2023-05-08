@@ -10,7 +10,7 @@ API_KEY ='aEIxt6NSkJGib80neq+dRg==p1ytbEYfgbfg9zBW'
 
 
 ##############################################################################################
-# Trash Quotes
+# Some Worthy Quotes
 ##############################################################################################
 
 @commands.command(name="quote")
@@ -170,6 +170,11 @@ async def dark(ctx):
         except Exception as err:
             print(err)
 
+
+######################################################################
+# Spooky
+######################################################################
+
 @commands.command(name ="spooky")
 async def spooky(ctx):
         try: 
@@ -187,6 +192,23 @@ async def spooky(ctx):
             darkjoke = await darkjoke.edit(embed = embed)
             await darkjoke.add_reaction("👍")
             await darkjoke.add_reaction("👎")
+            
+        except Exception as err:
+            print(err)
+
+######################################################################
+# Advice
+######################################################################
+
+@commands.command(name ="advice")
+async def spooky(ctx):
+        try: 
+            api_url= f'https://api.adviceslip.com/advice'
+            response = requests.get(api_url)
+            d = response.json()
+            setup = html.unescape(d["slip"]["advice"])
+            embed = discord.Embed(title=f'{setup}', color=0x555555)
+            await ctx.channel.send(embed = embed)
             
         except Exception as err:
             print(err)

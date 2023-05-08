@@ -126,7 +126,7 @@ bot.add_command(anime.animeQuote)
 bot.add_command(prefix.setprefix)
 bot.add_command(prefix.prefix)
 
-bot.add_command(moderation.mute)
+# bot.add_command(moderation.mute)
 
 
 bot.run(DISCORD_KEY)
