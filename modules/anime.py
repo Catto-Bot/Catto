@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import requests
+from admin import messages
 
 @commands.command(name="animeQuote")
 async def animeQuote(ctx):
@@ -22,4 +23,8 @@ async def animeQuote(ctx):
     
        await ctx.send( f"TATAKAE!🕊️- Eren Yeager" )
 
+@commands.command()
+async def something(ctx):
+    embed = messages.WIP()
+    await ctx.send(embed=embed)
 

@@ -8,6 +8,7 @@ import json
 from events import events
 from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles
 from admin import admin
+from anicat import anicat
 
 
 
@@ -97,6 +98,7 @@ bot.add_command(avatar.avatar)
 
 
 bot.add_command(anime.animeQuote)
+bot.add_command(anime.something)
 
 bot.add_command(prefix.setprefix)
 bot.add_command(prefix.prefix)
@@ -118,6 +120,10 @@ bot.add_command(greet.setleavechannel)
 
 
 bot.add_command(admin.ping)
+
+bot.add_command(anicat.anime)
+
+
 
 bot.run(DISCORD_KEY)
 
