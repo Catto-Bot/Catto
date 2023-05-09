@@ -5,7 +5,7 @@ from discord import Intents
 import os
 from dotenv import load_dotenv
 import json
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime,prefix,moderation
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime,prefix,moderation,play
 
 
 
@@ -126,7 +126,9 @@ bot.add_command(anime.animeQuote)
 bot.add_command(prefix.setprefix)
 bot.add_command(prefix.prefix)
 
-bot.add_command(moderation.mute)
+
+
+
 
 
 bot.run(DISCORD_KEY)
