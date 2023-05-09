@@ -116,7 +116,8 @@ bot.add_command(roles.deleterole)
 
 
 
-bot.add_command(greet.setwelcome)
+bot.add_command(greet.setwelcomechannel)
+bot.add_command(greet.setleavechannel)
 
 
 bot.run(DISCORD_KEY)
