@@ -51,4 +51,29 @@ async def kickthat(ctx, user: discord.Member):
     await user.kick()
     await ctx.send(f'The user ({user}) has been kicked out the server')
 
+# Unmute users
+@commands.command()
+@commands.has_permissions(moderate_members=True)
+async def unmute(ctx, user: discord.Member):
+    try:
+  
+        mute_role = discord.utils.get(ctx.guild.roles, name='Timeout')
+
+        if mute_role is None:
+            raise Exception
+
+        if mute_role in user.roles:
+            await user.remove_roles(mute_role)
+            return
+        embeded = discord.Embed(title="This user is not muted.", description='Do you want me mute the user? 🤔', color=0x555555)
+        joke = await ctx.send(embed = embeded)
+
+        await asyncio.sleep(5)
+
+        embeded.set_footer(text="Hahahah.......Just kidding!!!! I can't. But you can use mute command")
+        await joke.edit(embed = embeded)
+       
+        
+    except Exception as err:
+        await ctx.send("No such role founded")
 #########################################################################

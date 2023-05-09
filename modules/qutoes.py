@@ -147,10 +147,10 @@ async def insult(ctx):
 
 
 #####################################################################
-#Dark
+#Dark Meme
 #####################################################################
-@commands.command(name ="dark")
-async def dark(ctx):
+@commands.command()
+async def darkmeme(ctx):
         try: 
             api_url= f'https://v2.jokeapi.dev/joke/Dark?type=twopart'
             response = requests.get(api_url)

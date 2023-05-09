@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles
 
 
 
@@ -53,7 +53,7 @@ bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
 bot.add_command(qutoes.trivia)
 bot.add_command(qutoes.insult)
-bot.add_command(qutoes.dark)
+bot.add_command(qutoes.darkmeme)
 bot.add_command(qutoes.spooky)
 
 #gmabler
@@ -107,6 +107,7 @@ bot.add_command(prefix.prefix)
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kickthat)
 bot.add_command(moderation.ban)
+bot.add_command(moderation.unmute)
 
 bot.add_command(roles.setuprole)
 bot.add_command(roles.createrole)
