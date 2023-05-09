@@ -126,15 +126,9 @@ bot.add_command(anime.animeQuote)
 bot.add_command(prefix.setprefix)
 bot.add_command(prefix.prefix)
 
-<<<<<<< HEAD
-
-
-
-=======
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kickthat)
 bot.add_command(moderation.ban)
->>>>>>> b09920c55a1b6ee04a032636bc4f820436362733
 
 
 bot.run(DISCORD_KEY)
