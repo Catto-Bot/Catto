@@ -1,6 +1,6 @@
 # Catto Discord Bot
 
-![Catto Bot Logo](catto_logo.png)
+![Catto Bot Logo]([catto_logo.png](https://steamuserimages-a.akamaihd.net/ugc/1688275952686150099/5D20F620CBF4390D71CED880F7C8A07089211080/?imw=200&imh=200&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true))
 
 Catto is a multipurpose Discord bot with a wide range of commands to enhance your Discord server experience. Inspired by cats, Catto brings a touch of feline charm to your server with its cat-themed features. From fetching anime and GIFs to moderating your server, playing music, and managing roles, Catto has got you covered!
 
