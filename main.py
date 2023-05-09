@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles
 
 
 
@@ -115,7 +115,8 @@ bot.add_command(roles.deleterole)
 
 
 
-bot.add_command(greet.setwelcome)
+bot.add_command(greet.setwelcomechannel)
+bot.add_command(greet.setleavechannel)
 
 
 bot.run(DISCORD_KEY)
