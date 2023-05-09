@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import json
 from events import events
 from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles
-from test import admin
+from admin import admin
 
 
 
@@ -33,9 +33,6 @@ intents = discord.Intents.all()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
-
-
-
 
 
 
@@ -118,9 +115,9 @@ bot.add_command(roles.deleterole)
 
 bot.add_command(greet.setwelcomechannel)
 bot.add_command(greet.setleavechannel)
-bot.add_command(greet.setleavechannel)
 
-bot.add_command(admin.test)
+
+bot.add_command(admin.ping)
 
 bot.run(DISCORD_KEY)
 
