@@ -132,6 +132,8 @@ bot.add_command(moderation.ban)
 
 bot.add_command(roles.setuprole)
 bot.add_command(roles.createrole)
+bot.add_command(roles.removerole)
+bot.add_command(roles.deleterole)
 
 
 
