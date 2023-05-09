@@ -57,7 +57,7 @@ async def kickthat(ctx, user: discord.Member):
 async def unmute(ctx, user: discord.Member):
     try:
   
-        mute_role = discord.utils.get(ctx.guild.roles, name='Timeout')
+        mute_role = discord.utils.get(ctx.guild.roles, name='muted')
 
         if mute_role is None:
             raise Exception
@@ -75,5 +75,6 @@ async def unmute(ctx, user: discord.Member):
        
         
     except Exception as err:
-        await ctx.send("No such role founded")
+        embeded = discord.Embed(title='First use !mute <User> to initialize unmute command"')
+        await ctx.send(embed = embeded)
 #########################################################################
