@@ -2,4 +2,4 @@
 modules/__pycache__/
 gamblerdata
 responses.db
-events/__pycache__/
+events/__pycache__
