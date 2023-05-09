@@ -10,31 +10,25 @@ API_KEY ='aEIxt6NSkJGib80neq+dRg==p1ytbEYfgbfg9zBW'
 
 
 ##############################################################################################
-# Trash Quotes
+# Some Worthy Quotes
 ##############################################################################################
 
 @commands.command(name="quote")
-async def quote(ctx, category =""):
+async def quote(ctx):
     try:
-        if (category == ''):
-            api_url = 'https://api.api-ninjas.com/v1/quotes'
-            
-        else:
-            api_url = 'https://api.api-ninjas.com/v1/quotes?category={}'.format(category)
+        api_url = 'https://api.quotable.io/random'
         
-        response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
-        if response.status_code == requests.codes.ok:
-            data = response.json()[0]
-            quotes = data['quote']
-            author = data['author']
-            category = data['category']
-            embed = discord.Embed(title=f"{category.capitalize()} Quote", description=f"\"{quotes}\"", color=0x777777)
-            embed.set_footer(text=f"-{author}")
-            quote = await ctx.channel.send(embed=embed)
-            await quote.add_reaction("👍")
-            await quote.add_reaction("👎")
-        else:
-            raise Exception("Sorry")
+        response = requests.get(api_url)
+        data = response.json()
+        quotes = data['content']
+        author = data['author']
+        category = data['tags'][0]
+        embed = discord.Embed(title=f"{category}", description=f"\"{quotes}\"", color=0x777777)
+        embed.set_footer(text=f"-{author}")
+        quote = await ctx.channel.send(embed=embed)
+        await quote.add_reaction("👍")
+        await quote.add_reaction("👎")
+        
     except:
         await ctx.channel.send(f"I am down myself 🥲")
 
@@ -176,6 +170,11 @@ async def dark(ctx):
         except Exception as err:
             print(err)
 
+
+######################################################################
+# Spooky
+######################################################################
+
 @commands.command(name ="spooky")
 async def spooky(ctx):
         try: 
@@ -193,6 +192,23 @@ async def spooky(ctx):
             darkjoke = await darkjoke.edit(embed = embed)
             await darkjoke.add_reaction("👍")
             await darkjoke.add_reaction("👎")
+            
+        except Exception as err:
+            print(err)
+
+######################################################################
+# Advice
+######################################################################
+
+@commands.command(name ="advice")
+async def spooky(ctx):
+        try: 
+            api_url= f'https://api.adviceslip.com/advice'
+            response = requests.get(api_url)
+            d = response.json()
+            setup = html.unescape(d["slip"]["advice"])
+            embed = discord.Embed(title=f'{setup}', color=0x555555)
+            await ctx.channel.send(embed = embed)
             
         except Exception as err:
             print(err)
