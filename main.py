@@ -5,7 +5,9 @@ from discord import Intents
 import os
 from dotenv import load_dotenv
 import json
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,fight,anime,prefix,moderation,play
+from events import events
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet
+
 
 
 
@@ -35,32 +37,9 @@ bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None
 
 
 
-@bot.event
-async def on_ready():
-    print("The bot is ready")
 
 
-@bot.event
-async def on_guild_join(guild): 
-    with open('prefixes.json', 'r') as f: 
-        prefixes = json.load(f) 
-
-    prefixes[str(guild.id)] = '>'
-
-    with open('prefixes.json', 'w') as f:
-        json.dump(prefixes, f, indent=4) 
-
-@bot.event
-async def on_guild_remove(guild):
-    with open('prefixes.json', 'r') as f: 
-        prefixes = json.load(f)
-
-    prefixes.pop(str(guild.id)) 
-
-    with open('prefixes.json', 'w') as f: 
-        json.dump(prefixes, f, indent=4)
-
-
+events.setup(bot)
 
 
 bot.add_command(coinflip.coin_flip)
@@ -119,7 +98,6 @@ bot.add_command(valostats.maps)
 
 bot.add_command(avatar.avatar)
 
-bot.add_command(fight.fight)
 
 bot.add_command(anime.animeQuote)
 
@@ -129,6 +107,9 @@ bot.add_command(prefix.prefix)
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kickthat)
 bot.add_command(moderation.ban)
+
+
+bot.add_command(greet.setwelcome)
 
 
 bot.run(DISCORD_KEY)
