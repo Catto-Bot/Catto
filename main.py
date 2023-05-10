@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr
 from admin import admin
 from anicat import anicat
 
@@ -112,6 +112,8 @@ bot.add_command(roles.setuprole)
 bot.add_command(roles.createrole)
 bot.add_command(roles.removerole)
 bot.add_command(roles.deleterole)
+
+bot.add_command(wyr.wyr)
 
 
 
