@@ -3,9 +3,9 @@ import discord
 import json
 import random
 
-cooldown_time = 6 * 60 * 60
+cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat")
-@commands.cooldown(8, cooldown_time, commands.BucketType.user)
+@commands.cooldown(50, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
     with open("data\data.json", "r", encoding="utf8") as file:
         data = json.load(file)
@@ -39,61 +39,69 @@ async def anicat(ctx):
                     anicatdata = json.load(file)
             except:
                 anicatdata = {}
+
             if user_name in anicatdata:
                 anicatdata[user_name]["Total AniCats"] += 1
                 anicatdata[user_name]["Total AniPoints"] += points[random_index]
+                if names[random_index] not in anicatdata[user_name]["Names"]:
+                    anicatdata[user_name]["Names"].append(names[random_index])  # Add the name to the list
             else:
                 anicatdata[user_name] = {
                     "Total AniCats": 1,
-                    "Total AniPoints": points[random_index]
-                }
+                    "Total AniPoints": points[random_index],
+                    "Names": [names[random_index]]  # Create a list with the name
+            }
+
 
             with open("data/anicat.json", "w") as final:
                 json.dump(anicatdata, final)
 
     except Exception as e:
         editembed = discord.Embed(title="Expired!", description="You Took Too Long To Claim!")
+        editembed.set_image(url=source[random_index])
+        editembed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
         await final.clear_reactions()
         await final.edit(embed=editembed)
 
 
 
-@commands.command(name="anicatinfo")
-async def anicatinfo(ctx, *, member: discord.Member = None):
-    if member:
-        try:
-            with open("data/anicat.json", "r", encoding="utf8") as file:
-                anicatdata = json.load(file)
+@commands.command(name="anicatstats")
+async def anicatstats(ctx, *, member: discord.Member = None):
+    try:
+        with open("data/anicat.json", "r", encoding="utf8") as file:
+            anicatdata = json.load(file)
+
+        if member:
             member_name = str(member)
             if member_name in anicatdata:
                 total_anicats = anicatdata[member_name]["Total AniCats"]
                 total_anipoints = anicatdata[member_name]["Total AniPoints"]
+                names = anicatdata[member_name]["Names"]
 
                 embed = discord.Embed(title=f"Anicat Info for {member_name}", description="", color=discord.Color.green())
                 embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
                 embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                embed.add_field(name="Names", value="\n".join(names[:10]), inline=False)  # Join the first 10 names with newlines
                 await ctx.send(embed=embed)
             else:
                 await ctx.send("No Record Found")
-        except Exception as err:
-            await ctx.send("There was a problem!")
-    else:
-        try:
-            with open("data/anicat.json", "r", encoding="utf8") as file:
-                anicatdata = json.load(file)
+        else:
             author_name = str(ctx.author)
             if author_name in anicatdata:
                 total_anicats = anicatdata[author_name]["Total AniCats"]
                 total_anipoints = anicatdata[author_name]["Total AniPoints"]
+                names = anicatdata[author_name]["Names"]
 
                 embed = discord.Embed(title=f"Anicat Info for {author_name}", description="", color=discord.Color.magenta())
                 embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
                 embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                embed.add_field(name="Last 10 Claimed AniCats", value="\n".join(names[:10]), inline=False)  # Join the first 10 names with newlines
                 await ctx.send(embed=embed)
             else:
                 await ctx.send("No record found!")
-        except Exception as err:
-            await ctx.send("There was a problem!")
+    except Exception as err:
+        await ctx.send("There was a problem!")
+
 
 
 @anicat.error
@@ -103,7 +111,7 @@ async def anicat_error(ctx, error):
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         embed = discord.Embed(title="This Command Is On CoolDown!",
-                              description=f"You can use this command again after {hours} and {minutes} minutes"
+                              description=f"You can use this command again after {str(minutes)} minutes"
                               )
         embed.set_footer(text="Thank You For Using Catto Bot(AniCat)")
         await ctx.send(embed=embed)
