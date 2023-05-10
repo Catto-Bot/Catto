@@ -1,5 +1,4 @@
 .env
 modules/__pycache__/
 gamblerdata
-responses.db
-events/__pycache__
+__pycache__/
