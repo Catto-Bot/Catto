@@ -39,7 +39,7 @@ async def wyr(ctx):
             )
 
         while True:
-            reaction, user = await ctx.bot.wait_for("reaction_add", check=check, timeout = 2)
+            reaction, user = await ctx.bot.wait_for("reaction_add", check=check, timeout = 30)
             await message.remove_reaction(reaction, user)
             voted_users.add(user.id)  # Add user to the voted_users set
             if str(reaction.emoji) == "⬅️":
