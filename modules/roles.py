@@ -52,7 +52,7 @@ async def removerole(ctx, rolename, member: discord.Member = None):
     role = discord.utils.get(ctx.guild.roles, name = rolename)
     if role is None:
         await ctx.send(f"Role {rolename} not found!")
-    if not(role in member.roles):
+    elif not(role in member.roles):
         await ctx.send(f"{member.display_name} does not have the Role {rolename}!")
     else:
         await member.remove_roles(role)
