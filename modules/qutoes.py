@@ -54,8 +54,8 @@ async def devjoke(ctx):
         await devjoke.add_reaction("👍")
         await devjoke.add_reaction("👎")
 
-    except:
-        print("hello")
+    except Exception as err:
+        print(err)
 
 
 
@@ -142,8 +142,8 @@ async def insult(ctx):
             embed = discord.Embed(title=f'{insult}', color=0x555555)
             print(d)
             await ctx.send(embed = embed)
-        except:
-            print('Hello')
+        except Exception as err:
+            print(err)
 
 
 #####################################################################
