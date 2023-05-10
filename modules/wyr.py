@@ -56,7 +56,6 @@ async def wyr(ctx):
             await message.edit(embed=embed)
 
     except Exception as error:
-        print(error)
         embed2 = discord.Embed(title="time limit reached", color=0x333333)
         embed2.add_field(name="Would you rather", value=option1, inline=True)
         embed2.add_field(name="Or", value=option2, inline=True)

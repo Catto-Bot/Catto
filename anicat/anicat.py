@@ -57,6 +57,7 @@ async def anicat(ctx):
         await final.edit(embed=editembed)
 
 
+
 @commands.command(name="anicatinfo")
 async def anicatinfo(ctx, *, member: discord.Member = None):
     if member:
