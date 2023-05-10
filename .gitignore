@@ -3,3 +3,6 @@ modules/__pycache__/
 gamblerdata
 responses.db
 events/__pycache__
+anicat/__pycache__
+data/__pycache__
+admin/__pycache__
