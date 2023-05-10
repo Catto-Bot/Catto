@@ -125,6 +125,8 @@ bot.add_command(admin.ping)
 
 bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
+bot.add_command(anicat.anicatinfo)
+
 
 
 

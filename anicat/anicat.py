@@ -4,7 +4,7 @@ import json
 import random
 
 cooldown_time = 1 * 60 * 60
-@commands.command(name="anicat")
+@commands.command(name="anicat", aliases=["ac","anic"])
 @commands.cooldown(50, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
     with open("data\data.json", "r", encoding="utf8") as file:
@@ -62,10 +62,11 @@ async def anicat(ctx):
         editembed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
         await final.clear_reactions()
         await final.edit(embed=editembed)
+        return
 
 
 
-@commands.command(name="anicatstats")
+@commands.command(name="anicatstats", aliases=["as","stats"])
 async def anicatstats(ctx, *, member: discord.Member = None):
     try:
         with open("data/anicat.json", "r", encoding="utf8") as file:
@@ -83,6 +84,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                 embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
                 embed.add_field(name="Names", value="\n".join(names[:10]), inline=False)  # Join the first 10 names with newlines
                 await ctx.send(embed=embed)
+
             else:
                 await ctx.send("No Record Found")
         else:
@@ -99,8 +101,40 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                 await ctx.send(embed=embed)
             else:
                 await ctx.send("No record found!")
+                return
     except Exception as err:
         await ctx.send("There was a problem!")
+        return
+
+
+
+@commands.command("anicatinfo", aliases=["aci"])
+async def anicatinfo(ctx, *,card):
+    try:
+        with open("data/data.json", "r") as read:
+            data = json.load(read)
+
+        card_lower = card.lower()
+        matching_items = [item for item in data if card_lower in item["Name"].lower()]
+
+        if matching_items:
+            source = matching_items[0]["Source"]
+            name = matching_items[0]["Name"]
+            embed = discord.Embed(title="MATCH FOUND!", description=name)
+            embed.set_image(url=source)
+            embed.set_footer(text="Thank You For Using Catto Bot(AniCat)")
+            await ctx.send(embed=embed)
+            return
+        else:
+
+            await ctx.send("Not found")
+
+    except Exception as err:
+        await ctx.send("Error occurred: " + str(err))
+
+
+
+
 
 
 
