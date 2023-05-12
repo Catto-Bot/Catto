@@ -17,9 +17,6 @@ def downloading():
                          color=0xFF0000)
 
 
-def error(e="executing command"):
-    return discord.Embed(title=f"⚠ Unknown error occurred while {e}!",
-                         description="Please report to [Teapot.py](https://github.com/RedCokeDevelopment/Teapot.py) developers [here](https://github.com/RedCokeDevelopment/Teapot.py/issues)!",
-                         color=0xFF0000)
+
 
 
