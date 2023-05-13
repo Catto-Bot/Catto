@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import time
 import requests
+import asyncio
 
 
 
@@ -25,6 +26,21 @@ async def ping(ctx):
         await ctx.send("an error occured. please try again!")
         print(err)
 
+
+# @commands.command(name="restart")
+# async def restart(ctx):
+#     numbers = [5,4,3,2,1]
+#     countdown = await ctx.send("Restarting In")
+#     await asyncio.sleep(1)
+#     for num in numbers:
+#         await countdown.edit(content = num)
+#     await countdown.edit(content="Restarting..")
+#     await ctx.bot.close()
+#     await countdown.edit(content="Started..")
+
+
+        
+        
 
 
 
