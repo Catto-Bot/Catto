@@ -9,7 +9,8 @@ def welcomemessage(message):
 
 @commands.command(name="setwelcomechannel")
 @commands.has_permissions(administrator=True)
-async def setwelcomechannel(ctx, channelid):
+async def setwelcomechannel(ctx, channe_lid):
+    channelid = channe_lid.strip('<#>')
     embed = discord.Embed(title="Success!", description="The default welcome channel has been set!")
     embed.set_footer(text="Thank you for using Catto Bot!")
 
@@ -25,7 +26,8 @@ async def setwelcomechannel(ctx, channelid):
 
 @commands.command(name="setleavechannel")
 @commands.has_permissions(administrator=True)
-async def setleavechannel(ctx, channelid):
+async def setleavechannel(ctx, channe_lid):
+    channelid = channe_lid.strip('<#>')
     embed = discord.Embed(title="Success!", description="The default leave channel has been set!")
     embed.set_footer(text="Thank you for using Catto Bot!")
 

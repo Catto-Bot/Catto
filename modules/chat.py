@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import json
 import sqlite3
 
 
@@ -40,10 +41,16 @@ async def c(ctx, *input_text: str):
         embed = discord.Embed(description=result[0], color=discord.Color.dark_gray())
         await ctx.send(embed=embed)
     else:
+        with open('prefixes.json', 'r') as f:
+            prefixes = json.load(f)
         embed=discord.Embed(title="Error!", description="What Do I Say Here?", color=discord.Color.dark_gray())
-        embed.set_footer(text='!learn [input sentence] "|" [output sentence]')
+        embed.set_footer(text=f'{prefixes[str(ctx.guild.id)]}learn [input sentence] | [output sentence]')
         await ctx.send(embed=embed)
 
+
+    # with open('prefixes.json', 'r') as f:
+    #     prefixes = json.load(f)
+    # embed = discord.Embed(title="Prefix", description=f"The Prefix For This Server Is '{prefixes[str(ctx.guild.id)]}'")
 
 
 

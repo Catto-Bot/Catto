@@ -1,8 +1,10 @@
 from discord.ext import commands
 import discord
 import json
-
-
+from easy_pil import Canvas, Font
+import io
+from discord import File
+from easy_pil import Editor, load_image_async, Font
 
 
 
@@ -32,7 +34,8 @@ async def on_member_join(member):
             color=discord.Color.dark_gray()
 )
 
-            embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.gif")
+            embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.png")
+            embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png")
             embed.set_footer(text="Thank You For Using Catto Bot 🐾", icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif")
             await channel.send(embed=embed)
                 
@@ -51,12 +54,100 @@ async def on_member_remove(member):
             channel_id = channelgreet[guild_id]
             channel = guild.get_channel(int(channel_id))
             embed = discord.Embed(title=f"Sorry To See You Leave {member}!", description="Hope You Had A Great Time!", color=discord.Color.dark_gray())
-            embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.gif")
+            embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png")
+            embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.png")
             embed.set_footer(text="Thank You For Using Catto Bot 🐾", icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif")
             await channel.send(embed=embed)
         
     except Exception as e:
         print(f"Error: {e}")
+
+
+
+
+async def on_message(member):
+    try:
+        with open('messages.json', 'r') as f:
+            messages = json.load(f)
+        with open("gamblerdata/catomonie.json", "r") as fe:
+            catomonie = json.load(fe)
+    except:
+        messages = {}
+
+    member_id = str(member.author.id) 
+    user_name = str(member.author)
+
+    if member_id in messages:
+        messages[member_id]['total_messages'] += 1
+        if messages[member_id]['total_messages'] == 25:
+            level_message = f"Congratulations, {user_name}! You've reached Level 1! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 10,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 10000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+        if messages[member_id]['total_messages'] == 200:
+            level_message = f"Congratulations, {user_name}! You've reached Level 2! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 100000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+        if messages[member_id]['total_messages'] == 500:
+            level_message = f"Congratulations, {user_name}! You've reached Level 3! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 100000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+        if messages[member_id]['total_messages'] == 1000:
+            level_message = f"Congratulations, {user_name}! You've reached Level 4! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 100000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+        if messages[member_id]['total_messages'] == 2000:
+            level_message = f"Congratulations, {user_name}! You've reached Level 5! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 100000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+        if messages[member_id]['total_messages'] == 5000:
+            level_message = f"Congratulations, {user_name}! You've reached Level 6! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
+            embed.add_field(name="Reward", value="You Have Won 500,000 catomonie!", inline=False)
+            catomonie[member_id]["coins"] += 500000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=embed)
+
+    else:
+        messages[member_id] = {"total_messages": 1, "Username": user_name}
+
+    with open('messages.json', 'w') as f:
+        json.dump(messages, f, indent=4)
+
+
+
+
 
 
 
@@ -85,3 +176,4 @@ def setup(bot):
     bot.add_listener(on_ready)
     bot.add_listener(on_member_join)
     bot.add_listener(on_member_remove)
+    bot.add_listener(on_message)

@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo
 from admin import admin
 from anicat import anicat
 
@@ -33,7 +33,7 @@ def get_prefix(bot, message):
 intents = discord.Intents.all()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 
 
@@ -133,6 +133,8 @@ bot.add_command(anicat.anicatinfo)
 
 
 bot.add_command(emoji.emojify)
+
+bot.add_command(fakeinfo.fakeinfo)
 
 
 

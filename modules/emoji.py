@@ -10,7 +10,7 @@ cooldown_time = 10
 async def emojify(ctx,*, msg):
     try:
         literalsemojify = {
-    "a": "🇦", "b": "🅱️", "c": "🇨", "d": "🇩", "e": "🇪", "f": "🇫",
+    "a": "🇦", "b": "🇧", "c": "🇨", "d": "🇩", "e": "🇪", "f": "🇫",
     "g": "🇬", "h": "🇭", "i": "🇮", "j": "🇯", "k": "🇰", "l": "🇱",
     "m": "🇲", "n": "🇳", "o": "🇴", "p": "🇵", "q": "🇶", "r": "🇷",
     "s": "🇸", "t": "🇹", "u": "🇺", "v": "🇻", "w": "🇼", "x": "🇽",
@@ -28,7 +28,7 @@ async def emojify(ctx,*, msg):
             await ctx.send("Your Message Could Not Be Emojified!")     
         else: 
             await ctx.message.delete()
-            await ctx.send(f"Your message is {translatedtext}" )
+            await ctx.send(f"{translatedtext}" )
 
     except Exception as err:
         print(err)
