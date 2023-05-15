@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,tts
 from admin import admin
 from anicat import anicat
 
@@ -35,6 +35,10 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
+@bot.event
+async def on_ready():
+    print("The bot is ready")
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="!help"))
 
 
 events.setup(bot)
@@ -61,6 +65,7 @@ bot.add_command(gambler.balance)
 bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
+bot.add_command(gambler.leaderboard)
 
 
 bot.add_command(gifs.hug)
@@ -134,7 +139,9 @@ bot.add_command(anicat.anicatinfo)
 
 bot.add_command(emoji.emojify)
 
-bot.add_command(fakeinfo.fakeinfo)
+
+
+bot.add_command(tts.tts)
 
 
 

@@ -229,6 +229,24 @@ async def steal(ctx, username: discord.Member):
     except Exception as err:
         await ctx.send("This person doesn't have a wallet yet!")
 
+@commands.command(name="leaderboard")
+async def leaderboard(ctx):
+    try:
+        with open("gamblerdata/catomonie.json", "r") as f:
+            catomonie = json.load(f)
+        
+        sorted_users = sorted(catomonie.values(), key=lambda x: x['coins'], reverse=True)
+        top_10_users = sorted_users[:10]
+        embed = discord.Embed(title="Top 10 Users with Most Money", color=discord.Color.red())
+        for i, user in enumerate(top_10_users, 1):
+            username = user['Username']
+            coins = user['coins']
+            embed.add_field(name=f"#{i}: {username}", value=f"Coins: {coins}", inline=False)
+        await ctx.send(embed=embed)
+        
+    except Exception as err:
+        await ctx.send("Unable To Retrieve Data!")
+
 
 @steal.error
 async def steal_error(ctx, error):

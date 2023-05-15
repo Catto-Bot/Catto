@@ -13,8 +13,7 @@ from easy_pil import Editor, load_image_async, Font
 
 
 
-async def on_ready():
-    print("The bot is ready")
+
 
 
 async def on_member_join(member):
@@ -166,7 +165,6 @@ async def on_guild_remove(guild):
 def setup(bot):
     bot.add_listener(on_guild_join)
     bot.add_listener(on_guild_remove)
-    bot.add_listener(on_ready)
     bot.add_listener(on_member_join)
     bot.add_listener(on_member_remove)
     bot.add_listener(on_message)
