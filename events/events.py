@@ -76,68 +76,61 @@ async def on_message(member):
 
     member_id = str(member.author.id) 
     user_name = str(member.author)
+    def levelupmsg(level):
+            level_message = f"Congratulations, {user_name}! You've reached Level {level}! 🎉"
+            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
+            embed.add_field(name="Reward", value="You Have Won 10,000 catomonie!", inline=False)
+            return embed
 
     if member_id in messages:
         messages[member_id]['total_messages'] += 1
         if messages[member_id]['total_messages'] == 25:
-            level_message = f"Congratulations, {user_name}! You've reached Level 1! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 10,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 10000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(1))
 
         if messages[member_id]['total_messages'] == 200:
-            level_message = f"Congratulations, {user_name}! You've reached Level 2! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 100000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(2))
 
         if messages[member_id]['total_messages'] == 500:
-            level_message = f"Congratulations, {user_name}! You've reached Level 3! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 100000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(3))
 
         if messages[member_id]['total_messages'] == 1000:
-            level_message = f"Congratulations, {user_name}! You've reached Level 4! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 100000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(4))
 
         if messages[member_id]['total_messages'] == 2000:
-            level_message = f"Congratulations, {user_name}! You've reached Level 5! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 100,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 100000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(5))
 
         if messages[member_id]['total_messages'] == 5000:
-            level_message = f"Congratulations, {user_name}! You've reached Level 6! 🎉"
-            embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.set_image(url="https://example.com/level_1_image.png")  # Replace with your own image URL
-            embed.add_field(name="Reward", value="You Have Won 500,000 catomonie!", inline=False)
             catomonie[member_id]["coins"] += 500000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
-            await member.channel.send(embed=embed)
+            await member.channel.send(embed=levelupmsg(6))
+
+        if messages[member_id]['total_messages'] == 10000:
+            catomonie[member_id]["coins"] += 500000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=levelupmsg(7))
+
+        if messages[member_id]['total_messages'] == 100000:
+            catomonie[member_id]["coins"] += 500000
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)
+            await member.channel.send(embed=levelupmsg(8))
 
     else:
         messages[member_id] = {"total_messages": 1, "Username": user_name}
