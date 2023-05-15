@@ -26,6 +26,22 @@ async def ping(ctx):
         await ctx.send("an error occured. please try again!")
         print(err)
 
+@commands.command(name="servers")
+@commands.check(lambda ctx: ctx.author.id == 780639741866409984)
+async def servers(ctx):
+    embed= discord.Embed(title="MYAAAA", description="CHOR")
+    a=1
+    for guild in ctx.bot.guilds:
+        embed.add_field(name=f"#{a} {guild}",value=f"{guild.id}",inline=False)
+        a = a+ 1
+    await ctx.send(embed=embed)
+
+@servers.error
+async def servers_error(ctx,error):
+    await ctx.send("This command can only be used by aryn#5511")
+        
+ 
+
 
 # @commands.command(name="restart")
 # async def restart(ctx):

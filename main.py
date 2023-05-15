@@ -39,6 +39,7 @@ bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 async def on_ready():
     print("The bot is ready")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="!help"))
+    
 
 
 events.setup(bot)
@@ -129,6 +130,7 @@ bot.add_command(greet.setleavechannel)
 
 
 bot.add_command(admin.ping)
+bot.add_command(admin.servers)
 # bot.add_command(admin.restart)
 
 bot.add_command(anicat.anicat)
