@@ -252,19 +252,7 @@ async def kill(ctx, member: commands.MemberConverter = None):
         embed = discord.Embed(title=f"{ctx.author.display_name} killed themselves! (⌐■_■)", color=discord.Color.dark_gray())
         await ctx.send(embed=embed)
 
-@commands.command(name="kick")
-async def kick(ctx, member: commands.MemberConverter = None):
-    if member:
-        kickr = requests.get("https://api.waifu.pics/sfw/kick")
-        json_kick_data = json.loads(kickr.text)
-        embed = discord.Embed(title=f"{ctx.author.display_name} kicked {member.display_name}! (ง'̀-'́)ง", color=discord.Color.dark_gray())
-        embed.set_image(url=json_kick_data['url'])
-        embed.set_footer(text="Thank You For Using Catto! :D")
-        await ctx.send(embed=embed)
-    else:
-        embed = discord.Embed(title=f"{ctx.author.display_name} kicked themselves! (ง'̀-'́)ง", color=discord.Color.dark_gray())
-        embed.set_image(url="https://media.tenor.com/yxpzAkL8ABoAAAAS/weeman-kickinghimself.gif")
-        await ctx.send(embed=embed)                     
+                  
 
 @commands.command(name="wink")
 async def wink(ctx, member: commands.MemberConverter = None):

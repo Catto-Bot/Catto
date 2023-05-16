@@ -21,6 +21,7 @@ async def maps(ctx):
 
 @commands.command(name="vstats")
 async def vstats(ctx, name):
+    ret = await ctx.send("``Retreiving Data, Please Wait. This May Take Some Time``")
     username,tag = name.split('#')
     response = requests.get(f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tag}").text
     rankresponse = requests.get(f"https://api.henrikdev.xyz/valorant/v1/mmr/ap/{username}/{tag}").text
@@ -28,6 +29,7 @@ async def vstats(ctx, name):
     rank_stats = json.loads(rankresponse)
     parse = valorant_stats['data']
     rankparse = rank_stats['data']
+    await ret.edit(content="``Almost Done``")
     images = rankparse["images"]
     cards = parse['card']
     embed = discord.Embed(
@@ -37,7 +39,9 @@ async def vstats(ctx, name):
     embed.set_image(url=cards["wide"])
     embed.set_footer(text=f"Last Updated: {parse['last_update']} ")
     embed.set_thumbnail(url=images["small"])
-    await ctx.send(embed=embed)
+    await ret.edit(content="``Found``")
+    await ret.edit(embed=embed)
+    
 
 @commands.command(name="valofight", aliases=["vf"])
 async def valofight(ctx, *, member: discord.Member = None):
@@ -190,8 +194,10 @@ async def valofight_error(ctx,error):
     print(error)
 
 @vstats.error
-async def vstats_error(ctx,name):
+async def vstats_error(ctx, err):
+    print(err)
     with open('prefixes.json', 'r') as f: 
+
         prefixes = json.load(f)
     embed= discord.Embed(title="Error!", description=f"Error While Retrieving Data. Please Try Again Later")
     embed.add_field(inline=False, name="Format", value=f"The Correct Format is {prefixes[str(ctx.guild.id)]}vstats (username#tagline)")

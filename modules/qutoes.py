@@ -140,7 +140,6 @@ async def insult(ctx):
             d = response.json()
             insult = html.unescape(d['insult'])
             embed = discord.Embed(title=f'{insult}', color=0x555555)
-            print(d)
             await ctx.send(embed = embed)
         except Exception as err:
             print(err)
@@ -201,7 +200,7 @@ async def spooky(ctx):
 ######################################################################
 
 @commands.command(name ="advice")
-async def spooky(ctx):
+async def advice(ctx):
         try: 
             api_url= f'https://api.adviceslip.com/advice'
             response = requests.get(api_url)

@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help
 from admin import admin
 from anicat import anicat
 
@@ -33,8 +33,8 @@ def get_prefix(bot, message):
 intents = discord.Intents.all()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=get_prefix, intents=intents)
-
+bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
+bot.remove_command('help')
 @bot.event
 async def on_ready():
     print("The bot is ready")
@@ -58,6 +58,7 @@ bot.add_command(qutoes.trivia)
 bot.add_command(qutoes.insult)
 bot.add_command(qutoes.darkmeme)
 bot.add_command(qutoes.spooky)
+bot.add_command(qutoes.advice)
 
 #gmabler
 bot.add_command(gambler.daily)
@@ -84,7 +85,6 @@ bot.add_command(gifs.pat)
 bot.add_command(gifs.handhold)
 bot.add_command(gifs.nom)
 bot.add_command(gifs.kill)
-bot.add_command(gifs.kick)
 bot.add_command(gifs.wink)
 bot.add_command(gifs.poke)
 
@@ -112,7 +112,7 @@ bot.add_command(prefix.setprefix)
 bot.add_command(prefix.prefix)
 
 bot.add_command(moderation.mute)
-bot.add_command(moderation.kickthat)
+bot.add_command(moderation.kick)
 bot.add_command(moderation.ban)
 bot.add_command(moderation.unmute)
 
@@ -140,6 +140,8 @@ bot.add_command(anicat.anicatinfo)
 bot.add_command(fakeinfo.fakeinfo)
 
 bot.add_command(emoji.emojify)
+
+bot.add_command(help.help)
 
 
 

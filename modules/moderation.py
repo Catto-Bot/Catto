@@ -47,7 +47,7 @@ async def ban(ctx, user: discord.Member):
 # Kick users
 @commands.command()
 @commands.has_permissions(kick_members=True)
-async def kickthat(ctx, user: discord.Member):
+async def kick(ctx, user: discord.Member):
     await user.kick()
     await ctx.send(f'The user ({user}) has been kicked out the server')
 
