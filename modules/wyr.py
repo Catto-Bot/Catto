@@ -44,10 +44,10 @@ async def wyr(ctx):
             voted_users.add(user.id)  # Add user to the voted_users set
             if str(reaction.emoji) == "⬅️":
                 vote_count[option1] += 1
-                await ctx.send(f"{user} voted for Option 1!")
+                await ctx.send(f"``{user} voted for Option 1!``")
             elif str(reaction.emoji) == "➡️":
                 vote_count[option2] += 1
-                await ctx.send(f"{user} voted for Option 2!")
+                await ctx.send(f"``{user} voted for Option 2!``")
 
             # Update the embed message with the current vote count
             embed.clear_fields()

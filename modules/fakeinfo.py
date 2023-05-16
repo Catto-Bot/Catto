@@ -9,13 +9,13 @@ import asyncio
 async def fakeinfo(ctx):
     fake = Faker()
     fake.add_provider(internet)
-    embed = discord.Embed(title="Generating Info, Please Wait!", description="")
-    first = await ctx.send(embed=embed)
+    embed = discord.Embed(title="Generating Info, Please Wait! <a:loading:1108012790783946772>", description="")
+    first = await ctx.reply(embed=embed)
     await asyncio.sleep(1)
-    embed2 = discord.Embed(title="Accessing The Database!", description="")
+    embed2 = discord.Embed(title="Accessing The Database! <a:loading:1108012790783946772>", description="")
     await first.edit(embed=embed2)
     await asyncio.sleep(1)
-    third = discord.Embed(title="Almost Done!", description="")
+    third = discord.Embed(title="Almost Done! <a:loading:1108012790783946772>", description="")
     await first.edit(embed=third)
     
     name = fake.name()

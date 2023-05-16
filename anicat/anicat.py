@@ -5,7 +5,7 @@ import random
 
 cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat", aliases=["ac","anic"])
-@commands.cooldown(50, cooldown_time, commands.BucketType.user)
+@commands.cooldown(10, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
     with open("data\data.json", "r", encoding="utf8") as file:
         data = json.load(file)
@@ -149,6 +149,16 @@ async def anicat_error(ctx, error):
                               )
         embed.set_footer(text="Thank You For Using Catto Bot(AniCat)")
         await ctx.send(embed=embed)
+
+
+@anicatinfo.error
+async def anicatinfo_error(ctx, error):
+    with open('prefixes.json', 'r') as f: 
+
+        prefixes = json.load(f)
+    embed= discord.Embed(title="Error!", description=f"Error While Retrieving Data. Please Try Again Later")
+    embed.add_field(inline=False, name="Format", value=f"The Correct Format is {prefixes[str(ctx.guild.id)]}anicatinfo (characterName)")
+    await ctx.send(embed=embed)
 
 
 

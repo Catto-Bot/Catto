@@ -9,6 +9,7 @@ async def help(ctx):
         prefixes = json.load(read)
     
     embed = discord.Embed(title="Catto Commands", description="Here are the available commands:")
+    embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
     embed.add_field(name="💰 CattoGamble", value="monie, balance, daily, weekly, bet, steal, leaderboard", inline=False)
     embed.add_field(name="🎮 ValoStats", value="vstats, maps, valofight", inline=False)
     embed.add_field(name="💬 Chat", value="learn, c", inline=False)
