@@ -6,6 +6,21 @@ import asyncio
 
 
 
+@commands.command(name="info")
+async def info(ctx):
+    devs = ["ghost", "nitrix", "kadota", "aryn"]
+    dev_names = "\n".join(devs)
+    
+    embed = discord.Embed(
+        title="Developers",
+        description=dev_names,
+        color=0x000000
+    )
+    embed.set_footer(text=f"Requested by {ctx.message.author.display_name}", icon_url=ctx.message.author.avatar)
+    
+    await ctx.send(embed=embed)
+
+
 @commands.command(name="ping")
 async def ping(ctx):
     try:

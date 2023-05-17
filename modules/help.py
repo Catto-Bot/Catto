@@ -7,8 +7,9 @@ import datetime
 async def help(ctx):
     with open("prefixes.json", "r") as read:
         prefixes = json.load(read)
-    
+
     embed = discord.Embed(title="Catto Commands", description="Here are the available commands:")
+    embed.add_field(name="👨‍💻 Info", value="info", inline=False)
     embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
     embed.add_field(name="💰 CattoGamble", value="monie, balance, daily, weekly, bet, steal, leaderboard", inline=False)
     embed.add_field(name="🎮 ValoStats", value="vstats, maps, valofight", inline=False)
