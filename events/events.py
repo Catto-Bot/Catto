@@ -60,20 +60,11 @@ async def on_message(member):
         return
     content = member.content.lower()
     
-    if content == "gn":
+    if content == "gn" or content == "goodnight":
         mention = member.author.mention
         await member.channel.send(f"GoodNight {mention}!")
     
-    if content == "gm":
-        mention = member.author.mention
-        await member.channel.send(f"GoodMorning {mention}!")
-    
-    content = member.content.lower()
-    if content == "gn":
-        mention = member.author.mention
-        await member.channel.send(f"GoodNight {mention}!")
-    
-    if content == "gm":
+    if content == "gm" or content == "goodmorning":
         mention = member.author.mention
         await member.channel.send(f"GoodMorning {mention}!")
 
