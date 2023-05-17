@@ -57,3 +57,19 @@ async def removerole(ctx, rolename, member: discord.Member = None):
     else:
         await member.remove_roles(role)
         await ctx.send(f"Removed Role {rolename} from {member.display_name}!")
+
+@deleterole.error
+async def deleterole_error(ctx,error):
+    await ctx.send("Are you an Admin?")
+
+@removerole.error
+async def removerole_error(ctx,error):
+    await ctx.send("Are you an Admin?")
+
+@removerole.error
+async def removerole_error(ctx,error):
+    await ctx.send("Are you an Admin?")
+
+@setuprole.error
+async def setuprole_error(ctx,error):
+    await ctx.send("Are you an Admin?")

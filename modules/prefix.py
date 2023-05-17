@@ -24,3 +24,7 @@ async def prefix(ctx):
     embed = discord.Embed(title="Prefix", description=f"The Prefix For This Server Is '{prefixes[str(ctx.guild.id)]}'")
     await ctx.send(embed=embed)
     
+
+@setprefix.error
+async def setprefix_error(ctx,err):
+    await ctx.send("Not An Admin")

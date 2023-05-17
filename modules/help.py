@@ -12,7 +12,7 @@ async def help(ctx):
     embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
     embed.add_field(name="💰 CattoGamble", value="monie, balance, daily, weekly, bet, steal, leaderboard", inline=False)
     embed.add_field(name="🎮 ValoStats", value="vstats, maps, valofight", inline=False)
-    embed.add_field(name="💬 Chat", value="learn, c", inline=False)
+    embed.add_field(name="💬 Chat", value="chat, learn", inline=False)
     embed.add_field(name="🐱 Anime", value="animeQuote", inline=False)
     embed.add_field(name="🖼️ Avatar", value="avatar", inline=False)
     embed.add_field(name="✨ Emojify", value="emojify", inline=False)
@@ -26,7 +26,7 @@ async def help(ctx):
     embed.add_field(name="🔒 Roles", value="setuprole, createrole, removerole, deleterole", inline=False)
     embed.add_field(name="🎫 Ticket", value="ticketsetup, deleteticket", inline=False)
     embed.add_field(name="❓ Would You Rather?", value="wyr", inline=False)
-    embed.add_field(name="🎲 Other", value="flip, rps, announce, jokes, cat, rolldice", inline=False)
+    embed.add_field(name="🎲 Other", value="flip, rps, announce, cat, rolldice", inline=False)
     embed.set_footer(text=f"Current Prefix: {prefixes[str(ctx.guild.id)]}")
 
     embed.color = discord.Color.blue() 

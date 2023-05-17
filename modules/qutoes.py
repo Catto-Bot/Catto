@@ -30,7 +30,7 @@ async def quote(ctx):
         await quote.add_reaction("👎")
         
     except:
-        await ctx.channel.send(f"I am down myself 🥲")
+        await ctx.channel.send(f"Error. Try Again!")
 
 ########################################################################################################################
 # DEV JOKE
@@ -105,7 +105,7 @@ async def trivia(ctx):
 
             await trivia.delete()
         except:
-            embed = discord.Embed(title='Nobody reacted in time 😔', color=0xff0000)
+            embed = discord.Embed(title='Nobody reacted on time 😔', color=0xff0000)
             await ctx.send(embed = embed)
             await trivia.delete()
 

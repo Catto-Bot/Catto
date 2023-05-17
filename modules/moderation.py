@@ -75,6 +75,22 @@ async def unmute(ctx, user: discord.Member):
        
         
     except Exception as err:
-        embeded = discord.Embed(title='First use !mute <User> to initialize unmute command"')
+        embeded = discord.Embed(title='First use !mute <User> to use the unmute command"')
         await ctx.send(embed = embeded)
 #########################################################################
+
+@mute.error
+async def mute_error(ctx,err):
+    await ctx.send("Not An Admin")
+
+@ban.error
+async def ban_error(ctx,err):
+    await ctx.send("Not An Admin")
+
+@kick.error
+async def kick_error(ctx,err):
+    await ctx.send("Not An Admin")
+
+@unmute.error
+async def unmute_error(ctx,err):
+    await ctx.send("Not An Admin")

@@ -6,6 +6,7 @@ from admin import messages
 @commands.command(name="animeQuote")
 async def animeQuote(ctx):
     try:
+        hello = await ctx.send("loading ")
         api_url = 'https://animechan.vercel.app/api/random'
         response = requests.get(api_url)
         aniQuote = response.json()
@@ -18,6 +19,7 @@ async def animeQuote(ctx):
 
         embed = discord.Embed(title=f"Anime Name: {animeName}",description= f"'{mainQuote}'", color=0x555555 )
         embed.set_footer(text=f"-{aniChara}")
+        await hello.delete()
         await ctx.send(embed = embed )
     except:
     
