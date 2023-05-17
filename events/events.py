@@ -7,15 +7,6 @@ from discord import File
 from easy_pil import Editor, load_image_async, Font
 
 
-
-
-
-
-
-
-
-
-
 async def on_member_join(member):
     try:
         with open('channelgreet.json', 'r') as f:
@@ -67,6 +58,15 @@ async def on_member_remove(member):
 async def on_message(member):
     if member.author.bot:
         return
+    content = member.content.lower()
+    
+    if content == "gn":
+        mention = member.author.mention
+        await member.channel.send(f"GoodNight {mention}!")
+    
+    if content == "gm":
+        mention = member.author.mention
+        await member.channel.send(f"GoodMorning {mention}!")
     
     content = member.content.lower()
     if content == "gn":
@@ -90,57 +90,32 @@ async def on_message(member):
     def levelupmsg(level):
             level_message = f"Congratulations, {user_name}! You've reached Level {level}! 🎉"
             embed = discord.Embed(title="Level Up", description=level_message, color=discord.Color.green())
-            embed.add_field(name="Reward", value="You Have Won 10,000 catomonie!", inline=False)
             return embed
 
     if member_id in messages:
         messages[member_id]['total_messages'] += 1
         if messages[member_id]['total_messages'] == 25:
-            catomonie[member_id]["coins"] += 5000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(1))
 
         if messages[member_id]['total_messages'] == 200:
-            catomonie[member_id]["coins"] += 20000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(2))
 
         if messages[member_id]['total_messages'] == 500:
-            catomonie[member_id]["coins"] += 100000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(3))
 
         if messages[member_id]['total_messages'] == 1000:
-            catomonie[member_id]["coins"] += 100000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(4))
 
         if messages[member_id]['total_messages'] == 2000:
-            catomonie[member_id]["coins"] += 100000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(5))
 
         if messages[member_id]['total_messages'] == 5000:
-            catomonie[member_id]["coins"] += 500000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(6))
 
         if messages[member_id]['total_messages'] == 10000:
-            catomonie[member_id]["coins"] += 500000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(7))
 
         if messages[member_id]['total_messages'] == 100000:
-            catomonie[member_id]["coins"] += 500000
-            with open("gamblerdata/catomonie.json", "w") as final:
-                json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(8))
 
     else:

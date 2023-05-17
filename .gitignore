@@ -3,3 +3,7 @@ modules/__pycache__/
 gamblerdata
 __pycache__/
 messages.json
+data/anicat.json
+prefixes.json
+channelgreet.json
+conf.json
