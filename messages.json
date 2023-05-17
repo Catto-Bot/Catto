@@ -1,5 +1,6 @@
 {
     "780639741866409984": {
+<<<<<<< HEAD
         "total_messages": 150,
         "Username": "aryn#5511"
     },
@@ -18,5 +19,9 @@
     "839691122481299506": {
         "total_messages": 2,
         "Username": "cfghiro#5980"
+=======
+        "total_messages": 108,
+        "Username": "aryn#5511"
+>>>>>>> 47ee06f0cae6f6902e9cbeacd798a1979bbca2f1
     }
 }

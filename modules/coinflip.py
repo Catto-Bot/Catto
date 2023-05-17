@@ -110,7 +110,10 @@ async def joke(ctx):
     except:
         print("error")
 
-
+@rps_game.error
+async def rps_game_error(ctx,err):
+    embed = discord.Embed(title="Syntax Error", description="Please Mention A User!")
+    await ctx.reply(embed=embed)
         
         
 
