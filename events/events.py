@@ -66,7 +66,8 @@ async def on_member_remove(member):
 
 async def on_message(member):
     if member.author.bot:
-        return  
+        return
+    
     try:
         with open('messages.json', 'r') as f:
             messages = json.load(f)
@@ -170,3 +171,4 @@ def setup(bot):
     bot.add_listener(on_member_join)
     bot.add_listener(on_member_remove)
     bot.add_listener(on_message)
+    
