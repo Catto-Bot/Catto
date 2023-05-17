@@ -68,6 +68,15 @@ async def on_message(member):
     if member.author.bot:
         return
     
+    content = member.content.lower()
+    if content == "gn":
+        mention = member.author.mention
+        await member.channel.send(f"GoodNight {mention}!")
+    
+    if content == "gm":
+        mention = member.author.mention
+        await member.channel.send(f"GoodMorning {mention}!")
+
     try:
         with open('messages.json', 'r') as f:
             messages = json.load(f)
@@ -87,13 +96,13 @@ async def on_message(member):
     if member_id in messages:
         messages[member_id]['total_messages'] += 1
         if messages[member_id]['total_messages'] == 25:
-            catomonie[member_id]["coins"] += 10000
+            catomonie[member_id]["coins"] += 5000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(1))
 
         if messages[member_id]['total_messages'] == 200:
-            catomonie[member_id]["coins"] += 100000
+            catomonie[member_id]["coins"] += 20000
             with open("gamblerdata/catomonie.json", "w") as final:
                 json.dump(catomonie, final)
             await member.channel.send(embed=levelupmsg(2))
@@ -150,7 +159,7 @@ async def on_guild_join(guild):
     with open('prefixes.json', 'r') as f: 
         prefixes = json.load(f) 
 
-    prefixes[str(guild.id)] = '>'
+    prefixes[str(guild.id)] = '!'
 
     with open('prefixes.json', 'w') as f:
         json.dump(prefixes, f, indent=4) 

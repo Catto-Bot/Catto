@@ -5,9 +5,10 @@ import random
 
 cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat", aliases=["ac","anic"])
-@commands.cooldown(100, cooldown_time, commands.BucketType.user)
+@commands.cooldown(1000, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
-    with open("data\data.json", "r", encoding="utf8") as file:
+    
+    with open("data/data.json", "r", encoding="utf8") as file:
         data = json.load(file)
 
     names = [item["Name"] for item in data]
