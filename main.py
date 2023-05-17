@@ -6,11 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-<<<<<<< HEAD
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship
-=======
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,conf
->>>>>>> 47ee06f0cae6f6902e9cbeacd798a1979bbca2f1
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf
 from admin import admin
 from anicat import anicat
 
