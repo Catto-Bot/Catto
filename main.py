@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship
 from admin import admin
 from anicat import anicat
 
@@ -142,6 +142,7 @@ bot.add_command(fakeinfo.fakeinfo)
 bot.add_command(emoji.emojify)
 
 bot.add_command(help.help)
+bot.add_command(ship.ship)
 
 
 
