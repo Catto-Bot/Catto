@@ -17,7 +17,7 @@ async def daily(ctx):
         with open('prefixes.json', 'r') as t:
             prefixes = json.load(t)
         embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first", color=0x555555)
-        t.close()
+        
         await ctx.send(embed=embed)
     lastClaimed = catomonie[user_id]["last_claimed"]
     currentTime = time.time()
@@ -88,7 +88,7 @@ async def monie(ctx):
     #     
         embed = discord.Embed(title="Welcome to Catto Gamble", description=f"Start playing by using {prefixes[str(ctx.guild.id)]}bet and claim your daily coins with {prefixes[str(ctx.guild.id)]}daily", color=0x555555)
         catomonie[user_id] = {"coins": 0, "last_claimed": 0,"last_claimed_weekly": 0, "Username": user_name}
-        t.close()
+        
         with open("gamblerdata/catomonie.json", "w") as final:
             json.dump(catomonie, final)
         await ctx.send(embed=embed)
