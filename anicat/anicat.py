@@ -5,7 +5,7 @@ import random
 
 cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat", aliases=["ac","anic"])
-@commands.cooldown(1000, cooldown_time, commands.BucketType.user)
+@commands.cooldown(20, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
     
     with open("data/data.json", "r", encoding="utf8") as file:
@@ -32,6 +32,7 @@ async def anicat(ctx):
             embed = discord.Embed(title=f"claimed by {user}", description="")
             embed.set_image(url=source[random_index])
             embed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
+            embed.set_author(name=names[random_index])
             await final.edit(embed=embed)
             await final.clear_reactions()
             user_name = str(user)
