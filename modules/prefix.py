@@ -27,4 +27,5 @@ async def prefix(ctx):
 
 @setprefix.error
 async def setprefix_error(ctx,err):
-    await ctx.send("Not An Admin")
+    embed = discord.Embed(title="", description=err)
+    await ctx.send(embed = embed)

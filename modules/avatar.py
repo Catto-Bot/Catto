@@ -3,7 +3,7 @@ import discord
 
 #user.avatar_url
 
-@commands.command(name='avatar')
+@commands.command(name='avatar', aliases=["av"])
 async def avatar(ctx, *, member: discord.Member = None):
     if not member:
         member = ctx.message.author

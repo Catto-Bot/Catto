@@ -14,7 +14,10 @@ async def daily(ctx):
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
     if user_id not in catomonie:
-        embed = discord.Embed(description="Use !monie to create a wallet first", color=0x555555)
+        with open('prefixes.json', 'r') as f:
+            prefixes = json.load(f)
+        embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first", color=0x555555)
+        f.close()
         await ctx.send(embed=embed)
     lastClaimed = catomonie[user_id]["last_claimed"]
     currentTime = time.time()
@@ -43,7 +46,9 @@ async def weekly(ctx):
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
     if user_id not in catomonie:
-        embed = discord.Embed(description="Use !monie to create a wallet first", color=0x555555)
+        with open('prefixes.json', 'r') as f:
+            prefixes = json.load(f) 
+        embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first", color=0x555555)
         await ctx.send(embed=embed)
     last_claimed_weekly = catomonie.get(user_id, {}).get("last_claimed_weekly", 0)
     current_time = time.time()
@@ -78,14 +83,19 @@ async def monie(ctx):
         embed = discord.Embed(description="You already have an existing wallet!", color=0x555555)
         await ctx.send(embed=embed)
     else:
-        embed = discord.Embed(title="Welcome to Catto Gamble", description="Start playing by using !bet and claim your daily coins with !daily", color=0x555555)
+        with open('prefixes.json', 'r') as f: 
+            prefixes = json.load(f)
+    #     
+        embed = discord.Embed(title="Welcome to Catto Gamble", description=f"Start playing by using {prefixes[str(ctx.guild.id)]}bet and claim your daily coins with {prefixes[str(ctx.guild.id)]}daily", color=0x555555)
         catomonie[user_id] = {"coins": 0, "last_claimed": 0,"last_claimed_weekly": 0, "Username": user_name}
+        f.close()
         with open("gamblerdata/catomonie.json", "w") as final:
             json.dump(catomonie, final)
         await ctx.send(embed=embed)
 
 
-@commands.command(name="balance" ,aliases=["wallet"])
+
+@commands.command(name="balance" ,aliases=["wallet", "bal"])
 async def balance(ctx):
     try:
         with open("gamblerdata/catomonie.json", "r") as f:
@@ -95,7 +105,9 @@ async def balance(ctx):
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
     if user_id not in catomonie:
-        embed = discord.Embed(description="Use !monie to create a wallet first!")
+        with open('prefixes.json', 'r') as f: 
+            prefixes = json.load(f)    
+        embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!")
         await ctx.send(embed=embed)
     else:
         balance = catomonie[user_id]["coins"]
@@ -154,6 +166,7 @@ async def bet(ctx,n,m):
                 betpercentage = round(1 / tbd * 100)
                 
                 embed = discord.Embed(title="Better luck next time!", description=f"You had {betpercentage}% chance of winning the bet.", color=discord.Color.red())
+                embed.set_footer(text=f"The Number Was {randomnumber}")
                 await ctx.send(embed=embed)
         else:
             embed = discord.Embed(title="You don't have enough catomonie!", color=discord.Color.red())
@@ -166,7 +179,7 @@ async def bet(ctx,n,m):
         embed = discord.Embed(title="Error!", description="An error occurred while processing your bet. Please try again later.", color=discord.Color.red())
         await ctx.send(embed=embed)
 
-cooldown_time = 60
+cooldown_time = 25
 @commands.command(name="steal")
 @commands.cooldown(1, cooldown_time, commands.BucketType.user)
 async def steal(ctx, username: discord.Member):
@@ -184,7 +197,7 @@ async def steal(ctx, username: discord.Member):
         our_total_money = catomonie[user_id]["coins"]  
         steal_total_money = catomonie[steal_id]["coins"]
         total_money = min(our_total_money,steal_total_money)
-        win_money = random.randint(1000,int(round(total_money/5)))
+        win_money = random.randint(1000,int(round(total_money/3)))
         winmessagearray = [f'{member} fell down the stairs trying to catch you',f'You were too quick for {member}', f'Nice job! {member} didnt even notice you taking their catomonie']
         losemessagearay = [f'You fell down the stairs trying to run away',f'{member} saw through your scheme and gave you a swift kick in your balls', f'You got caught!']
         random_win = random.choice(winmessagearray)
@@ -192,7 +205,9 @@ async def steal(ctx, username: discord.Member):
 
 
         if user_id not in catomonie:
-            embed = discord.Embed(description="Use !monie to create a wallet first!")
+            with open('prefixes.json', 'r') as f: 
+                prefixes = json.load(f)
+            embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!")
             await ctx.send(embed=embed)
             return
         if steal_id not in catomonie:

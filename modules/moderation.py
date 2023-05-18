@@ -81,16 +81,20 @@ async def unmute(ctx, user: discord.Member):
 
 @mute.error
 async def mute_error(ctx,err):
-    await ctx.send("Not An Admin")
+    embed = discord.Embed(title=err, description="")
+    await ctx.send(embed=embed)
 
 @ban.error
 async def ban_error(ctx,err):
-    await ctx.send("Not An Admin")
+    embed = discord.Embed(title=err, description="")
+    await ctx.send(embed=embed)
 
 @kick.error
 async def kick_error(ctx,err):
-    await ctx.send("Not An Admin")
+    embed = discord.Embed(title=err, description="")
+    await ctx.send(embed=embed)
 
 @unmute.error
 async def unmute_error(ctx,err):
-    await ctx.send("Not An Admin")
+    embed = discord.Embed(title=err, description="")
+    await ctx.send(embed=embed)
