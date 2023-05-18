@@ -54,7 +54,13 @@ async def servers(ctx):
 @servers.error
 async def servers_error(ctx,error):
     await ctx.send("This command can only be used by aryn#5511")
-        
+
+
+@commands.command(name="invite")
+async def invite(ctx):
+    embed = discord.Embed(title="Invite Our Bot To Your Server!", description="https://discord.com/oauth2/authorize?client_id=1108380972950491146&permissions=8&scope=bot")
+    embed.set_footer(text="Thank You For Using Catto0!")
+    await ctx.send(embed=embed)
  
 
 

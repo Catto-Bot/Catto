@@ -60,16 +60,20 @@ async def removerole(ctx, rolename, member: discord.Member = None):
 
 @deleterole.error
 async def deleterole_error(ctx,error):
-    await ctx.send("Are you an Admin?")
+    embed = discord.Embed(title=error, description="")
+    await ctx.send(embed=embed)
 
 @removerole.error
 async def removerole_error(ctx,error):
-    await ctx.send("Are you an Admin?")
+    embed = discord.Embed(title=error, description="")
+    await ctx.send(embed=embed)
 
-@removerole.error
-async def removerole_error(ctx,error):
-    await ctx.send("Are you an Admin?")
+@createrole.error
+async def createrole_error(ctx,error):
+    embed = discord.Embed(title=error, description="")
+    await ctx.send(embed=embed)
 
 @setuprole.error
 async def setuprole_error(ctx,error):
-    await ctx.send("Are you an Admin?")
+    embed = discord.Embed(title=error, description="")
+    await ctx.send(embed=embed)
