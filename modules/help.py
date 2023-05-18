@@ -12,7 +12,7 @@ async def help(ctx):
     embed.add_field(name="👨‍💻 Info", value="info", inline=False)
     embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
     embed.add_field(name="💰 CattoGamble", value="monie, balance, daily, weekly, bet, steal, leaderboard", inline=False)
-    embed.add_field(name="🎮 ValoStats", value="vstats, maps, valofight", inline=False)
+    embed.add_field(name="🎮 ValoStats", value="vstats, valofight", inline=False)
     embed.add_field(name="💬 Chat", value="chat, learn", inline=False)
     embed.add_field(name="🐱 Anime", value="animeQuote", inline=False)
     embed.add_field(name="🖼️ Avatar", value="avatar", inline=False)

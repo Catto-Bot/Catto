@@ -197,7 +197,7 @@ async def steal(ctx, username: discord.Member):
         our_total_money = catomonie[user_id]["coins"]  
         steal_total_money = catomonie[steal_id]["coins"]
         total_money = min(our_total_money,steal_total_money)
-        win_money = random.randint(1000,int(round(total_money/3)))
+        win_money = random.randint(1000,int(round(total_money/6)))
         winmessagearray = [f'{member} fell down the stairs trying to catch you',f'You were too quick for {member}', f'Nice job! {member} didnt even notice you taking their catomonie']
         losemessagearay = [f'You fell down the stairs trying to run away',f'{member} saw through your scheme and gave you a swift kick in your balls', f'You got caught!']
         random_win = random.choice(winmessagearray)

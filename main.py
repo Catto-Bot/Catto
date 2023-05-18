@@ -131,6 +131,7 @@ bot.add_command(greet.setleavechannel)
 bot.add_command(admin.ping)
 bot.add_command(admin.servers)
 bot.add_command(admin.info)
+bot.add_command(admin.invite)
 
 bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
