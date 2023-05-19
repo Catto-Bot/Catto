@@ -121,9 +121,9 @@ async def on_message(member):
 
 
 
-async def on_guild_join(guild): 
-    print("added to server")
-    with open('./prefixes.json', 'r') as f: 
+async def on_guild_join(guild):
+    print("bot joined") 
+    with open('prefixes.json', 'r') as f: 
         prefixes = json.load(f) 
 
     prefixes[str(guild.id)] = '!'
@@ -133,13 +133,13 @@ async def on_guild_join(guild):
 
 
 async def on_guild_remove(guild):
-    print("removed")
-    with open('./prefixes.json', 'r') as f: 
+    print("bot left")
+    with open('prefixes.json', 'r') as f: 
         prefixes = json.load(f)
 
     prefixes.pop(str(guild.id)) 
 
-    with open('./prefixes.json', 'w') as f: 
+    with open('prefixes.json', 'w') as f: 
         json.dump(prefixes, f, indent=4)
 
 def setup(bot):
