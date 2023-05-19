@@ -107,14 +107,23 @@ async def announce_error(ctx,message:str):
 
 #jokes
 
-@commands.command(name="jokes",aliases=["joke"])
+@commands.command(name="jokes")
 async def joke(ctx):
     try:
         api_url='https://icanhazdadjoke.com/slack'
-    
+        response = requests.get(api_url)
+        j = response.json()
+
+        joke = j['attachments'][0]['fallback']
+
+        embed = discord.Embed(title=f'{joke}',color=0x555555)
+        await ctx.send(embed=embed)
+     
 
     except:
         print("error")
+
+
 
 @rps_game.error
 async def rps_game_error(ctx,err):
