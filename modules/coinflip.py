@@ -4,7 +4,10 @@ from discord.ext import commands
 import random
 import requests
 import asyncio
+
+####################################################################################
 #COINFLIP
+####################################################################################
 
 @commands.command(name="flip")
 async def coin_flip(ctx, member: commands.MemberConverter = None):
@@ -25,7 +28,9 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
 
 
 
+####################################################################################
 #RPS
+####################################################################################
 
 @commands.command(name="rps")
 async def rps_game(ctx,user_choice):
@@ -55,7 +60,9 @@ async def rps_game(ctx,user_choice):
 
 
 
-#announce
+####################################################################################
+#Announce
+####################################################################################
 
 @commands.command(name="announce", aliases=["announcement"])
 @commands.has_permissions(administrator=True)
@@ -105,9 +112,11 @@ async def announce_error(ctx,message:str):
 
 
 
-#jokes
+####################################################################################
+#joke
+####################################################################################
 
-@commands.command(name="jokes")
+@commands.command(name="jokes", aliases=['joke'])
 async def joke(ctx):
     try:
         api_url='https://icanhazdadjoke.com/slack'
@@ -117,7 +126,9 @@ async def joke(ctx):
         joke = j['attachments'][0]['fallback']
 
         embed = discord.Embed(title=f'{joke}',color=0x555555)
-        await ctx.send(embed=embed)
+        joke_embed = await ctx.send(embed=embed)
+        await joke_embed.add_reaction("👍")
+        await joke_embed.add_reaction("👎")
      
 
     except:

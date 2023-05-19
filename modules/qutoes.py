@@ -131,7 +131,9 @@ async def dadjoke(ctx):
         daddy=d['attachments'][0]['fallback']
 
         embed = discord.Embed(title=f'{daddy}', color=0x555555)
-        await ctx.send(embed = embed)
+        dadjoke = await ctx.send(embed = embed)
+        await dadjoke.add_reaction("👍")
+        await dadjoke.add_reaction("👎")
     except:
         await ctx.channel.send("My dad left me like your left to buy milk 😁")
 
@@ -172,8 +174,8 @@ async def darkmeme(ctx):
 
             embed = discord.Embed(title=f"{setup} \n {delivery}", color=0x666666)
             darkjoke = await darkjoke.edit(embed = embed)
-            await darkjoke.add_reaction("👍")
-            await darkjoke.add_reaction("👎")
+            await darkjoke.add_reaction("💀")
+
             
         except Exception as err:
             print(err)
