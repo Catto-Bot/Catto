@@ -122,6 +122,7 @@ async def on_message(member):
 
 
 async def on_guild_join(guild): 
+    print("added to server")
     with open('./prefixes.json', 'r') as f: 
         prefixes = json.load(f) 
 
@@ -132,6 +133,7 @@ async def on_guild_join(guild):
 
 
 async def on_guild_remove(guild):
+    print("removed")
     with open('./prefixes.json', 'r') as f: 
         prefixes = json.load(f)
 
