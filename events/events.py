@@ -84,30 +84,35 @@ async def on_message(member):
             return embed
 
     if member_id in messages:
-        messages[member_id]['total_messages'] += 1
-        if messages[member_id]['total_messages'] == 25:
-            await member.channel.send(embed=levelupmsg(1))
+        try:
+            messages[member_id]['total_messages'] += 1
+            if messages[member_id]['total_messages'] == 25:
+                await member.channel.send(embed=levelupmsg(1))
 
-        if messages[member_id]['total_messages'] == 200:
-            await member.channel.send(embed=levelupmsg(2))
+            if messages[member_id]['total_messages'] == 200:
+                await member.channel.send(embed=levelupmsg(2))
 
-        if messages[member_id]['total_messages'] == 500:
-            await member.channel.send(embed=levelupmsg(3))
+            if messages[member_id]['total_messages'] == 500:
+                await member.channel.send(embed=levelupmsg(3))
 
-        if messages[member_id]['total_messages'] == 1000:
-            await member.channel.send(embed=levelupmsg(4))
+            if messages[member_id]['total_messages'] == 1000:
+                await member.channel.send(embed=levelupmsg(4))
 
-        if messages[member_id]['total_messages'] == 2000:
-            await member.channel.send(embed=levelupmsg(5))
+            if messages[member_id]['total_messages'] == 2000:
+                await member.channel.send(embed=levelupmsg(5))
 
-        if messages[member_id]['total_messages'] == 5000:
-            await member.channel.send(embed=levelupmsg(6))
+            if messages[member_id]['total_messages'] == 5000:
+                await member.channel.send(embed=levelupmsg(6))
 
-        if messages[member_id]['total_messages'] == 10000:
-            await member.channel.send(embed=levelupmsg(7))
+            if messages[member_id]['total_messages'] == 10000:
+                await member.channel.send(embed=levelupmsg(7))
 
-        if messages[member_id]['total_messages'] == 100000:
-            await member.channel.send(embed=levelupmsg(8))
+            if messages[member_id]['total_messages'] == 100000:
+                await member.channel.send(embed=levelupmsg(8))
+        except Exception as err:
+            embed = discord.Embed(title="Error", description=err)
+            await member.channel.send(embed=embed)
+            
 
     else:
         messages[member_id] = {"total_messages": 1, "Username": user_name}
