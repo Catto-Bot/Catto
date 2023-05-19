@@ -42,7 +42,7 @@ async def ping(ctx):
         print(err)
 
 @commands.command(name="servers")
-@commands.check(lambda ctx: ctx.author.id == 780639741866409984)
+@commands.check(lambda ctx: ctx.author.id == 780639741866409984 or ctx.author.id == 534977801116319745 or ctx.author.id == 540405934367703050 or ctx.author.id == 582506141959979008)
 async def servers(ctx):
     embed= discord.Embed(title="MYAAAA", description="CHOR")
     a=1
