@@ -190,7 +190,11 @@ async def steal(ctx, username: discord.Member):
         except:
             catomonie = {}
         user_id = str(ctx.author.id)
-        steal_id = str(username.id)    
+        steal_id = str(username.id) 
+        if user_id == steal_id and user_id in catomonie:
+            embed = discord.Embed(title='You can\'t steal yourself. You idiot!',description='You lost 10000 for your idiotness.', color=0xff7b7b)
+            catomonie[user_id]["coins"] -= 10000
+            await ctx.send(embed = embed)   
         member = username.name
         win_percentage = random.randint(1, 100)
 
