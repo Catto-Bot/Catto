@@ -3,8 +3,14 @@ import discord
 import json
 import datetime
 
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+
 @commands.command(name="help")
 async def help(ctx):
+    save(ctx)
     with open("prefixes.json", "r") as read:
         prefixes = json.load(read)
 

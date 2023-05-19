@@ -3,9 +3,14 @@ import discord
 import json
 import requests
 
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 
 @commands.command(name="hug")
 async def hug(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         hugr = requests.get("https://purrbot.site/api/img/sfw/hug/gif")
         json_hug_data = json.loads(hugr.text)
@@ -21,6 +26,7 @@ async def hug(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="slap")
 async def slap(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         hugr = requests.get("https://purrbot.site/api/img/sfw/slap/gif")
         json_hug_data = json.loads(hugr.text)
@@ -36,6 +42,7 @@ async def slap(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="kiss")
 async def kiss(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         hugr = requests.get("https://purrbot.site/api/img/sfw/kiss/gif")
         json_hug_data = json.loads(hugr.text)
@@ -50,6 +57,7 @@ async def kiss(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="bite")
 async def bite(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         biter = requests.get("https://purrbot.site/api/img/sfw/bite/gif")
         json_bite_data = json.loads(biter.text)
@@ -65,6 +73,7 @@ async def bite(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="lick")
 async def lick(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         lickr = requests.get("https://purrbot.site/api/img/sfw/lick/gif")
         json_lick_data = json.loads(lickr.text)
@@ -92,6 +101,7 @@ async def lick(ctx, member: commands.MemberConverter = None):
 # "cringe"]
 @commands.command(name="bully")
 async def bully(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         bullyr = requests.get("https://api.waifu.pics/sfw/bully")
         json_bully_data = json.loads(bullyr.text)
@@ -108,6 +118,7 @@ async def bully(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="cuddle")
 async def cuddle(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         cuddler = requests.get("https://api.waifu.pics/sfw/cuddle")
         json_cuddle_data = json.loads(cuddler.text)
@@ -124,6 +135,7 @@ async def cuddle(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="cry")
 async def cry(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         cryr = requests.get("https://api.waifu.pics/sfw/cry")
         json_cry_data = json.loads(cryr.text)
@@ -139,6 +151,7 @@ async def cry(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="pat")
 async def pat(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         patr = requests.get("https://api.waifu.pics/sfw/pat")
         json_pat_data = json.loads(patr.text)
@@ -153,6 +166,7 @@ async def pat(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="bonk")
 async def bonk(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         bonkr = requests.get("https://api.waifu.pics/sfw/bonk")
         json_bonk_data = json.loads(bonkr.text)
@@ -167,6 +181,7 @@ async def bonk(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="smug")
 async def smug(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         smugr = requests.get("https://api.waifu.pics/sfw/smug")
         json_smug_data = json.loads(smugr.text)
@@ -184,6 +199,7 @@ async def smug(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="blush")
 async def blush(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         blushr = requests.get("https://api.waifu.pics/sfw/blush")
         json_blush_data = json.loads(blushr.text)
@@ -199,6 +215,7 @@ async def blush(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="wave")
 async def wave(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         waver = requests.get("https://api.waifu.pics/sfw/wave")
         json_wave_data = json.loads(waver.text)
@@ -213,6 +230,7 @@ async def wave(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="handhold")
 async def handhold(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         handr = requests.get("https://api.waifu.pics/sfw/handhold")
         json_hand_data = json.loads(handr.text)
@@ -227,6 +245,7 @@ async def handhold(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="nom")
 async def nom(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         nomr = requests.get("https://api.waifu.pics/sfw/nom")
         json_nom_data = json.loads(nomr.text)
@@ -241,6 +260,7 @@ async def nom(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="kill")
 async def kill(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         killr = requests.get("https://api.waifu.pics/sfw/kill")
         json_kill_data = json.loads(killr.text)
@@ -256,6 +276,7 @@ async def kill(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="wink")
 async def wink(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         winkr = requests.get("https://api.waifu.pics/sfw/wink")
         json_wink_data = json.loads(winkr.text)
@@ -269,6 +290,7 @@ async def wink(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="poke")
 async def poke(ctx, member: commands.MemberConverter = None):
+    save(ctx)
     if member:
         poker = requests.get("https://api.waifu.pics/sfw/poke")
         json_poke_data = json.loads(poker.text)

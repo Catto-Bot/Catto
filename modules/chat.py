@@ -16,6 +16,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS blacklist
 
 @commands.command(name="learn",aliases=["l"])
 async def learn(ctx, *, input_str:str):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
     try:
         input_text, response_text = map(str.strip, input_str.split('|'))
         
@@ -34,6 +37,9 @@ async def learn(ctx, *, input_str:str):
 
 @commands.command(name="c", aliases=["s","talk","chat","t"])
 async def c(ctx, *input_text: str):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
     input_text = ' '.join(input_text)
     cursor.execute('SELECT response_text FROM responses WHERE input_text = ?', (input_text.lower(),))
     result = cursor.fetchone()

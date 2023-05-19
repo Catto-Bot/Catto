@@ -8,6 +8,9 @@ cooldown_time = 10
 @commands.command(name="emojify", aliases=["e"])
 @commands.cooldown(1, cooldown_time, commands.BucketType.user)
 async def emojify(ctx,*, msg):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
     try:
         literalsemojify = {
     "a": "🇦", "b": "🇧", "c": "🇨", "d": "🇩", "e": "🇪", "f": "🇫",

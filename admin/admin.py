@@ -3,12 +3,16 @@ import discord
 import time
 import requests
 import asyncio
+from datetime import datetime
 
 
+
+bot_version = "2.0"
+github_repo = "Soon To Be Public"
 
 @commands.command(name="info")
 async def info(ctx):
-    devs = ["ghost", "nitrix", "kadota", "aryn"]
+    devs = ["Ghost Riley#6077", "Nitrix#1271", "kadota#1408", "aryn#5511"]
     dev_names = "\n".join(devs)
     
     embed = discord.Embed(
@@ -16,13 +20,22 @@ async def info(ctx):
         description=dev_names,
         color=0x000000
     )
-    embed.set_footer(text=f"Requested by {ctx.message.author.display_name}", icon_url=ctx.message.author.avatar)
+    embed.add_field(name="Bot Version", value=bot_version, inline=False)
+    embed.add_field(name="Coded in", value="``discord.py``", inline=False)
+    embed.set_footer(
+        text=f"Requested by {ctx.message.author.display_name}",
+        icon_url=ctx.message.author.avatar
+    )
     
     await ctx.send(embed=embed)
 
 
+
 @commands.command(name="ping")
 async def ping(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
     try:
         start_time = time.time()
         a = await ctx.send("Pinging")
@@ -63,6 +76,7 @@ async def servers_error(ctx,error):
 
 @commands.command(name="invite")
 async def invite(ctx):
+    print(f"ping command used in '{ctx.guild.name}' Server By {ctx.author}")
     embed = discord.Embed(title="Invite Our Bot To Your Server!", description="https://discord.com/oauth2/authorize?client_id=1108380972950491146&permissions=8&scope=bot")
     embed.set_footer(text="Thank You For Using Catto0!")
     await ctx.send(embed=embed)

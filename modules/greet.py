@@ -7,9 +7,15 @@ def welcomemessage(message):
     welcomemessage = message
     return
 
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+
 @commands.command(name="setwelcomechannel")
 @commands.has_permissions(administrator=True)
 async def setwelcomechannel(ctx, channe_lid):
+    save(ctx)
     try:
         channelid = channe_lid.strip('<#>')
         embed = discord.Embed(title="Success!", description="The default welcome channel has been set!")
@@ -30,6 +36,7 @@ async def setwelcomechannel(ctx, channe_lid):
 @commands.command(name="setleavechannel")
 @commands.has_permissions(administrator=True)
 async def setleavechannel(ctx, channe_lid):
+    save(ctx)
     channelid = channe_lid.strip('<#>')
     try:
         embed = discord.Embed(title="Success!", description="The default leave channel has been set!")

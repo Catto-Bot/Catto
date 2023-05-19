@@ -8,6 +8,9 @@ import asyncio
 
 @commands.command(name="flip")
 async def coin_flip(ctx, member: commands.MemberConverter = None):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
     
     lists = ["Heads", "Tails"]
     result1 = random.choice(lists)
@@ -26,6 +29,9 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
 
 @commands.command(name="rps")
 async def rps_game(ctx,user_choice):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 
     list=["rock","paper","scissors"]
     bot_choice=random.choice(list)
