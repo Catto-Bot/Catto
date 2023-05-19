@@ -192,8 +192,8 @@ async def steal(ctx, username: discord.Member):
         user_id = str(ctx.author.id)
         steal_id = str(username.id) 
         if user_id == steal_id and user_id in catomonie:
-            embed = discord.Embed(title='You can\'t steal yourself. You idiot!',description='You lost 10000 for your idiotness.', color=0xff7b7b)
-            catomonie[user_id]["coins"] -= 10000
+            embed = discord.Embed(title='You can\'t steal yourself. You idiot!',description='You lost 1000 catomonie for your idiotness.', color=0xff7b7b)
+            catomonie[user_id]["coins"] -= 1000
             await ctx.send(embed = embed)
             return   
         member = username.name
