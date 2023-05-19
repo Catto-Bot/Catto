@@ -9,6 +9,7 @@ from events import events
 from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf
 from admin import admin
 from anicat import anicat
+from nsfw import animeNsfw
 
 
 
@@ -42,7 +43,7 @@ async def on_ready():
     
 
 
-events.setup(bot)
+# events.setup(bot)
 
 
 bot.add_command(coinflip.coin_flip)
@@ -147,6 +148,7 @@ bot.add_command(ship.ship)
 bot.add_command(conf.confessionsetup)
 bot.add_command(conf.ch)
 
+bot.add_command(animeNsfw.hentai)
 
 
 

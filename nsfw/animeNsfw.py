@@ -8,10 +8,11 @@ def save(ctx):
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 
 def get_nsfw_channels(guild):
+        nsfws = []
         for channel in guild.text_channels:
             if channel.is_nsfw():
-                return channel
-        return None
+                nsfws.append(channel)
+        return nsfws
 
 
 urls = ['https://api.waifu.im/search/?included_tags=ass', 'https://api.waifu.im/search/?included_tags=hentai', 'https://api.waifu.im/search/?included_tags=milf', 'https://api.waifu.im/search/?included_tags=waifu&is_nsfw=true', 'https://api.waifu.im/search/?included_tags=oppai&is_nsfw=true', 'https://api.waifu.im/search/?included_tags=selfies&is_nsfw=true', 'https://api.waifu.im/search/?included_tags=uniform&is_nsfw=true']
@@ -25,25 +26,25 @@ async def hentai(ctx):
     try:
         guild = ctx.guild
         
-        nsfw_channel = get_nsfw_channels(guild)
+        nsfw_channels = get_nsfw_channels(guild)
 
-        if nsfw_channel == None:
-            await ctx.send(random.choice(gifs))
+        if nsfw_channels == []:
+            await ctx.send('This server doesn\'t have any nsfw channel.')
             return
-        
-        if ctx.channel.id != nsfw_channel.id:
-             embed= discord.Embed(title="This is not a NSFW channel!!😠", description="")
-             embed.set_image(url=random.choice(gifs))
-             await ctx.send(embed=embed)
-             return
-        
-        response = requests.get(random.choice(urls))
-        data = response.json()
-        url = data['images'][0]['url']
-        embed = discord.Embed(title='',color=0x333333)
-        embed.set_image(url = url)
+        if ctx.channel.id in [channel.id for channel in nsfw_channels]:
+            response = requests.get(random.choice(urls))
+            data = response.json()
+            url = data['images'][0]['url']
+            embed = discord.Embed(title='',color=0x333333)
+            embed.set_image(url = url)
 
-        await nsfw_channel.send(embed = embed)
+            await ctx.send(embed = embed)
+            # await ctx.send("This command is being used in an NSFW channel.")
+        else:
+            embed= discord.Embed(title="This is not a NSFW channel!!😠", description="")
+            embed.set_image(url=random.choice(gifs))
+            await ctx.send(embed=embed)
+                   
     except Exception as err:
          print(err)
          embed = discord.Embed(color = 0xff7b7b)
