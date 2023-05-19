@@ -6,9 +6,13 @@ import random
 import asyncio
 
 
-
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 @commands.command(name="vstats")
 async def vstats(ctx, name):
+    save(ctx)
     ret = await ctx.send("``Retreiving Data, Please Wait. This May Take Some Time``")
     username,tag = name.split('#')
     response = requests.get(f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tag}").text
@@ -33,6 +37,7 @@ async def vstats(ctx, name):
 
 @commands.command(name="valofight", aliases=["vf"])
 async def valofight(ctx, *, member: discord.Member = None):
+    save(ctx)
     if not member:
         with open('prefixes.json', 'r') as f:
             prefixes = json.load(f)

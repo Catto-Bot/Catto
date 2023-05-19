@@ -3,10 +3,16 @@ import discord
 import json
 import random
 
+
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat", aliases=["ac","anic"])
 @commands.cooldown(20, cooldown_time, commands.BucketType.user)
 async def anicat(ctx):
+    save(ctx)
     with open("logs.txt", "a") as file:
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
@@ -73,6 +79,7 @@ async def anicat(ctx):
 
 @commands.command(name="anicatstats", aliases=["as","stats"])
 async def anicatstats(ctx, *, member: discord.Member = None):
+    save(ctx)
     with open("logs.txt", "a") as file:
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
@@ -118,6 +125,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
 
 @commands.command("anicatinfo", aliases=["aci"])
 async def anicatinfo(ctx, *,card):
+    save(ctx)
     with open("logs.txt", "a") as file:
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")

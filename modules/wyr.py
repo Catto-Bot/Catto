@@ -3,8 +3,14 @@ from discord.ext import commands
 import requests
 import re
 
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+
 @commands.command(name="wyr")
 async def wyr(ctx):
+    save(ctx)
     try:
         api_url = "https://would-you-rather-api--abaanshanid.repl.co/"
         response = requests.get(api_url)
@@ -24,7 +30,7 @@ async def wyr(ctx):
         message = await ctx.send(embed=embed)
         await message.add_reaction("⬅️")
         await message.add_reaction("➡️")
-
+    
 
         voted_users = set()  # Set to store the users who have voted
         vote_count = {option1: 0, option2: 0}  # Dictionary to store the vote count

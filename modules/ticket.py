@@ -2,9 +2,16 @@ from discord.ext import commands
 import discord
 import asyncio
 
+
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+
 @commands.command(name="ticketsetup")
 @commands.has_permissions(administrator=True)
 async def ticketsetup(ctx):
+    save(ctx)
     tickets = {}
     embed = discord.Embed(title="Catto Ticket Counter", description="Is this where you want to setup the ticket system?")
     embed.set_footer(text="React to confirm!")
@@ -95,6 +102,7 @@ async def ticketsetup(ctx):
 @commands.command(name="deleteticket")
 @commands.has_permissions(administrator=True)
 async def deleteticket(ctx):
+    save(ctx)
     sure = await ctx.send("Are you sure you want to delete this channel?")
     await sure.add_reaction("👍")
     await sure.add_reaction("👎")

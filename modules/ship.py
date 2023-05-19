@@ -2,9 +2,13 @@ import discord
 from discord.ext import commands
 import random
 
-
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 @commands.command(name="ship")
 async def ship(ctx, *, member: discord.Member = None):
+    save(ctx)
     if member:
         if len(ctx.message.mentions) == 0:
             await ctx.send("Please mention a user to ship!")

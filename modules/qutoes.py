@@ -8,13 +8,17 @@ import asyncio
 
 API_KEY ='aEIxt6NSkJGib80neq+dRg==p1ytbEYfgbfg9zBW'
 
-
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 ##############################################################################################
 # Some Worthy Quotes
 ##############################################################################################
 
 @commands.command(name="quote")
 async def quote(ctx):
+    save(ctx)
     try:
         api_url = 'https://api.quotable.io/random'
         
@@ -38,6 +42,7 @@ async def quote(ctx):
 
 @commands.command(name="devjoke")
 async def devjoke(ctx):
+    save(ctx)
     try:
         api_url= "https://backend-omega-seven.vercel.app/api/getjoke"
         response  = requests.get(api_url)
@@ -64,6 +69,7 @@ async def devjoke(ctx):
 ################################################################################################
 @commands.command(name = "trivia")
 async def trivia(ctx):
+        save(ctx)
         api_url ="https://opentdb.com/api.php?amount=1&type=boolean"
         d = json.loads(
         requests.get(api_url).text
@@ -116,6 +122,7 @@ async def trivia(ctx):
 ######################################################################################################
 @commands.command(name = "dadjoke")
 async def dadjoke(ctx):
+    save(ctx)
     try:
         api_url = 'https://icanhazdadjoke.com/slack'
         response = requests.get(api_url)
@@ -134,6 +141,7 @@ async def dadjoke(ctx):
 ####################################################################################
 @commands.command(nmae ="insult")
 async def insult(ctx):
+        save(ctx)
         try: 
             api_url= 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
             response = requests.get(api_url)
@@ -150,6 +158,7 @@ async def insult(ctx):
 #####################################################################
 @commands.command()
 async def darkmeme(ctx):
+        save(ctx)
         try: 
             api_url= f'https://v2.jokeapi.dev/joke/Dark?type=twopart'
             response = requests.get(api_url)
@@ -176,6 +185,7 @@ async def darkmeme(ctx):
 
 @commands.command(name ="spooky")
 async def spooky(ctx):
+        save(ctx)
         try: 
             api_url= f'https://v2.jokeapi.dev/joke/Spooky?type=twopart'
             response = requests.get(api_url)
@@ -201,6 +211,7 @@ async def spooky(ctx):
 
 @commands.command(name ="advice")
 async def advice(ctx):
+        save(ctx)
         try: 
             api_url= f'https://api.adviceslip.com/advice'
             response = requests.get(api_url)

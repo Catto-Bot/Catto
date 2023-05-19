@@ -2,6 +2,10 @@ import discord
 from discord.ext import commands
 import requests
 import random
+def save(ctx):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 
 def get_nsfw_channels(guild):
         for channel in guild.text_channels:
@@ -17,7 +21,8 @@ gifs = ['https://media.tenor.com/n1kNXs7w8q8AAAAd/pervert-anime.gif','https://me
 
 @commands.command()
 async def hentai(ctx):
-    try: 
+    save(ctx)
+    try:
         guild = ctx.guild
         
         nsfw_channel = get_nsfw_channels(guild)
