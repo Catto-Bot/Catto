@@ -43,7 +43,7 @@ async def on_ready():
     
 
 
-# events.setup(bot)
+events.setup(bot)
 
 
 bot.add_command(coinflip.coin_flip)
