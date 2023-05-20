@@ -109,8 +109,8 @@ async def invite(ctx):
 #     await ctx.bot.close()
 #     await countdown.edit(content="Started..")
 
-@servers.error
-async def servers_error(ctx,error):
+@addai.error
+async def addai_error(ctx,error):
     await ctx.send("This command can only be used by aryn#5511")
         
         
