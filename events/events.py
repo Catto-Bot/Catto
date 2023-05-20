@@ -110,8 +110,7 @@ async def on_message(member):
             if messages[member_id]['total_messages'] == 100000:
                 await member.channel.send(embed=levelupmsg(8))
         except Exception as err:
-            embed = discord.Embed(title="Error", description=err)
-            await member.channel.send(embed=embed)
+            print(err)
             
 
     else:

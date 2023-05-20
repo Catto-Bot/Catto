@@ -58,7 +58,7 @@ async def ai(ctx, *, msg):
         with open('output.jpg', 'rb') as f:
             picture = discord.File(f)
             embed = discord.Embed(title="Generated Image", description=f"Prompt: {msg}", color=0x000000)
-            embed.set_image(url="attachment://output.jpg")
+            embed.set_image(url="attachment://output.png")
             embed.set_footer(text="Note: Generating Explicit Images Will Result In A Ban")
             await ret.delete()
             await ctx.reply(embed=embed, file=picture)
