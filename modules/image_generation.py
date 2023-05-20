@@ -16,7 +16,7 @@ allowed_users = []
 
 
 @commands.command(name="ai")
-@commands.cooldown(5, 60, commands.BucketType.user)
+@commands.cooldown(100, 60, commands.BucketType.user)
 async def ai(ctx, *, msg):
     try:
         with open("ai_allowed.txt", "r") as read:
@@ -35,7 +35,8 @@ async def ai(ctx, *, msg):
 
         ai.locked = True
         ret = await ctx.send("Generating Image <a:loading:1108012790783946772>")
-        API_URL = "https://api-inference.huggingface.co/models/stablediffusionapi/anime-model-v2"
+        
+        API_URL = "https://api-inference.huggingface.co/models/andite/anything-v4.0"
         headers = {"Authorization": HUGGING_FACE_KEY}
 
         def query(payload):
