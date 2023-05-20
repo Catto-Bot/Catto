@@ -69,9 +69,24 @@ async def servers(ctx):
     embed.set_footer(text=f"Total Members: {total_members}")
     await ctx.send(embed=embed)
 
-@servers.error
-async def servers_error(ctx,error):
-    await ctx.send("This command can only be used by aryn#5511")
+
+
+
+@commands.command(name="addai")
+@commands.check(lambda ctx: ctx.author.id == 780639741866409984)
+async def addai(ctx, msg):
+    try:
+        with open("ai_allowed.txt", "a") as file:
+            file.write(msg + "\n")
+        await ctx.send("done")
+    except Exception as err:
+        await ctx.send(err)
+
+
+
+   
+
+
 
 
 @commands.command(name="invite")
@@ -94,10 +109,14 @@ async def invite(ctx):
 #     await ctx.bot.close()
 #     await countdown.edit(content="Started..")
 
-
+@servers.error
+async def servers_error(ctx,error):
+    await ctx.send("This command can only be used by aryn#5511")
         
         
-
+@servers.error
+async def servers_error(ctx,error):
+    await ctx.send("This command can only be used by aryn#5511")
 
 
     
