@@ -35,7 +35,7 @@ async def ai(ctx, *, msg):
 
         ai.locked = True
         ret = await ctx.send("Generating Image <a:loading:1108012790783946772>")
-        API_URL = "https://api-inference.huggingface.co/models/cag/anything-v3-1"
+        API_URL = "https://api-inference.huggingface.co/models/stablediffusionapi/anime-model-v2"
         headers = {"Authorization": HUGGING_FACE_KEY}
 
         def query(payload):
