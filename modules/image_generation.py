@@ -11,13 +11,17 @@ load_dotenv()
 
 HUGGING_FACE_KEY= os.getenv('HUGGING_FACE_KEY')
 
-
+def save(ctx, msg):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author} Prompt: {msg}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author} Prompt: {msg}")
 allowed_users = []  
 
 
 @commands.command(name="ai")
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(5, 60, commands.BucketType.user)
 async def ai(ctx, *, msg):
+    save(ctx, msg)
     try:
         with open("ai_allowed.txt", "r") as read:
             allowed_users = read.readlines()
