@@ -53,9 +53,9 @@ async def ai(ctx, *, msg):
 
         image = Image.open(io.BytesIO(image_bytes))
 
-        image.save("output.jpg")
+        image.save("output.png")
 
-        with open('output.jpg', 'rb') as f:
+        with open('output.png', 'rb') as f:
             picture = discord.File(f)
             embed = discord.Embed(title="Generated Image", description=f"Prompt: {msg}", color=0x000000)
             embed.set_image(url="attachment://output.png")
