@@ -5,9 +5,11 @@ import io
 import os
 from PIL import Image
 import time
+from dotenv import load_dotenv
 
+load_dotenv()
 
-
+HUGGING_FACE_KEY= os.getenv('HUGGING_FACE_KEY')
 
 
 allowed_users = [780639741866409984, 839691122481299506]  
@@ -33,9 +35,8 @@ async def ai(ctx, *, msg):
 
         ai.locked = True
         ret = await ctx.send("Generating Image <a:loading:1108012790783946772>")
-        #
         API_URL = "https://api-inference.huggingface.co/models/SG161222/Realistic_Vision_V1.4"
-        headers = {"Authorization": "Bearer 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"}
+        headers = {"Authorization": HUGGING_FACE_KEY}
 
         def query(payload):
             response = requests.post(API_URL, headers=headers, json=payload)

@@ -9,4 +9,4 @@ channelgreet.json
 conf.json
 logs.txt
 responses.db
-allowed_users.txt
+ai_allowed.txt

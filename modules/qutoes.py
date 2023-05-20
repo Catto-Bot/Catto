@@ -6,7 +6,6 @@ import json
 import html
 import asyncio
 
-API_KEY ='aEIxt6NSkJGib80neq+dRg==p1ytbEYfgbfg9zBW'
 
 def save(ctx):
     with open("logs.txt", "a") as file:
