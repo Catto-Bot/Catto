@@ -68,7 +68,7 @@ async def ai(ctx, *, msg):
 
     finally:
         ai.locked = False
-        os.remove('output.jpg')
+        os.remove('output.png')
 
 
 # Cooldown error handler
