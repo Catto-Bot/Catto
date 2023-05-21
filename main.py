@@ -10,6 +10,8 @@ from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats
 from admin import admin
 from anicat import anicat
 from nsfw import animeNsfw
+import time
+import datetime
 
 
 
@@ -28,7 +30,7 @@ def get_prefix(bot, message):
     except:
         prefixes = {}
 
-
+start_time = time.time() 
 
 
 intents = discord.Intents.all()
@@ -45,7 +47,19 @@ async def on_ready():
 
 events.setup(bot)
 
+@commands.command(name="uptime")
+async def uptime(ctx):
+    try:
+        end_time = time.time()
+        uptime = end_time - start_time
 
+        uptime_str = str(datetime.timedelta(seconds=int(uptime)))
+        await ctx.send(f"Bot uptime: {uptime_str}")
+    except Exception as err:
+        await ctx.send(f"An error occurred while retrieving the uptime: {err}") 
+
+
+bot.add_command(uptime)
 bot.add_command(coinflip.coin_flip)
 bot.add_command(coinflip.rps_game)
 bot.add_command(coinflip.announce)

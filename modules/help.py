@@ -15,7 +15,7 @@ async def help(ctx):
         prefixes = json.load(read)
 
     embed = discord.Embed(title="Catto Commands", description="Here are the available commands:")
-    embed.add_field(name="👨‍💻 Main", value="info, ai(prompt)", inline=False)
+    embed.add_field(name="👨‍💻 Main", value="info, ai(prompt), uptime", inline=False)
     embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
     embed.add_field(name="💰 CattoGamble", value="monie, balance, daily, weekly, bet, steal, leaderboard, give", inline=False)
     embed.add_field(name="🎮 ValoStats", value="vstats, valofight", inline=False)

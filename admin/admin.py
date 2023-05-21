@@ -22,6 +22,8 @@ async def info(ctx):
     )
     embed.add_field(name="Bot Version", value=bot_version, inline=False)
     embed.add_field(name="Coded in", value="``discord.py``", inline=False)
+    embed.add_field(name="Github Repo", value="``https://github.com/Catto-Bot/Catto``", inline=False)
+    embed.add_field(name="Support Server", value="``https://discord.gg/cvNa9XTbD9``", inline=False)
     embed.set_footer(
         text=f"Requested by {ctx.message.author.display_name}",
         icon_url=ctx.message.author.avatar
@@ -47,7 +49,7 @@ async def ping(ctx):
         await a.edit(content="Almost Done!")
         end_time = time.time()
         latency = (end_time - start_time) * 1000  # Convert to milliseconds
-        
+       
         await ctx.send(f"Latency: {latency:.2f}ms")
 
     except Exception as err:
