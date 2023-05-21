@@ -180,6 +180,9 @@ bot.add_command(image_generation.ai)
 
 
 
+
+
+
 bot.run(DISCORD_KEY)
 
 

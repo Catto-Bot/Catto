@@ -19,7 +19,7 @@ allowed_users = []
 
 
 @commands.command(name="ai")
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(5, 60, commands.BucketType.user)
 async def ai(ctx, *, msg):
     save(ctx, msg)
     try:
@@ -28,7 +28,7 @@ async def ai(ctx, *, msg):
         allowed_users = [int(user_id.strip()) for user_id in allowed_users]  
         if ctx.author.id not in allowed_users:
             embed = discord.Embed(title="Error", description=f"Hi {ctx.author.name}, You are not authorized to use this command.")
-            embed.set_footer(text="Support Server: https://discord.gg/rvQXeuMwdG")
+            embed.set_footer(text="Support Server: https://discord.gg/cvNa9XTbD9")
             await ctx.send(embed=embed)
             return
         
