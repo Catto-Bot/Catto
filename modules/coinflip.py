@@ -147,7 +147,7 @@ async def rps_game_error(ctx,err):
 #Cat facts
 ####################################################################################
         
-@commands.command(name='catfact',aliases=['cfact'])
+@commands.command(name='catfact',aliases=['cfact','catfacts'])
 async def catfact(ctx):
     try:
         api_url='https://catfact.ninja/fact'
@@ -162,6 +162,27 @@ async def catfact(ctx):
     except: 
         print("error")
 
+
+
+####################################################################################
+#Bored
+####################################################################################
+
+@commands.command(name='bored')
+async def bored(ctx):
+    try:
+        api_url = 'https://www.boredapi.com/api/activity'
+        response = requests.get(api_url)
+        b = response.json()
+
+        bored = b['activity']
+        bored += '.'
+        
+        embed = discord.Embed(title=f'{bored}', color=0x555555)
+        await ctx.send(embed=embed)
+    
+    except:
+        print("error")
         
 
     
