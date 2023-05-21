@@ -141,8 +141,26 @@ async def rps_game_error(ctx,err):
     embed = discord.Embed(title="Syntax Error", description="Pick paper, rock or scissors")
     await ctx.reply(embed=embed)
         
-        
 
+
+####################################################################################
+#Cat facts
+####################################################################################
+        
+@commands.command(name='catfact',aliases=['cfact'])
+async def catfact(ctx):
+    try:
+        api_url='https://catfact.ninja/fact'
+        response = requests.get(api_url)
+        c = response.json()
+
+        cat = c['fact']
+
+        embed = discord.Embed(title=f'{cat}',color=0x555555)
+        await ctx.send(embed=embed)
+
+    except: 
+        print("error")
 
         
 
