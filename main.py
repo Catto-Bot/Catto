@@ -59,6 +59,9 @@ async def uptime(ctx):
         await ctx.send(f"An error occurred while retrieving the uptime: {err}") 
 
 
+
+
+
 bot.add_command(uptime)
 bot.add_command(coinflip.coin_flip)
 bot.add_command(coinflip.rps_game)

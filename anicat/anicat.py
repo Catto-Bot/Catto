@@ -172,18 +172,4 @@ async def anicatinfo_error(ctx, error):
     await ctx.send(embed=embed)
 
 
-
-
-
-        
-            
-    
-
-
-
-
-
-        
-            
-    
-
+                            

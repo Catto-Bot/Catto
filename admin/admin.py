@@ -42,16 +42,18 @@ async def ping(ctx):
         start_time = time.time()
         a = await ctx.send("Pinging")
         test1 = requests.get("https://icanhazdadjoke.com/slack")
-        test2 = requests.get("https://meme-api.com/gimme")
         embed=discord.Embed(title="hehe", description="hehe")
         embed.add_field(name="hehe", value=test1)
-        embed.add_field(name="hehe", value=test2)
         await a.edit(content="Almost Done!")
         end_time = time.time()
-        latency = (end_time - start_time) * 1000  # Convert to milliseconds
-       
-        await ctx.send(f"Latency: {latency:.2f}ms")
-
+        latency = (end_time - start_time) * 1000
+        latencybot = ctx.bot.latency 
+        embed = discord.Embed(title="Bot Latency", description="")
+        embed.add_field(name="Server/Api Latency", value=f"Latency: {latency:.2f}ms", inline=False)
+        embed.add_field(name="Actual Bot Latency", value=f'Pong! Latency: {latencybot * 1000:.2f}ms', inline=False)
+        await a.delete()
+        await ctx.send(embed=embed)
+        
     except Exception as err:
         await ctx.send("an error occured. please try again!")
         print(err)
