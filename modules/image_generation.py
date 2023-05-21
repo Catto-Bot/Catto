@@ -19,7 +19,7 @@ allowed_users = []
 
 
 @commands.command(name="ai")
-@commands.cooldown(5, 60, commands.BucketType.user)
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def ai(ctx, *, msg):
     save(ctx, msg)
     try:
