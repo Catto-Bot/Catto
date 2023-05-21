@@ -77,7 +77,7 @@ async def ai_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         remaining = round(error.retry_after)
         await ctx.send(f"This command is on cooldown. Please try again in {remaining} second(s).")
-    await ctx.send(f"add a prompt as well!")
+    
 
 
 

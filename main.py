@@ -70,6 +70,7 @@ bot.add_command(gambler.monie)
 bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
 bot.add_command(gambler.leaderboard)
+bot.add_command(gambler.give)
 
 
 bot.add_command(gifs.hug)

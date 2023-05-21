@@ -105,26 +105,55 @@ async def monie(ctx):
 
 
 @commands.command(name="balance" ,aliases=["wallet", "bal"])
-async def balance(ctx):
-    with open("logs.txt", "a") as file:
-        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
-        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
-    try:
-        with open("gamblerdata/catomonie.json", "r") as f:
-            catomonie = json.load(f)
-    except:
-        catomonie = {}
-    user_id = str(ctx.author.id)
-    user_name = str(ctx.author)
-    if user_id not in catomonie:
-        with open('prefixes.json', 'r') as t: 
-            prefixes = json.load(t)    
-        embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!")
-        await ctx.send(embed=embed)
-    else:
-        balance = catomonie[user_id]["coins"]
-        embed = discord.Embed(title=f"{user_name}'s Balance", description=f"Your balance is **{balance}**.", color=0x555555)
-        await ctx.send(embed=embed)
+async def balance(ctx, member: discord.Member = None):
+    if not member:
+        try:
+            with open("logs.txt", "a") as file:
+                file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+                print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+            try:
+                with open("gamblerdata/catomonie.json", "r") as f:
+                    catomonie = json.load(f)
+            except:
+                catomonie = {}
+            user_id = str(ctx.author.id)
+            user_name = str(ctx.author)
+            if user_id not in catomonie:
+                with open('prefixes.json', 'r') as t: 
+                    prefixes = json.load(t)    
+                embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!")
+                await ctx.send(embed=embed)
+            else:
+                balance = catomonie[user_id]["coins"]
+                embed = discord.Embed(title=f"{user_name}'s Balance", description=f"Your balance is **{balance}**.", color=0x555555)
+                await ctx.send(embed=embed)
+        except Exception as err:
+            await ctx.reply(err)
+
+    if member:
+        try:
+            with open("logs.txt", "a") as file:
+                file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+                print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+            try:
+                with open("gamblerdata/catomonie.json", "r") as f:
+                    catomonie = json.load(f)
+            except:
+                catomonie = {}
+            user_id = str(member.id)
+            user_name = str(member.name)
+            if user_id not in catomonie:
+                with open('prefixes.json', 'r') as t: 
+                    prefixes = json.load(t)    
+                embed = discord.Embed(description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!")
+                await ctx.send(embed=embed)
+            else:
+                balance = catomonie[user_id]["coins"]
+                embed = discord.Embed(title=f"{user_name}'s Balance", description=f"{user_name}'s balance is **{balance}**.", color=0x555555)
+                await ctx.send(embed=embed)
+        except Exception as err:
+            await ctx.reply(err)
+        
 
 
 @commands.command(name="bet")
@@ -248,7 +277,7 @@ async def steal(ctx, username: discord.Member):
                 return
 
             if win_percentage <= 50:
-                catomonie[steal_id]["coins"] -+ win_money
+                catomonie[steal_id]["coins"] -= win_money
                 catomonie[user_id]["coins"] += win_money
                 embed = discord.Embed(title=f'You won {win_money} catomonie', description=random_win)
                 await ctx.send(embed=embed)
@@ -293,6 +322,34 @@ async def leaderboard(ctx):
     except Exception as err:
         await ctx.send("Unable To Retrieve Data!")
 
+@commands.command(name="give")
+async def give(ctx, monie, member: discord.Member = None):
+    with open("logs.txt", "a") as file:
+        file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+        print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+    if member:
+        try:
+            sender_id = str(ctx.author.id)
+            receiver_id = str(member.id) 
+            with open("gamblerdata/catomonie.json", "r") as f:
+                catomonie = json.load(f)
+            if catomonie[sender_id]["coins"] < int(monie):
+                await ctx.reply("You dont have enough money!")
+                return
+            
+            catomonie[sender_id]["coins"] -= int(monie)
+            catomonie[receiver_id]["coins"] += int(monie)
+            with open("gamblerdata/catomonie.json", "w") as final:
+                json.dump(catomonie, final)   
+            embed = discord.Embed(title="Success!", description=f"{ctx.author.name} has sent {monie} to {member.name}")
+            embed.set_footer(text="Thank You For Using Catto Bot!")
+            await ctx.send(embed=embed)
+
+        except Exception as err:
+            await ctx.send(err)
+    else:
+        await ctx.reply(f"Hi {ctx.author.name}, Please Mention A User")
+
 
 @steal.error
 async def steal_error(ctx, error):
@@ -317,6 +374,14 @@ async def bet_error(ctx, error):
         with open('prefixes.json', 'r') as f: 
             prefixes = json.load(f)
         embed = discord.Embed(title="Error! Wrong Format", description=f"The Correct format is {prefixes[str(ctx.guild.id)]}bet (number) (money)", color=discord.Color.red())
+        await ctx.send(embed=embed)
+
+
+@give.error
+async def give_error(ctx, error):
+        with open('prefixes.json', 'r') as f: 
+            prefixes = json.load(f)
+        embed = discord.Embed(title="Error! Wrong Format", description=f"The Correct format is {prefixes[str(ctx.guild.id)]}give (money) (@user)", color=discord.Color.red())
         await ctx.send(embed=embed)
 
 
