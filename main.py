@@ -53,10 +53,17 @@ async def uptime(ctx):
         end_time = time.time()
         uptime = end_time - start_time
 
-        uptime_str = str(datetime.timedelta(seconds=int(uptime)))
-        await ctx.send(f"Bot uptime: {uptime_str}")
+        weeks, uptime = divmod(uptime, 604800)  
+        days, uptime = divmod(uptime, 86400)    
+        hours, uptime = divmod(uptime, 3600)     
+        minutes, seconds = divmod(uptime, 60)
+
+        uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds"
+        await ctx.send(f"Bot uptime: ``{uptime_str}``")
     except Exception as err:
-        await ctx.send(f"An error occurred while retrieving the uptime: {err}") 
+        await ctx.send(f"An error occurred while retrieving the uptime: {err}")
+
+
 
 
 
