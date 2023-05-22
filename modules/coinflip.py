@@ -41,8 +41,8 @@ async def rps_game(ctx,user_choice=None):
     list=["rock","paper","scissors"]
     bot_choice=random.choice(list)
 
-    if not user_choice:
-        embed = discord.Embed(title=f"The correct syntax is !rps <choice>", color=0xFF0000)
+    if not user_choice in list:
+        embed = discord.Embed(title=f"Correct Syntax:",description="!rps <choice> (rock, paper, scissors)", color=0xFF0000)
         await ctx.send(embed=embed)
         return
 
@@ -59,7 +59,7 @@ async def rps_game(ctx,user_choice=None):
     else:
         result="You lose 😢"
 
-    embed=discord.Embed(title="Rock Paper Scissors", description=f'The bot chose {bot_choice}. {result}',color=0x333333)
+    embed=discord.Embed(title="Rock Paper Scissors", description=f'The bot chose {bot_choice}. {result}',color=0x555555)
     await ctx.send(embed=embed)
 
 
