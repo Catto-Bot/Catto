@@ -66,9 +66,12 @@ async def servers(ctx):
     total_members = 0
 
     for guild in ctx.bot.guilds:
-        embed.add_field(name=f"#{a} {guild} Member Count = {guild.member_count}", value=f"{guild.id}", inline=False)
-        total_members += guild.member_count
-        a += 1
+        if guild.member_count > 30:
+            embed.add_field(name=f"#{a} {guild} Member Count = {guild.member_count}", value=f"{guild.id}", inline=False)
+            total_members += guild.member_count
+            a += 1
+        else:
+            total_members += guild.member_count
 
     embed.set_footer(text=f"Total Members: {total_members}")
     await ctx.send(embed=embed)

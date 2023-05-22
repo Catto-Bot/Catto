@@ -385,3 +385,28 @@ async def give_error(ctx, error):
         await ctx.send(embed=embed)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            
