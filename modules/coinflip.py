@@ -33,13 +33,18 @@ async def coin_flip(ctx, member: commands.MemberConverter = None):
 ####################################################################################
 
 @commands.command(name="rps")
-async def rps_game(ctx,user_choice):
+async def rps_game(ctx,user_choice=None):
     with open("logs.txt", "a") as file:
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 
     list=["rock","paper","scissors"]
     bot_choice=random.choice(list)
+
+    if not user_choice:
+        embed = discord.Embed(title=f"The correct syntax is !rps <choice>", color=0xFF0000)
+        await ctx.send(embed=embed)
+        return
 
     user_choice=user_choice.lower()
 
@@ -50,7 +55,7 @@ async def rps_game(ctx,user_choice):
     if(user_choice==bot_choice):
         result="It's a draw. Try again"
     elif (user_choice=="rock" and bot_choice=="scissors" ) or (user_choice=="paper" and bot_choice=="rock") or (user_choice=="scissors" and bot_choice=="paper"):
-        result="You Win!"
+        result="You Win 🏆"
     else:
         result="You lose 😢"
 
@@ -141,10 +146,7 @@ async def joke(ctx):
 
 
 
-@rps_game.error
-async def rps_game_error(ctx,err):
-    embed = discord.Embed(title="Syntax Error", description="Pick paper, rock or scissors")
-    await ctx.reply(embed=embed)
+
         
 
 
