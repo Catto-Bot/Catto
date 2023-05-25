@@ -29,7 +29,7 @@ async def aiterms(ctx):
         with open("ai_allowed.txt", "r") as file:
             allowed_users = file.read().splitlines()
             if str(ctx.author.id) in allowed_users:
-                await ctx.send(f"{ctx.author.name}, you already have access.")
+                await ctx.send(f"``{ctx.author.name}, you already have access.``")
                 return
         
         embed = discord.Embed(title="Terms and Conditions")
@@ -52,17 +52,23 @@ async def aiterms(ctx):
                 try:
                     with open("ai_allowed.txt", "a") as file:
                         file.write(str(ctx.author.id) + "\n")
-                    await ctx.send(f"``Access granted to {ctx.author.name}.``")
+                    await verify.edit(content = f"``Access granted to {ctx.author.name}.``")
+                    await verify.clear_reactions()
                 except Exception as err:
                     await ctx.send(f"Error occurred: {err}")
+                    await verify.clear_reactions()
 
             if str(reaction.emoji) == "❌":
-                await ctx.send("``Aborted.``")
+                await verify.edit(content = "``Aborted.``")
+                await verify.clear_reactions()
                 return
         except asyncio.TimeoutError:
-            await ctx.send("Expired!")
+            embed = discord.Embed(title="Expired", description="")
+            await verify.edit(embed=embed)
+            await verify.clear_reactions()
     except Exception as e:
         await ctx.send(f"An error occurred: {e}")
+        await verify.clear_reactions()
 
 
 
