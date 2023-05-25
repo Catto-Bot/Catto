@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf,image_generation
+from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf,image_generation,hangman
 from admin import admin
 from anicat import anicat
 from nsfw import animeNsfw
@@ -181,7 +181,8 @@ bot.add_command(animeNsfw.hentai)
 
 bot.add_command(image_generation.ai)
 
-
+bot.add_command(hangman.hangman)
+bot.add_command(hangman.guess)
 
 
 
