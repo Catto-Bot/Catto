@@ -61,20 +61,17 @@ async def ping(ctx):
 @commands.command(name="servers")
 @commands.check(lambda ctx: ctx.author.id == 780639741866409984 or ctx.author.id == 534977801116319745 or ctx.author.id == 540405934367703050 or ctx.author.id == 582506141959979008)
 async def servers(ctx):
-    embed = discord.Embed(title="MYAAAA", description="CHOR")
     a = 1
     total_members = 0
-
+    server = ""
     for guild in ctx.bot.guilds:
-        if guild.member_count > 30:
-            embed.add_field(name=f"#{a} {guild} Member Count = {guild.member_count}", value=f"{guild.id}", inline=False)
-            total_members += guild.member_count
-            a += 1
-        else:
-            total_members += guild.member_count
 
-    embed.set_footer(text=f"Total Members: {total_members}")
-    await ctx.send(embed=embed)
+        server = server + f"#{a}, {guild} , {guild.member_count}" + "\n"
+        a += 1
+        total_members += guild.member_count
+
+    await ctx.send(f"\n ```{server} \nTotal members = {total_members}```")
+
 
 
 
@@ -123,6 +120,7 @@ async def addai_error(ctx,error):
         
 @servers.error
 async def servers_error(ctx,error):
+    print(error)
     await ctx.send("This command can only be used by aryn#5511")
 
 
