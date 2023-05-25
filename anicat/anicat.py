@@ -9,6 +9,7 @@ def save(ctx):
     with open("logs.txt", "a") as file:
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
+
 cooldown_time = 1 * 60 * 60
 @commands.command(name="anicat", aliases=["ac","anic"])
 @commands.cooldown(20, cooldown_time, commands.BucketType.user)
@@ -30,7 +31,7 @@ async def anicat(ctx):
     await final.add_reaction("<:anicat:1105722682160447550>")
 
     def check(reaction, user):
-        return reaction.message.id == final.id and str(reaction.emoji) in ["<:anicat:1105722682160447550>"]
+        return reaction.message.id == final.id and user != ctx.bot and str(reaction.emoji) in ["<:anicat:1105722682160447550>"]
 
     try:
         reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.00, check=check)
