@@ -2,7 +2,8 @@ from discord.ext import commands
 import discord
 import json
 import random
-
+import asyncio
+import time
 
 def save(ctx):
     with open("logs.txt", "a") as file:
@@ -74,10 +75,12 @@ async def anicat(ctx):
 
 
 
-@commands.command(name="anicatstats", aliases=["as","stats"])
+@commands.command(name="anicatstats", aliases=["as", "stats"])
 async def anicatstats(ctx, *, member: discord.Member = None):
     save(ctx)
-
+    page = 1
+    starting = 0
+    ending = 10
     try:
         with open("data/anicat.json", "r", encoding="utf8") as file:
             anicatdata = json.load(file)
@@ -92,8 +95,50 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                 embed = discord.Embed(title=f"Anicat Info for {member_name}", description="", color=discord.Color.green())
                 embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
                 embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
-                embed.add_field(name="Names", value="\n".join(names[:10]), inline=False)  # Join the first 10 names with newlines
-                await ctx.send(embed=embed)
+                embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                embed.set_footer(text=f"Page: {page}")
+
+                anothercheck = await ctx.send(embed=embed)
+                await anothercheck.add_reaction("⬅️")
+                await anothercheck.add_reaction("➡️")
+
+                def check(reaction, user):
+                    return user == ctx.author and reaction.message.id == anothercheck.id and str(reaction.emoji) in ["⬅️", "➡️"]
+
+                timer_seconds = 60
+                end_time = time.time() + timer_seconds
+                while time.time() < end_time:
+                    try:
+                        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=end_time - time.time(), check=check)
+                        if str(reaction.emoji) == "➡️":
+                            page += 1
+                            starting += 10
+                            ending += 10
+                            embed = discord.Embed(title=f"Anicat Info for {member_name}", description="", color=discord.Color.green())
+                            embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
+                            embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                            embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                            embed.set_footer(text=f"Page: {page}")
+                            await anothercheck.edit(embed=embed)
+                            await anothercheck.remove_reaction(reaction, user)
+
+                        if str(reaction.emoji) == "⬅️":
+                            if page > 1:
+                                page -= 1
+                                starting -= 10
+                                ending -= 10
+                                embed = discord.Embed(title=f"Anicat Info for {member_name}", description="", color=discord.Color.green())
+                                embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
+                                embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                                embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                                embed.set_footer(text=f"Page: {page}")
+                                await anothercheck.edit(embed=embed)
+                                await anothercheck.remove_reaction(reaction, user)
+                            else:
+                                await anothercheck.edit(content="``You are already on the first page.``")
+
+                    except asyncio.TimeoutError:
+                        break
 
             else:
                 await ctx.send("No Record Found")
@@ -107,14 +152,59 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                 embed = discord.Embed(title=f"Anicat Info for {author_name}", description="", color=discord.Color.magenta())
                 embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
                 embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
-                embed.add_field(name="Last 10 Claimed AniCats", value="\n".join(names[:10]), inline=False)  # Join the first 10 names with newlines
-                await ctx.send(embed=embed)
+                embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                embed.set_footer(text=f"Page: {page}")
+
+                owncheck = await ctx.send(embed=embed)
+                await owncheck.add_reaction("⬅️")
+                await owncheck.add_reaction("➡️")
+
+                def check(reaction, user):
+                    return user == ctx.author and reaction.message.id == owncheck.id and str(reaction.emoji) in ["⬅️", "➡️"]
+
+                timer_seconds = 60
+                end_time = time.time() + timer_seconds
+                while time.time() < end_time:
+                    try:
+                        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=end_time - time.time(), check=check)
+                        if str(reaction.emoji) == "➡️":
+                            page += 1
+                            starting += 10
+                            ending += 10
+                            embed = discord.Embed(title=f"Anicat Info for {author_name}", description="", color=discord.Color.magenta())
+                            embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
+                            embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                            embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                            embed.set_footer(text=f"Page: {page}")
+                            await owncheck.edit(embed=embed)
+                            await owncheck.remove_reaction(reaction, user)
+
+                        if str(reaction.emoji) == "⬅️":
+                            if page > 1:
+                                page -= 1
+                                starting -= 10
+                                ending -= 10
+                                embed = discord.Embed(title=f"Anicat Info for {author_name}", description="", color=discord.Color.magenta())
+                                embed.add_field(name="Total Anicats", value=total_anicats, inline=False)
+                                embed.add_field(name="Total AniPoints", value=total_anipoints, inline=False)
+                                embed.add_field(name="Anicats Info", value="\n".join(names[starting:ending]), inline=False)
+                                embed.set_footer(text=f"Page: {page}")
+                                await owncheck.edit(embed=embed)
+                                await owncheck.remove_reaction(reaction, user)
+                            else:
+                                await owncheck.edit(content="``You are already on the first page.``")
+
+                    except asyncio.TimeoutError:
+                        break
+
             else:
                 await ctx.send("No record found!")
                 return
     except Exception as err:
-        await ctx.send("There was a problem!")
+        await ctx.send(str(err))
         return
+
+
 
 
 

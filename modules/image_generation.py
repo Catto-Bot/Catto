@@ -6,6 +6,7 @@ import os
 from PIL import Image
 import time
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
@@ -18,8 +19,71 @@ def save(ctx, msg):
 allowed_users = []  
 
 
+@commands.command(name="aiterms")
+async def aiterms(ctx):
+    try:
+        def check(reaction, user):
+            return user == ctx.author and reaction.message.id == verify.id and str(reaction.emoji) in ["✅", "❌"]
+        
+        # Check if user already has access
+        with open("ai_allowed.txt", "r") as file:
+            allowed_users = file.read().splitlines()
+            if str(ctx.author.id) in allowed_users:
+                await ctx.send(f"``{ctx.author.name}, you already have access.``")
+                return
+        
+        embed = discord.Embed(title="Terms and Conditions")
+        embed.add_field(name="Prohibited Content", value="The generation of explicit or NSFW images is strictly prohibited. Users found generating or sharing such content will be subject to immediate PERMANENT ban.")
+
+        embed.add_field(name="Command Usage", value="Please refrain from spamming the image generation command excessively. Excessive use may result in limitations or cooldowns to ensure fair usage for all users.")
+
+        embed.add_field(name="User Responsibility", value="By using the ai command, you acknowledge and agree that you are solely responsible for the images generated and their usage. The bot owner and developers hold no liability for any content generated or its consequences.")
+
+        embed.add_field(name="Vote", value="Also, make sure to vote for the bot [here](https://top.gg/bot/1108380972950491146).")
+
+        embed.set_footer(text="By using the image generation command, you agree to abide by these terms and conditions.")
+        verify = await ctx.send(embed=embed)
+        await verify.add_reaction("✅")
+        await verify.add_reaction("❌")
+        
+        try:
+            reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+            if str(reaction.emoji) == "✅":
+                try:
+                    with open("ai_allowed.txt", "a") as file:
+                        file.write(str(ctx.author.id) + "\n")
+                    await verify.edit(content = f"``Access granted to {ctx.author.name}.``")
+                    await verify.clear_reactions()
+                except Exception as err:
+                    await ctx.send(f"Error occurred: {err}")
+                    await verify.clear_reactions()
+
+            if str(reaction.emoji) == "❌":
+                await verify.edit(content = "``Aborted.``")
+                await verify.clear_reactions()
+                return
+        except asyncio.TimeoutError:
+            embed = discord.Embed(title="Expired", description="")
+            await verify.edit(embed=embed)
+            await verify.clear_reactions()
+    except Exception as e:
+        await ctx.send(f"An error occurred: {e}")
+        await verify.clear_reactions()
+
+
+
+# @commands.command(name="addai")
+# @commands.check(lambda ctx: ctx.author.id == 780639741866409984)
+# async def addai(ctx, msg):
+#     try:
+#         with open("ai_allowed.txt", "a") as file:
+#             file.write(msg + "\n")
+#         await ctx.send("done")
+#     except Exception as err:
+#         await ctx.send(err)
+
 @commands.command(name="ai")
-@commands.cooldown(1, 60, commands.BucketType.user)
+@commands.cooldown(1, 30, commands.BucketType.user)
 async def ai(ctx, *, msg):
     save(ctx, msg)
     try:
@@ -27,7 +91,7 @@ async def ai(ctx, *, msg):
             allowed_users = read.readlines()
         allowed_users = [int(user_id.strip()) for user_id in allowed_users]  
         if ctx.author.id not in allowed_users:
-            embed = discord.Embed(title="Error", description=f"Hi {ctx.author.name}, You are not authorized to use this command.")
+            embed = discord.Embed(title="Error", description=f"Hi {ctx.author.name}, use ``!aiterms`` first to be authorized ")
             embed.set_footer(text="Support Server: https://discord.gg/cvNa9XTbD9")
             await ctx.send(embed=embed)
             return
