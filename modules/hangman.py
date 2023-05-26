@@ -18,6 +18,7 @@ async def hangman(ctx):
     json_string = string
     data = json.loads(json_string)
     chosen_word = data[0]
+    print(chosen_word)
 
     guessed_word = ['_'] * len(chosen_word)
     no_of_guesses = 0
@@ -30,7 +31,7 @@ async def hangman(ctx):
         'max_guess': max_guess
     }
 
-    embed = discord.Embed(title="Welcome To Hangman", description="Guess The Word: " + " ".join(guessed_word).replace("_", "⬛"), color=0x333333)
+    embed = discord.Embed(title="Welcome To Hangman", description="Use !guess <letter>\n\nGuess The Word: " + " ".join(guessed_word).replace("_", "⬛"), color=0x333333)
     embed.set_footer(text="Total guesses: 6")
     await ctx.send(embed=embed)
 
@@ -66,6 +67,7 @@ async def guess(ctx, guess):
             return
     else:
         no_of_guesses += 1
+        hangman_games[ctx.guild.id]['no_of_guesses'] = no_of_guesses
 
     if no_of_guesses >= max_guess:
         await ctx.send(f"Game Over! The correct word was {chosen_word}")
