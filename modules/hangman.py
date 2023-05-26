@@ -13,7 +13,7 @@ async def hangman(ctx):
     if ctx.guild.id in hangman_games:
         await ctx.send("A Hangman game is already in progress in this server.")
         return
-
+    hello = await ctx.send("``Starting Game, Please Wait``")
     string = requests.get("https://random-word-form.herokuapp.com/random/noun").text
     json_string = string
     data = json.loads(json_string)
@@ -30,9 +30,9 @@ async def hangman(ctx):
         'no_of_guesses': no_of_guesses,
         'max_guess': max_guess
     }
-
     embed = discord.Embed(title="Welcome To Hangman", description="Use !guess <letter>\n\nGuess The Word: " + " ".join(guessed_word).replace("_", "⬛"), color=0x333333)
     embed.set_footer(text="Total guesses: 6")
+    await hello.delete()
     await ctx.send(embed=embed)
 
 
