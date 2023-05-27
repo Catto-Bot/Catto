@@ -4,6 +4,7 @@ import time
 import requests
 import asyncio
 from datetime import datetime
+import os
 
 
 
@@ -63,27 +64,20 @@ async def ping(ctx):
 async def servers(ctx):
     a = 1
     total_members = 0
-    server = ""
-    message_chunks = []
+    server_info = ""
     
     for guild in ctx.bot.guilds:
-        server_info = f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
-        
-      
-        if len(server) + len(server_info) > 2000:
-            message_chunks.append(server)
-            server = server_info
-        else:
-            server += server_info
-
+        server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
         a += 1
         total_members += guild.member_count
 
-   
-    message_chunks.append(server)
-    
-    for chunk in message_chunks:
-        await ctx.send(f"\n```{chunk}\nTotal members = {total_members}```")
+    with open("server_info.txt", "w") as file:
+        file.write(server_info)
+
+    await ctx.send(f"Server information for {ctx.bot.user.name} ({len(ctx.bot.guilds)} servers, {total_members} members)", file=discord.File("server_info.txt"))
+
+    os.remove("server_info.txt")
+
 
 
 
