@@ -12,10 +12,10 @@ def save(ctx):
 async def wyr(ctx):
     save(ctx)
     try:
-        api_url = "https://would-you-rather-api--abaanshanid.repl.co/"
+        api_url = "https://api.truthordarebot.xyz/api/wyr"
         response = requests.get(api_url)
         data = response.json()
-        question  = data['data']
+        question  = data['question']
 
         # Find the options using regular expressions
         options = re.findall(r"rather\s(.*?)\sor\s(.*?)\?", question, re.IGNORECASE)

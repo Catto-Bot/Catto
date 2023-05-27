@@ -31,7 +31,7 @@ async def anicat(ctx):
     await final.add_reaction("<:anicat:1105722682160447550>")
 
     def check(reaction, user):
-        return reaction.message.id == final.id and user != ctx.bot and str(reaction.emoji) in ["<:anicat:1105722682160447550>"]
+        return reaction.message.id == final.id and user != ctx.bot.user and str(reaction.emoji) in ["<:anicat:1105722682160447550>"]
 
     try:
         reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.00, check=check)
@@ -69,6 +69,7 @@ async def anicat(ctx):
     except Exception as e:
         editembed = discord.Embed(title="Expired!", description="You Took Too Long To Claim!")
         editembed.set_image(url=source[random_index])
+        embed.set_author(name=names[random_index])
         editembed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
         await final.clear_reactions()
         await final.edit(embed=editembed)
