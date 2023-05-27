@@ -303,3 +303,72 @@ async def poke(ctx, member: commands.MemberConverter = None):
         embed.set_image(url="https://media.tenor.com/cVMA5TtZ_3oAAAAS/baymax-poke.gif")
         await ctx.send(embed=embed)
 
+
+@handhold.error
+async def handhold_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@hug.error
+async def hug_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@slap.error
+async def slap_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@kiss.error
+async def kiss_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@lick.error
+async def lick_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@bite.error
+async def bite_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@bully.error
+async def bully_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@blush.error
+async def blush_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@cry.error
+async def cry_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@cuddle.error
+async def cuddle_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@smug.error
+async def smug_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@bonk.error
+async def bonk_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@pat.error
+async def pat_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@nom.error
+async def nom_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@kill.error
+async def kill_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@wink.error
+async def wink_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
+@poke.error
+async def poke_error(ctx,error):
+    await ctx.send(f"``{error}``")
+
