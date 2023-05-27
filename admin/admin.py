@@ -66,7 +66,8 @@ async def servers(ctx):
     server = ""
     for guild in ctx.bot.guilds:
 
-        server = server + f"#{a}, {guild} , {guild.member_count}" + "\n"
+        server = server + f"#{a}, {guild} , {guild.member_count} , id = {guild.id}" + "\n"
+
         a += 1
         total_members += guild.member_count
 
