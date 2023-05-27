@@ -27,7 +27,7 @@ async def help(ctx):
     embed.add_field(name="🎥 Gifs", value="hug, slap, kiss, lick, bite, bully, blush, cry, cuddle, smug, bonk, pat, handhold, nom, kill, wink, poke", inline=False)
     embed.add_field(name="👋 Greet", value="setwelcomechannel, setupleavechannel", inline=False)
     embed.add_field(name="🎭 Meme", value="meme, darkmeme, dadjoke, devjoke, bored", inline=False)
-    embed.add_field(name="🔨 Games", value="trivia, hangman", inline=False)
+    embed.add_field(name="🎮 Games", value="trivia, hangman", inline=False)
     embed.add_field(name="🔨 Moderation", value="mute, kick, ban, unmute", inline=False)
     embed.add_field(name="⚙️ Prefix", value="prefix, setprefix", inline=False)
     embed.add_field(name="📜 Quotes", value="quote, insult, spooky, advice", inline=False)
