@@ -78,4 +78,11 @@ async def guess(ctx, guess):
     embed = discord.Embed(title="Guess The Word", description=" ".join(guessed_word).replace("_", "⬛"), color=0x333333)
     embed.set_footer(text=f"Chances left: {chances_left}")
     await ctx.send(embed=embed)
+
+
+
+@guess.error
+async def guess_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("`Correct format is !guess <letter>`")
     
