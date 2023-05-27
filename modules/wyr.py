@@ -68,4 +68,33 @@ async def wyr(ctx):
         
         await message.clear_reactions()
         await message.edit(embed=embed2)
+
+@commands.command(name="truth")
+async def truth(ctx):
+    save(ctx)
+    try:
+        fetching = await ctx.send("``Fetching..``")
+        api_url = "https://api.truthordarebot.xyz/api/truth"
+        response = requests.get(api_url)
+        data = response.json()
+        question  = data['question']
+        await fetching.edit(content = f"```{question}```")
+    except Exception as err:
+        await fetching.delete()
+        await ctx.send(f"``{err}``")
+    
+@commands.command(name="dare")
+async def dare(ctx):
+    save(ctx)
+    try:
+        fetching = await ctx.send("``Fetching..``")
+        api_url = "https://api.truthordarebot.xyz/api/dare"
+        response = requests.get(api_url)
+        data = response.json()
+        question  = data['question']
+        await fetching.edit(content = f"```{question}```")
+    except Exception as err:
+        await fetching.delete()
+        await ctx.send(f"``{err}``")
+
         

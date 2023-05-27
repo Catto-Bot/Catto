@@ -150,6 +150,8 @@ bot.add_command(roles.removerole)
 bot.add_command(roles.deleterole)
 
 bot.add_command(wyr.wyr)
+bot.add_command(wyr.truth)
+bot.add_command(wyr.dare)
 
 
 
