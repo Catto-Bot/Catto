@@ -65,13 +65,14 @@ async def servers(ctx):
     total_members = 0
     server = ""
     for guild in ctx.bot.guilds:
-
-        server = server + f"#{a}, {guild} , {guild.member_count} , id = {guild.id}" + "\n"
-
+        server += f"#{a}, {guild} , {guild.member_count} , id = {guild.id}\n"
         a += 1
         total_members += guild.member_count
 
-    await ctx.send(f"\n ```{server} \nTotal members = {total_members}```")
+    message_chunks = [server[i:i+2000] for i in range(0, len(server), 2000)]
+    for chunk in message_chunks:
+        await ctx.send(f"\n ```{chunk} \nTotal members = {total_members}```")
+
 
 
 
