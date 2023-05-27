@@ -11,6 +11,7 @@ import asyncio
 load_dotenv()
 
 HUGGING_FACE_KEY= os.getenv('HUGGING_FACE_KEY')
+HUGGING_FACE_PRIVATE_KEY= os.getenv('HUGGING_FACE_PRIVATE_KEY')
 
 def save(ctx, msg):
     with open("logs.txt", "a") as file:
@@ -146,3 +147,56 @@ async def ai_error(ctx, error):
 
 
 ai.locked = False
+
+
+lock = asyncio.Lock()
+@commands.command(name="privai")
+@commands.check(lambda ctx: ctx.author.id == 780639741866409984 or ctx.author.id == 839691122481299506 or ctx.author.id == 534977801116319745 or ctx.author.id == 540405934367703050 or ctx.author.id == 582506141959979008 or ctx.author.id == 374959702242754560 or ctx.author.id == 851012067552788511 or ctx.author.id == 588025801455304707)
+@commands.cooldown(1, 15, commands.BucketType.user)
+async def privai(ctx, *, msg):
+    # Acquire the lock
+    async with lock:
+        save(ctx, msg)
+
+        try:
+            hello = await ctx.send("Loading..")
+            API_URL = "https://api-inference.huggingface.co/models/AIARTCHAN/MIX-Pro-V4"
+            headers = {"Authorization": HUGGING_FACE_PRIVATE_KEY}
+
+            def query(payload):
+                response = requests.post(API_URL, headers=headers, json=payload)
+                return response.content
+
+            image_bytes = query({
+                "inputs": msg,
+            })
+
+            image = Image.open(io.BytesIO(image_bytes))
+
+            image.save("output.png")
+
+            with open('output.png', 'rb') as f:
+                picture = discord.File(f)
+                embed = discord.Embed(title="Generated Image", description=f"Prompt: {msg}", color=0x000000)
+                embed.set_image(url="attachment://output.png")
+                embed.set_footer(text="Note: Generating Explicit Images Will Result In A Ban")
+                await hello.delete()
+                await ctx.reply(embed=embed, file=picture)
+
+        except Exception as err:
+            await ctx.send(err)
+
+        finally:
+            os.remove('output.png')
+
+
+
+# Cooldown error handler
+@privai.error
+async def privai_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        remaining = round(error.retry_after)
+        await ctx.send(f"This command is on cooldown. Please try again in {remaining} second(s).")
+    
+
+
