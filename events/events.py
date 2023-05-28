@@ -5,7 +5,7 @@ from easy_pil import Canvas, Font
 import io
 from discord import File
 from easy_pil import Editor, load_image_async, Font
-
+from discord import SyncWebhook
 
 async def on_member_join(member):
     try:
@@ -21,8 +21,7 @@ async def on_member_join(member):
             embed = discord.Embed(
             title=f"Welcome To Our Server {member}!",
             description="Make Sure To Read The Server Rules 🐱",
-            color=discord.Color.dark_gray()
-)
+            color=discord.Color.dark_gray())
 
             embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.png")
             embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png")
@@ -31,6 +30,10 @@ async def on_member_join(member):
                 
     except Exception as e:
         print(f"Error: {e}")
+    
+
+
+    
     
 async def on_member_remove(member):
     try:
@@ -125,15 +128,28 @@ async def on_message(member):
 
 
 
+
+
 async def on_guild_join(guild):
-    print("bot joined") 
-    with open('prefixes.json', 'r') as f: 
-        prefixes = json.load(f) 
+    print("Bot joined")
+    with open('prefixes.json', 'r') as f:
+        prefixes = json.load(f)
 
     prefixes[str(guild.id)] = '!'
 
-    with open('./prefixes.json', 'w') as f:
-        json.dump(prefixes, f, indent=4) 
+    with open('prefixes.json', 'w') as f:
+        json.dump(prefixes, f, indent=4)
+
+    webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1112180785378754620/1MInuU18lMsdxK7gvI_tIK-2T9yVBHU9VxfmMFpRTx3mLLe_uimjWBiDQk9Yjsr-oJiL")
+    webhook.send(f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
+             f"**Guild Name**: `{guild.name}` \n"
+             f"**Guild ID**: `{guild.id}` \n"
+             f"**Member Count**: `{guild.member_count}`")
+
+
+
+
+ 
 
 
 async def on_guild_remove(guild):
@@ -145,6 +161,11 @@ async def on_guild_remove(guild):
 
     with open('prefixes.json', 'w') as f: 
         json.dump(prefixes, f, indent=4)
+    webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1112180785378754620/1MInuU18lMsdxK7gvI_tIK-2T9yVBHU9VxfmMFpRTx3mLLe_uimjWBiDQk9Yjsr-oJiL")
+    webhook.send(f"\n\n ------------------ **BOT LEFT** ------------------ \n\n"
+             f"**Guild Name**: `{guild.name}` \n"
+             f"**Guild ID**: `{guild.id}` \n"
+             f"**Member Count**: `{guild.member_count}`")
 
 def setup(bot):
     bot.add_listener(on_guild_join)
