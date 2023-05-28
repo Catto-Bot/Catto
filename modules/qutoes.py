@@ -108,11 +108,11 @@ async def trivia(ctx):
 
             await asyncio.sleep(10)
 
-            await trivia.delete()
+            
         except:
             embed = discord.Embed(title='Nobody reacted on time 😔', color=0xff0000)
             await ctx.send(embed = embed)
-            await trivia.delete()
+            
 
 
 
