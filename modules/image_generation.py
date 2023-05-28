@@ -173,12 +173,12 @@ async def privai(ctx, *, msg):
 
             image = Image.open(io.BytesIO(image_bytes))
 
-            image.save("output.png")
+            image.save("output2.png")
 
-            with open('output.png', 'rb') as f:
+            with open('output2.png', 'rb') as f:
                 picture = discord.File(f)
                 embed = discord.Embed(title="Generated Image", description=f"Prompt: {msg}", color=0x000000)
-                embed.set_image(url="attachment://output.png")
+                embed.set_image(url="attachment://output2.png")
                 embed.set_footer(text="Note: Generating Explicit Images Will Result In A Ban")
                 await hello.delete()
                 await ctx.reply(embed=embed, file=picture)
@@ -187,7 +187,7 @@ async def privai(ctx, *, msg):
             await ctx.send(err)
 
         finally:
-            os.remove('output.png')
+            os.remove('output2.png')
 
 
 
