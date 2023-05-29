@@ -139,12 +139,29 @@ async def on_guild_join(guild):
 
     with open('prefixes.json', 'w') as f:
         json.dump(prefixes, f, indent=4)
+    
+
+    channel = discord.utils.get(guild.text_channels)
+    if channel is not None:
+        embed = discord.Embed(title="Thank you for inviting me!", description="I'm here to assist you.", color=discord.Color.green())
+        embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/1108380972950491146/7349e4327248b681dcbfc171091aca07.png")  # Replace with your desired cat image URL
+        embed.add_field(name="Basic Commands", value="Here are some basic commands you can use:", inline=False)
+        embed.add_field(name="!setprefix <new_prefix>", value="Change the bot's command prefix.", inline=False)
+        embed.add_field(name="!ai <prompt>", value="Generate AI images.", inline=False)
+        embed.add_field(name="!anicat", value="Display waifus.", inline=False)
+        embed.add_field(name="!help", value="Display the full list of available commands.", inline=False)
+        embed.set_footer(text="Powered by Catto0")  
+        await channel.send(embed=embed)
+    else:
+        print("The specified channel does not exist in the guild.")
+
 
     webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1112180785378754620/1MInuU18lMsdxK7gvI_tIK-2T9yVBHU9VxfmMFpRTx3mLLe_uimjWBiDQk9Yjsr-oJiL")
     webhook.send(f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
              f"**Guild Name**: `{guild.name}` \n"
              f"**Guild ID**: `{guild.id}` \n"
              f"**Member Count**: `{guild.member_count}`")
+    
 
 
 
