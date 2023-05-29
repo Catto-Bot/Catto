@@ -11,7 +11,7 @@ def save(ctx):
         file.write(f"\n{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
         print(f"{ctx.command.name} command used in '{ctx.guild.name}' Server By {ctx.author}")
 @commands.command(name="vstats")
-async def vstats(ctx, name):
+async def vstats(ctx, *,name):
     save(ctx)
     ret = await ctx.send("``Retreiving Data, Please Wait. This May Take Some Time``")
     username,tag = name.split('#')
@@ -192,8 +192,8 @@ async def vstats_error(ctx, err):
     with open('prefixes.json', 'r') as f: 
 
         prefixes = json.load(f)
-    embed= discord.Embed(title="Error!", description=f"Error While Retrieving Data. Please Try Again Later")
-    embed.add_field(inline=False, name="Format", value=f"The Correct Format is {prefixes[str(ctx.guild.id)]}vstats (username#tagline)")
+    embed= discord.Embed(title="Error!", description=f"User Not Found")
+    embed.add_field(inline=False, name="Format", value=f"Make Sure That You Are Using The Correct Format: {prefixes[str(ctx.guild.id)]}vstats (username#tagline)")
     embed.set_footer(text="Thank You For Using Catto!")
     await ctx.send(embed=embed)
 
