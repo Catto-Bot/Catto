@@ -67,12 +67,9 @@ async def servers(ctx):
     server_info = ""
     
     for guild in ctx.bot.guilds:
-        if guild.member_count > 100:
-            server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
-            a += 1
-            total_members += guild.member_count
-        else:
-            total_members += guild.member_count
+        server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
+        a += 1
+        total_members += guild.member_count
 
     with open("server_info.txt", "w") as file:
         file.write(server_info)
