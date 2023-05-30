@@ -62,14 +62,17 @@ async def ping(ctx):
 @commands.command(name="servers")
 @commands.check(lambda ctx: ctx.author.id == 780639741866409984 or ctx.author.id == 534977801116319745 or ctx.author.id == 540405934367703050 or ctx.author.id == 582506141959979008)
 async def servers(ctx):
-    a = 1
+    a = 0
     total_members = 0
     server_info = ""
     
     for guild in ctx.bot.guilds:
-        server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
-        a += 1
-        total_members += guild.member_count
+        if guild.member_count > 100:
+            server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
+            a += 1
+            total_members += guild.member_count
+        else:
+            total_members += guild.member_count
 
     with open("server_info.txt", "w") as file:
         file.write(server_info)

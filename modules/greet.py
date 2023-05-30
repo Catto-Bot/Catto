@@ -99,6 +99,14 @@ async def deleteleavechannel(ctx):
 @setleavechannel.error
 async def setleavechannel_error(ctx,error):
     await ctx.send(error)
+
+@deleteleavechannel.error
+async def deleteleavechannel_error(ctx,error):
+    await ctx.send(error)
+
+@deletewelcomechannel.error
+async def deletewelcomechannel_error(ctx,error):
+    await ctx.send(error)
     
     
 @setwelcomechannel.error
