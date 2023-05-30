@@ -102,27 +102,33 @@ async def ticketsetup(ctx):
 @commands.command(name="deleteticket")
 @commands.has_permissions(administrator=True)
 async def deleteticket(ctx):
-    save(ctx)
-    sure = await ctx.send("Are you sure you want to delete this channel?")
-    await sure.add_reaction("👍")
-    await sure.add_reaction("👎")
-    def check(reaction, user):
-        return user == ctx.author and reaction.message.id == sure.id and str(reaction.emoji) in ["👍", "👎"]
-    
     try:
-        reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
-        if str(reaction.emoji) == "👍":
-            await ctx.send("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            await ctx.channel.delete()
-        else:
-            await sure.delete()
+        save(ctx)
+        sure = await ctx.send("Are you sure you want to delete this channel?")
+        await sure.add_reaction("👍")
+        await sure.add_reaction("👎")
+        def check(reaction, user):
+            return user == ctx.author and reaction.message.id == sure.id and str(reaction.emoji) in ["👍", "👎"]
+        
+        try:
+            reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+            if str(reaction.emoji) == "👍":
+                await ctx.send("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                await ctx.channel.delete()
+            else:
+                await sure.delete()
+        except Exception as err:
+            await ctx.send("An error ocurred while deleting the channel")
     except Exception as err:
         await ctx.send("An error ocurred while deleting the channel")
 
 @ticketsetup.error
 async def ticketsetup_error(ctx, error):
-    embed = discord.Embed(title="You don't have permission to run this command!", color=0xff0000)
-    await ctx.send(embed=embed)
+    await ctx.send(f"``{error}``")
+
+@deleteticket.error
+async def deleteticket_error(ctx, error):
+    await ctx.send(f"``{error}``")
 
 
                 

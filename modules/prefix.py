@@ -35,3 +35,4 @@ async def prefix(ctx):
 async def setprefix_error(ctx,err):
     embed = discord.Embed(title="", description=err)
     await ctx.send(embed = embed)
+
