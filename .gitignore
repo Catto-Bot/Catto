@@ -6,6 +6,7 @@ messages.json
 data/anicat.json
 prefixes.json
 channelgreet.json
+channeleave.json
 conf.json
 logs.txt
 responses.db

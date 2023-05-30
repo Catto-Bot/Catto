@@ -30,8 +30,8 @@ async def setwelcomechannel(ctx, channe_lid):
             json.dump(channelgreet, f, indent=4)
 
         await ctx.send(embed=embed)
-    except:
-        await ctx.send("Error!")
+    except Exception as err:
+        await ctx.send(err)
 
 @commands.command(name="setleavechannel")
 @commands.has_permissions(administrator=True)
@@ -42,25 +42,25 @@ async def setleavechannel(ctx, channe_lid):
         embed = discord.Embed(title="Success!", description="The default leave channel has been set!")
         embed.set_footer(text="Thank you for using Catto Bot!")
 
-        with open('channelgreet.json', 'r') as f:
+        with open('channeleave.json', 'r') as f:
             channelgreet = json.load(f)
 
         channelgreet[str(ctx.guild.id)] = str(channelid)
 
-        with open('channelgreet.json', 'w') as f:
+        with open('channeleave.json', 'w') as f:
             json.dump(channelgreet, f, indent=4)
 
         await ctx.send(embed=embed)
-    except:
-        await ctx.send("Error!")
+    except Exception as err:
+        await ctx.send(err)
 
 
 @setleavechannel.error
 async def setleavechannel_error(ctx,error):
-    await ctx.send("Error!")
+    await ctx.send(error)
     
     
 @setwelcomechannel.error
 async def setwelcomechannel_error(ctx,error):
-    await ctx.send("Error!")
+    await ctx.send(error)
     

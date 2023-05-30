@@ -23,7 +23,7 @@ async def on_member_join(member):
             description="Make Sure To Read The Server Rules 🐱",
             color=discord.Color.dark_gray())
 
-            embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.png")
+            embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.gif")
             embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png")
             embed.set_footer(text="Thank You For Using Catto Bot 🐾", icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif")
             await channel.send(embed=embed)
@@ -37,7 +37,7 @@ async def on_member_join(member):
     
 async def on_member_remove(member):
     try:
-        with open('channelgreet.json', 'r') as f:
+        with open('channeleave.json', 'r') as f:
             channelgreet = json.load(f)
 
         guild = member.guild
@@ -47,7 +47,7 @@ async def on_member_remove(member):
             channel_id = channelgreet[guild_id]
             channel = guild.get_channel(int(channel_id))
             embed = discord.Embed(title=f"Sorry To See You Leave {member}!", description="Hope You Had A Great Time!", color=discord.Color.dark_gray())
-            embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png")
+            embed.set_thumbnail(url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.gif")
             embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.png")
             embed.set_footer(text="Thank You For Using Catto Bot 🐾", icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif")
             await channel.send(embed=embed)
