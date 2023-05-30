@@ -157,6 +157,8 @@ bot.add_command(wyr.dare)
 
 bot.add_command(greet.setwelcomechannel)
 bot.add_command(greet.setleavechannel)
+bot.add_command(greet.deletewelcomechannel)
+bot.add_command(greet.deleteleavechannel)
 
 
 bot.add_command(admin.ping)
