@@ -25,7 +25,7 @@ To add Catto to your Discord server, follow these steps:
 1. Join the [Catto Bot](https://discord.gg/cvNa9XTbD9) Server and click on the "Add to Discord" button.
 2. Select the Discord server you want to add Catto to and authorize the bot.
 3. Grant the necessary permissions for Catto to function correctly in your server.
-4. Catto will join your server, and you can start using its commands right away!
+4. Catto will join your server, and you can start using its commands right away! (The default prefix is "!")
 
 ## Usage
 
