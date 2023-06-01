@@ -89,19 +89,19 @@ async def on_message(member):
     if member_id in messages:
         try:
             messages[member_id]['total_messages'] += 1
-            if messages[member_id]['total_messages'] == 25:
+            if messages[member_id]['total_messages'] == 1:
                 await member.channel.send(embed=levelupmsg(1))
 
-            if messages[member_id]['total_messages'] == 200:
+            if messages[member_id]['total_messages'] == 50:
                 await member.channel.send(embed=levelupmsg(2))
 
-            if messages[member_id]['total_messages'] == 500:
+            if messages[member_id]['total_messages'] == 100:
                 await member.channel.send(embed=levelupmsg(3))
 
-            if messages[member_id]['total_messages'] == 1000:
+            if messages[member_id]['total_messages'] == 500:
                 await member.channel.send(embed=levelupmsg(4))
 
-            if messages[member_id]['total_messages'] == 2000:
+            if messages[member_id]['total_messages'] == 1000:
                 await member.channel.send(embed=levelupmsg(5))
 
             if messages[member_id]['total_messages'] == 5000:
@@ -110,8 +110,18 @@ async def on_message(member):
             if messages[member_id]['total_messages'] == 10000:
                 await member.channel.send(embed=levelupmsg(7))
 
-            if messages[member_id]['total_messages'] == 100000:
+            if messages[member_id]['total_messages'] == 20000:
                 await member.channel.send(embed=levelupmsg(8))
+
+            if messages[member_id]['total_messages'] == 20000:
+                await member.channel.send(embed=levelupmsg(9))
+
+            if messages[member_id]['total_messages'] == 50000:
+                await member.channel.send(embed=levelupmsg(10))
+
+
+            if messages[member_id]['total_messages'] == 40000:
+                await member.channel.send(embed=levelupmsg(11))                
         except Exception as err:
             print(err)
             
