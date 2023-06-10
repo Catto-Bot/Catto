@@ -166,6 +166,7 @@ bot.add_command(admin.servers)
 bot.add_command(admin.info)
 bot.add_command(admin.invite)
 bot.add_command(admin.addai)
+bot.add_command(admin.generate_image)
 
 bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)

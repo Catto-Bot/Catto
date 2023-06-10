@@ -5,7 +5,8 @@ import requests
 import asyncio
 from datetime import datetime
 import os
-
+from discord.ext import commands
+from PIL import Image, ImageDraw, ImageFont
 
 
 bot_version = "2.0"
@@ -94,6 +95,32 @@ async def addai(ctx, msg):
     except Exception as err:
         await ctx.send(err)
 
+
+@commands.command(name="generate_image")
+async def generate_image(ctx):
+    name = ctx.author.name
+    
+    image = generate_image_with_name(name)
+
+    temp_file = "temp_image.png"
+    image.save(temp_file)
+    await ctx.send(file=discord.File(temp_file))
+    image.close()
+    os.remove(temp_file)
+
+def generate_image_with_name(name, image_size=(500, 200), background_color=(0, 0, 0),
+                             text_color=(255, 255, 255), font_size=80, font_path='arial.ttf'):
+
+    image = Image.new('RGB', image_size, background_color)
+    draw = ImageDraw.Draw(image) 
+    font = ImageFont.truetype(font_path, font_size)
+    text_width, text_height = draw.textsize(name, font=font)
+    x = (image_size[0] - text_width) // 2
+    y = (image_size[1] - text_height) // 2
+    draw.text((x, y), name, font=font, fill=text_color)
+
+    
+    return image
 
 
    
