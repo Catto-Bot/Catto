@@ -33,7 +33,7 @@ async def ch(ctx,*, message):
                 title="",
                 description=confession,
                 color=discord.Color.green(),
-                timestamp=datetime.utcnow()
+                timestamp=datetime.now()
             )
 
             embed.set_footer(text=f"{prefixes[str(ctx.guild.id)]}ch (message)")
