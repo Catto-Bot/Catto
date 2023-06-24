@@ -106,9 +106,9 @@ async def ai(ctx, *, msg):
             ai.locked = True
             ret = await ctx.send("Generating Image <a:loading:1108012790783946772>")
             
-            API_URL = "https://api-inference.huggingface.co/models/andite/anything-v4.0"
+            API_URL = "https://api-inference.huggingface.co/models/NoCrypt/SomethingV2_2"
             headers = {"Authorization": HUGGING_FACE_KEY}
-
+    
             def query(payload):
                 response = requests.post(API_URL, headers=headers, json=payload)
                 return response.content
@@ -166,7 +166,7 @@ async def privai(ctx, *, msg):
 
         try:
             hello = await ctx.send("Loading..")
-            API_URL = "https://api-inference.huggingface.co/models/AIARTCHAN/MIX-Pro-V4"
+            API_URL = "https://api-inference.huggingface.co/models/AIARTCHAN/AbyssMapleVer3"
             headers = {"Authorization": HUGGING_FACE_PRIVATE_KEY}
 
             def query(payload):
