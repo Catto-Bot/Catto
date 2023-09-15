@@ -94,6 +94,7 @@ async def announce(ctx,*,message:str):
                 return
             else:
                 await announce_msg.delete()
+                await ctx.send(message)
                 return
         
         except asyncio.TimeoutError:
