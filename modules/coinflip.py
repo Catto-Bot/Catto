@@ -88,15 +88,12 @@ async def announce(ctx,*,message:str):
 
             if str(reaction.emoji) == "✅":
                 await announce_msg.delete()
-                everyone= await ctx.send('@everyone')
-                await everyone.delete()
+
                 embed=discord.Embed(title="Announcement 🔊",description=f'\n{message}',color=0x333333)
-                embed.set_footer(text="@everyone")
                 await ctx.send(embed=embed)
                 return
             else:
                 await announce_msg.delete()
-                await ctx.send(f'@everyone\n {message}')
                 return
         
         except asyncio.TimeoutError:
