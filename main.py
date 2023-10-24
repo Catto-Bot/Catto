@@ -41,7 +41,7 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print("The bot is ready")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="!help"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Happy Dashain!"))
     
 
 
