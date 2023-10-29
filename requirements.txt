@@ -7,7 +7,7 @@ discord-ui==5.1.6
 discord.py @ git+https://github.com/Rapptz/discord.py@23352fba7949a491257cc06d2d88377035f0a39f
 easy-pil==0.2.3
 Faker==18.7.0
-Pillow==9.5.0
+Pillow==10.0.1
 pipenv==2023.4.29
 virtualenv==20.23.0
 virtualenv-clone==0.5.7
