@@ -9,7 +9,6 @@ from events import events
 from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf,image_generation,hangman
 from admin import admin
 from anicat import anicat
-from nsfw import animeNsfw,npriv
 import time
 import datetime
 
