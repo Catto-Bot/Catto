@@ -181,9 +181,7 @@ bot.add_command(ship.ship)
 bot.add_command(conf.confessionsetup)
 bot.add_command(conf.ch)
 
-bot.add_command(animeNsfw.hentai)
-bot.add_command(npriv.hdnsfw )
-bot.add_command(npriv.nsfw )
+
 
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
