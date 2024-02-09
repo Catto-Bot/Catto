@@ -23,7 +23,6 @@ async def help(ctx):
     embed.add_field(name="🐱 Anime", value="animeQuote", inline=False)
     embed.add_field(name="🖼️ Avatar", value="avatar", inline=False)
     embed.add_field(name="✨ Emojify", value="emojify", inline=False)
-    embed.add_field(name="💨 NSFW", value="hentai, nsfw (prompt), hdnsfw", inline=False)
     embed.add_field(name="🎥 Gifs", value="hug, slap, kiss, lick, bite, bully, blush, cry, cuddle, smug, bonk, pat, handhold, nom, kill, wink, poke", inline=False)
     embed.add_field(name="👋 Greet", value="setwelcomechannel, setleavechannel, deletewelcomechannel, deleteleavechannel", inline=False)
     embed.add_field(name="🎭 Meme", value="meme, darkmeme, dadjoke, devjoke, bored", inline=False)
