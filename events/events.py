@@ -62,14 +62,24 @@ async def on_message(member):
     if member.author.bot:
         return
     content = member.content.lower()
+
+    if content == "cattoprefix":
+            with open('prefixes.json', 'r') as f: 
+                prefixes = json.load(f)
+                await member.channel.send(f"The Prefix Set For This Server Is: '{prefixes[str(member.guild.id)]}'" )
     
     if content == "gn" or content == "goodnight":
         mention = member.author.mention
-        await member.channel.send(f"GoodNight {mention}!")
+        await member.channel.send(f"GoodNight, {mention}!")
     
     if content == "gm" or content == "goodmorning":
         mention = member.author.mention
-        await member.channel.send(f"GoodMorning {mention}!")
+        await member.channel.send(f"GoodMorning, {mention}!")
+
+        
+    if content == "hi" or content == "hello":
+        mention = member.author.mention
+        await member.channel.send(f"Hello, {mention}!")
 
     try:
         with open('messages.json', 'r') as f:

@@ -11,6 +11,7 @@ from admin import admin
 from anicat import anicat
 import time
 import datetime
+import psutil
 
 
 
@@ -40,11 +41,24 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print("The bot is ready")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="The 1975"))
+
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'!help & cattoprefix'))
     
 
 
 events.setup(bot)
+
+
+# async def on_message(member):
+#     content = member.content.lower()
+#     if content == "cattoprefix":
+#         try:
+#             with open('prefixes.json', 'r') as f: 
+#                 prefixes = json.load(f)
+#                 await message.channel.send(prefixes[str(message.guild.id)] )
+#         except:
+#             prefixes = {}
+
 
 @commands.command(name="uptime")
 async def uptime(ctx):
@@ -56,8 +70,11 @@ async def uptime(ctx):
         days, uptime = divmod(uptime, 86400)    
         hours, uptime = divmod(uptime, 3600)     
         minutes, seconds = divmod(uptime, 60)
+        cpu_percent = psutil.cpu_percent(interval=1)
+        memory_usage = psutil.virtual_memory()
+        disk_usage = psutil.disk_usage('/')
 
-        uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds"
+        uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
         await ctx.send(f"Bot uptime: ``{uptime_str}``")
     except Exception as err:
         await ctx.send(f"An error occurred while retrieving the uptime: {err}")
