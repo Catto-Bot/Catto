@@ -59,6 +59,11 @@ events.setup(bot)
 #         except:
 #             prefixes = {}
 
+@commands.command(name="vote")
+async def vote(ctx):
+    vote_link = "https://top.gg/bot/1108380972950491146/invite"  
+    embed = discord.Embed(title="Vote for the Bot!", description=f"Click [here]({vote_link}) to vote for the bot!", color=discord.Color.blue())
+    await ctx.send(embed=embed)
 
 @commands.command(name="uptime")
 async def uptime(ctx):
@@ -215,7 +220,3 @@ bot.add_command(hangman.guess)
 
 
 bot.run(DISCORD_KEY)
-
-
-
-
