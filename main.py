@@ -89,7 +89,7 @@ async def uptime(ctx):
 
 
 
-
+bot.add_command(vote)
 bot.add_command(uptime)
 bot.add_command(coinflip.coin_flip)
 bot.add_command(coinflip.rps_game)

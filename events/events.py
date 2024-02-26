@@ -147,9 +147,6 @@ async def on_message(member):
 
 
 
-
-
-
 async def on_guild_join(guild):
     print("Bot joined")
     with open('prefixes.json', 'r') as f:
@@ -164,7 +161,7 @@ async def on_guild_join(guild):
     channel = discord.utils.get(guild.text_channels)
     if channel is not None:
         embed = discord.Embed(title="Thank you for inviting me!", description="I'm here to assist you.", color=discord.Color.green())
-        embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/1108380972950491146/7349e4327248b681dcbfc171091aca07.png")  # Replace with your desired cat image URL
+        embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/1108380972950491146/7349e4327248b681dcbfc171091aca07.png")  
         embed.add_field(name="Basic Commands", value="Here are some basic commands you can use:", inline=False)
         embed.add_field(name="!setprefix <new_prefix>", value="Change the bot's command prefix.", inline=False)
         embed.add_field(name="!ai <prompt>", value="Generate AI images.", inline=False)
