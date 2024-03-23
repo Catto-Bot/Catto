@@ -43,7 +43,7 @@ async def on_ready():
     await bot.tree.sync()
     print("The bot is ready")
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'!help & cattoprefix'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'!help & cattoprefix'))
     
 
 
@@ -66,6 +66,33 @@ async def vote(ctx):
     embed = discord.Embed(title="Vote for the Bot!", description=f"Click [here]({vote_link}) to vote for the bot!", color=discord.Color.blue())
     await ctx.send(embed=embed)
 
+
+
+@bot.tree.command(name="vote",description="use this command to vote for the bot")
+async def slash_command(interaction:discord.Interaction):
+    vote_link = "https://top.gg/bot/1108380972950491146/invite"  
+    embed = discord.Embed(title="Vote for the Bot!", description=f"Click [here]({vote_link}) to vote for the bot!", color=discord.Color.blue())
+    await interaction.response.send_message(embed=embed)
+
+
+@bot.tree.command(name="uptime",description="displays the stats for the bot")
+async def slash_command(interaction:discord.Interaction):
+    end_time = time.time()
+    uptime = end_time - start_time
+
+    weeks, uptime = divmod(uptime, 604800)  
+    days, uptime = divmod(uptime, 86400)    
+    hours, uptime = divmod(uptime, 3600)     
+    minutes, seconds = divmod(uptime, 60)
+    cpu_percent = psutil.cpu_percent(interval=1)
+    memory_usage = psutil.virtual_memory()
+    disk_usage = psutil.disk_usage('/')
+
+    uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
+
+    await interaction.response.send_message(f"Bot uptime: ``{uptime_str}``")
+
+
 @commands.command(name="uptime")
 async def uptime(ctx):
     try:
@@ -86,9 +113,13 @@ async def uptime(ctx):
         await ctx.send(f"An error occurred while retrieving the uptime: {err}")
 
 
+
 @bot.tree.command(name="test",description="This is a test for the application command")
 async def slash_command(interaction:discord.Interaction):
     await interaction.response.send_message("Hello World!")
+
+
+    
 
 
 
