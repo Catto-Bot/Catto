@@ -40,6 +40,7 @@ bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None
 bot.remove_command('help')
 @bot.event
 async def on_ready():
+    await bot.tree.sync()
     print("The bot is ready")
 
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'!help & cattoprefix'))
@@ -85,7 +86,9 @@ async def uptime(ctx):
         await ctx.send(f"An error occurred while retrieving the uptime: {err}")
 
 
-
+@bot.tree.command(name="test",description="This is a test for the application command")
+async def slash_command(interaction:discord.Interaction):
+    await interaction.response.send_message("Hello World!")
 
 
 
