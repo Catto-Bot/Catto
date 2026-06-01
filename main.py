@@ -98,7 +98,7 @@ async def vote(ctx):
 
 
 @bot.tree.command(name="vote", description="use this command to vote for the bot")
-async def slash_command(interaction: discord.Interaction):
+async def vote_slash(interaction: discord.Interaction):
     vote_link = "https://top.gg/bot/1108380972950491146/invite"
     embed = discord.Embed(
         title="Vote for the Bot!",
@@ -109,7 +109,7 @@ async def slash_command(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="uptime", description="displays the stats for the bot")
-async def slash_command(interaction: discord.Interaction):
+async def uptime_slash(interaction: discord.Interaction):
     end_time = time.time()
     uptime = end_time - start_time
 
@@ -147,7 +147,7 @@ async def uptime(ctx):
 
 
 @bot.tree.command(name="test", description="This is a test for the application command")
-async def slash_command(interaction: discord.Interaction):
+async def test_slash(interaction: discord.Interaction):
     await interaction.response.send_message("Hello World!")
 
 
