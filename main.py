@@ -17,7 +17,6 @@ from events import events
 from modules import (
     avatar,
     chat,
-    emoji,
     fakeinfo,
     gambler,
     gifs,
@@ -45,6 +44,7 @@ COGS = [
     "cogs.meme",
     "cogs.anime",
     "cogs.wyr",
+    "cogs.emoji",
 ]
 
 
@@ -292,8 +292,6 @@ bot.add_command(anicat.anicatstats)
 bot.add_command(anicat.anicatinfo)
 
 bot.add_command(fakeinfo.fakeinfo)
-
-bot.add_command(emoji.emojify)
 
 bot.add_command(help.help)
 bot.add_command(ship.ship)
