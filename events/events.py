@@ -1,11 +1,16 @@
 from discord.ext import commands
 import discord
 import json
+import os
 from easy_pil import Canvas, Font
 import io
 from discord import File
 from easy_pil import Editor, load_image_async, Font
 from discord import SyncWebhook
+from dotenv import load_dotenv
+
+load_dotenv()
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
 async def on_member_join(member):
     try:
@@ -173,11 +178,12 @@ async def on_guild_join(guild):
         print("The specified channel does not exist in the guild.")
 
 
-    webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1112180785378754620/1MInuU18lMsdxK7gvI_tIK-2T9yVBHU9VxfmMFpRTx3mLLe_uimjWBiDQk9Yjsr-oJiL")
-    webhook.send(f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
-             f"**Guild Name**: `{guild.name}` \n"
-             f"**Guild ID**: `{guild.id}` \n"
-             f"**Member Count**: `{guild.member_count}`")
+    if WEBHOOK_URL:
+        webhook = SyncWebhook.from_url(WEBHOOK_URL)
+        webhook.send(f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
+                 f"**Guild Name**: `{guild.name}` \n"
+                 f"**Guild ID**: `{guild.id}` \n"
+                 f"**Member Count**: `{guild.member_count}`")
     
 
 
@@ -195,11 +201,12 @@ async def on_guild_remove(guild):
 
     with open('prefixes.json', 'w') as f: 
         json.dump(prefixes, f, indent=4)
-    webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1112180785378754620/1MInuU18lMsdxK7gvI_tIK-2T9yVBHU9VxfmMFpRTx3mLLe_uimjWBiDQk9Yjsr-oJiL")
-    webhook.send(f"\n\n ------------------ **BOT LEFT** ------------------ \n\n"
-             f"**Guild Name**: `{guild.name}` \n"
-             f"**Guild ID**: `{guild.id}` \n"
-             f"**Member Count**: `{guild.member_count}`")
+    if WEBHOOK_URL:
+        webhook = SyncWebhook.from_url(WEBHOOK_URL)
+        webhook.send(f"\n\n ------------------ **BOT LEFT** ------------------ \n\n"
+                 f"**Guild Name**: `{guild.name}` \n"
+                 f"**Guild ID**: `{guild.id}` \n"
+                 f"**Member Count**: `{guild.member_count}`")
 
 def setup(bot):
     bot.add_listener(on_guild_join)

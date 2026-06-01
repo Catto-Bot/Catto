@@ -3,6 +3,11 @@ import discord
 from discord.ext import commands
 import random
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+CAT_API_KEY = os.getenv("CAT_API_KEY")
 
 
 # dice_images = [
@@ -52,7 +57,7 @@ async def rolldice(ctx, member: commands.MemberConverter = None):
 async def cat(ctx):
     try:
         headers = {
-            'x-api-key': 'live_KtxHNMT5p5HcQscmbtQDrBcXXqpEVLEVQM5dKo68Is1vPqNEC27l9b1CIWZWFY5E'
+            'x-api-key': CAT_API_KEY
         }
         api_url = 'https://api.thecatapi.com/v1/images/search'
         response = requests.get(api_url, headers = headers)
