@@ -1,127 +1,98 @@
-import asyncio
+import contextlib
 
 import discord
 from discord.ext import commands
 
 from core.logging import log_command
 
+TICKET_CATEGORY = "Catickets"
+
+
+class OpenTicketButton(discord.ui.View):
+    """Persistent view: clicking the button opens a private ticket channel."""
+
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(
+        label="Open Ticket",
+        emoji="🎟️",
+        style=discord.ButtonStyle.primary,
+        custom_id="catto:ticket:open",
+    )
+    async def open(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        guild = interaction.guild
+        if guild is None:
+            await interaction.response.send_message("Use this in a server.", ephemeral=True)
+            return
+        category = discord.utils.get(guild.categories, name=TICKET_CATEGORY)
+        if category is None:
+            await interaction.response.send_message(
+                "Ticket category missing. Run `/ticketsetup` again.", ephemeral=True
+            )
+            return
+        existing = discord.utils.get(category.channels, name=f"ticket-{interaction.user.name.lower()}")
+        if existing is not None:
+            await interaction.response.send_message(
+                f"You already have a ticket: {existing.mention}", ephemeral=True
+            )
+            return
+        overwrites = {
+            guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            interaction.user: discord.PermissionOverwrite(
+                read_messages=True, send_messages=True
+            ),
+        }
+        channel = await guild.create_text_channel(
+            name=f"ticket-{interaction.user.name.lower()}",
+            category=category,
+            overwrites=overwrites,
+        )
+        embed = discord.Embed(
+            title=f"Ticket for {interaction.user.name}",
+            description=f"{interaction.user.mention}, ping a staff member if you need help.",
+            color=discord.Color.dark_gray(),
+        )
+        embed.set_footer(text="Thank you for using Catickets")
+        await channel.send(embed=embed)
+        await interaction.response.send_message(
+            f"Ticket created: {channel.mention}", ephemeral=True
+        )
+
 
 class Tickets(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        bot.add_view(OpenTicketButton())  # restore persistence on cog load
 
     @commands.hybrid_command(name="ticketsetup")
     @commands.has_permissions(administrator=True)
-    async def ticketsetup(self, ctx: commands.Context):
+    async def ticketsetup(self, ctx: commands.Context) -> None:
         log_command(ctx)
-        tickets: dict[int, int] = {}
+        category = discord.utils.get(ctx.guild.categories, name=TICKET_CATEGORY)
+        if category is None:
+            category = await ctx.guild.create_category(TICKET_CATEGORY)
         embed = discord.Embed(
-            title="Catto Ticket Counter",
-            description="Is this where you want to set up the ticket system?",
-        )
-        embed.set_footer(text="React to confirm!")
-        confirm_msg = await ctx.send(embed=embed)
-        await confirm_msg.add_reaction("👍")
-        await confirm_msg.add_reaction("👎")
-
-        def confirm_check(reaction, user):
-            return (
-                user == ctx.author
-                and reaction.message.id == confirm_msg.id
-                and str(reaction.emoji) in ["👍", "👎"]
-            )
-
-        try:
-            reaction, _ = await ctx.bot.wait_for(
-                "reaction_add", timeout=20.0, check=confirm_check
-            )
-        except TimeoutError:
-            await ctx.send("You didn't react in time. Please start over.")
-            return
-
-        if str(reaction.emoji) != "👍":
-            await confirm_msg.delete()
-            abort = await ctx.send("Aborting ticket setup.")
-            await asyncio.sleep(5)
-            await abort.delete()
-            return
-
-        category = discord.utils.get(ctx.guild.categories, name="Catickets")
-        if category:
-            abort = await ctx.send(
-                embed=discord.Embed(
-                    title="ABORTING!!", description="Category already exists", color=0xFF0000
-                )
-            )
-            await asyncio.sleep(5)
-            await abort.delete()
-            return
-
-        category = await ctx.guild.create_category("Catickets")
-        embed = discord.Embed(title="Welcome to Catickets!", description="React to open a ticket")
-        embed.set_thumbnail(
-            url="https://img.freepik.com/premium-vector/cute-cat-is-being-ticket-keeper-animal-cartoon-concept-isolated_556653-2544.jpg"
+            title="Welcome to Catickets!",
+            description="Click the button below to open a ticket.",
         )
         embed.set_footer(text="Thank you for using Catickets!")
-        ticket_msg = await ctx.send(embed=embed)
-        await ticket_msg.add_reaction("🎟️")
-        await confirm_msg.delete()
-
-        def ticket_check(reaction, user):
-            return (
-                reaction.message.id == ticket_msg.id
-                and str(reaction.emoji) == "🎟️"
-                and user != ctx.bot.user
-            )
-
-        while True:
-            try:
-                reaction, user = await ctx.bot.wait_for("reaction_add", check=ticket_check)
-            except Exception:
-                continue
-            if user.id in tickets:
-                msg = await ctx.send(f"{user.mention}, you already have a ticket!")
-                await msg.delete(delay=5)
-                continue
-            channel = await ctx.guild.create_text_channel(
-                name=f"{user.name}'s ticket", category=category
-            )
-            await channel.set_permissions(user, read_messages=True, send_messages=True)
-            await channel.set_permissions(
-                ctx.guild.default_role, read_messages=False, send_messages=False
-            )
-            embed = discord.Embed(
-                title=f"Ticket {user.name} created",
-                description=f"{user.mention}, ping a staff member if you need help.",
-                color=discord.Color.dark_gray(),
-            )
-            embed.set_footer(text="Thank you for using Caticket")
-            await channel.send(embed=embed)
-            tickets[user.id] = channel.id
+        await ctx.send(embed=embed, view=OpenTicketButton())
 
     @commands.hybrid_command(name="deleteticket")
     @commands.has_permissions(administrator=True)
-    async def deleteticket(self, ctx: commands.Context):
+    async def deleteticket(self, ctx: commands.Context) -> None:
         log_command(ctx)
-        sure = await ctx.send("Are you sure you want to delete this channel?")
-        await sure.add_reaction("👍")
-        await sure.add_reaction("👎")
+        from core.views import ConfirmView
 
-        def check(reaction, user):
-            return (
-                user == ctx.author
-                and reaction.message.id == sure.id
-                and str(reaction.emoji) in ["👍", "👎"]
-            )
-
-        try:
-            reaction, _ = await ctx.bot.wait_for("reaction_add", timeout=20.0, check=check)
-            if str(reaction.emoji) == "👍":
+        view = ConfirmView(ctx.author.id)
+        msg = await ctx.send("Delete this channel?", view=view)
+        await view.wait()
+        if view.value is True:
+            with contextlib.suppress(discord.NotFound):
                 await ctx.channel.delete()
-            else:
-                await sure.delete()
-        except TimeoutError:
-            await sure.delete()
+        else:
+            await msg.edit(content="Cancelled.")
 
 
 async def setup(bot: commands.Bot):
