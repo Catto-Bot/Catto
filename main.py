@@ -9,7 +9,6 @@ import psutil
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from admin import admin
 from anicat import anicat
 from core import db
 from core.logging import configure as configure_logging
@@ -45,6 +44,7 @@ COGS = [
     "cogs.ai",
     "cogs.gambler",
     "cogs.ticket",
+    "cogs.admin",
 ]
 
 
@@ -190,82 +190,9 @@ events.setup(bot)
 #             prefixes = {}
 
 
-@commands.command(name="vote")
-async def vote(ctx):
-    vote_link = "https://top.gg/bot/1108380972950491146/invite"
-    embed = discord.Embed(
-        title="Vote for the Bot!",
-        description=f"Click [here]({vote_link}) to vote for the bot!",
-        color=discord.Color.blue(),
-    )
-    await ctx.send(embed=embed)
-
-
-@bot.tree.command(name="vote", description="use this command to vote for the bot")
-async def vote_slash(interaction: discord.Interaction):
-    vote_link = "https://top.gg/bot/1108380972950491146/invite"
-    embed = discord.Embed(
-        title="Vote for the Bot!",
-        description=f"Click [here]({vote_link}) to vote for the bot!",
-        color=discord.Color.blue(),
-    )
-    await interaction.response.send_message(embed=embed)
-
-
-@bot.tree.command(name="uptime", description="displays the stats for the bot")
-async def uptime_slash(interaction: discord.Interaction):
-    end_time = time.time()
-    uptime = end_time - start_time
-
-    weeks, uptime = divmod(uptime, 604800)
-    days, uptime = divmod(uptime, 86400)
-    hours, uptime = divmod(uptime, 3600)
-    minutes, seconds = divmod(uptime, 60)
-    cpu_percent = psutil.cpu_percent(interval=1)
-    memory_usage = psutil.virtual_memory()
-    disk_usage = psutil.disk_usage("/")
-
-    uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
-
-    await interaction.response.send_message(f"Bot uptime: ``{uptime_str}``")
-
-
-@commands.command(name="uptime")
-async def uptime(ctx):
-    try:
-        end_time = time.time()
-        uptime = end_time - start_time
-
-        weeks, uptime = divmod(uptime, 604800)
-        days, uptime = divmod(uptime, 86400)
-        hours, uptime = divmod(uptime, 3600)
-        minutes, seconds = divmod(uptime, 60)
-        cpu_percent = psutil.cpu_percent(interval=1)
-        memory_usage = psutil.virtual_memory()
-        disk_usage = psutil.disk_usage("/")
-
-        uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
-        await ctx.send(f"Bot uptime: ``{uptime_str}``")
-    except Exception as err:
-        await ctx.send(f"An error occurred while retrieving the uptime: {err}")
-
-
-@bot.tree.command(name="test", description="This is a test for the application command")
-async def test_slash(interaction: discord.Interaction):
-    await interaction.response.send_message("Hello World!")
-
-
-bot.add_command(vote)
-bot.add_command(uptime)
 bot.add_command(valostats.vstats)
 bot.add_command(valostats.valofight)
 
-
-bot.add_command(admin.ping)
-bot.add_command(admin.servers)
-bot.add_command(admin.info)
-bot.add_command(admin.invite)
-bot.add_command(admin.addai)
 
 bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
