@@ -1,3 +1,4 @@
+import contextlib
 import re
 
 import discord
@@ -44,10 +45,8 @@ class WyrView(discord.ui.View):
             child.disabled = True
         embed = self._embed()
         embed.title = "Voting closed"
-        try:
+        with contextlib.suppress(discord.NotFound):
             await self.message.edit(embed=embed, view=self)
-        except discord.NotFound:
-            pass
 
 
 class WouldYouRather(commands.Cog):

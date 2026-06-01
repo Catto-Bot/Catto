@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import html
 
 import discord
@@ -122,10 +123,8 @@ class TriviaView(discord.ui.View):
             return
         for child in self.children:
             child.disabled = True
-        try:
+        with contextlib.suppress(discord.NotFound):
             await self.message.edit(view=self)
-        except discord.NotFound:
-            pass
 
     @commands.hybrid_command(name="insult")
     async def insult(self, ctx: commands.Context):
