@@ -19,7 +19,6 @@ from modules import (
     gambler,
     gifs,
     hangman,
-    help,
     image_generation,
     moderation,
     ticket,
@@ -45,6 +44,7 @@ COGS = [
     "cogs.fakeinfo",
     "cogs.roles",
     "cogs.quotes",
+    "cogs.help",
 ]
 
 
@@ -274,7 +274,6 @@ bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
 bot.add_command(anicat.anicatinfo)
 
-bot.add_command(help.help)
 
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
