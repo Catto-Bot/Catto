@@ -9,7 +9,7 @@ class Anime(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="animeQuote")
+    @commands.hybrid_command(name="animequote", aliases=["animeQuote"])
     async def anime_quote(self, ctx: commands.Context):
         log_command(ctx)
         loading = await ctx.send("loading…")
