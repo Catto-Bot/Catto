@@ -12,7 +12,7 @@ class PollButton(discord.ui.Button):
         self.idx = idx
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        view: "PollView" = self.view  # type: ignore[assignment]
+        view: PollView = self.view  # type: ignore[assignment]
         view.votes[interaction.user.id] = self.idx
         await interaction.response.edit_message(embed=view.embed(), view=view)
 
