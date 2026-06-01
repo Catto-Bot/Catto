@@ -1,3 +1,4 @@
+import contextlib
 import re
 import time
 
@@ -33,10 +34,8 @@ class Reminders(commands.Cog):
         for r in await db.due_reminders(now):
             channel = self.bot.get_channel(r["channel_id"])
             if channel is not None:
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await channel.send(f"<@{r['user_id']}> ⏰ {r['message']}")
-                except discord.HTTPException:
-                    pass
             await db.delete_reminder(r["id"])
 
     @check.before_loop
