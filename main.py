@@ -5,7 +5,6 @@ import time
 from pathlib import Path
 
 import discord
-import psutil
 from discord.ext import commands
 from dotenv import load_dotenv
 

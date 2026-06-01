@@ -1,3 +1,4 @@
+import contextlib
 import json
 import random
 import time
@@ -109,10 +110,8 @@ class AniCat(commands.Cog):
             elif str(reaction.emoji) == "⬅️" and page > 0:
                 page -= 1
             await msg.edit(embed=build_embed(page))
-            try:
+            with contextlib.suppress(discord.Forbidden, discord.NotFound):
                 await msg.remove_reaction(reaction, user)
-            except (discord.Forbidden, discord.NotFound):
-                pass
 
     @commands.hybrid_command(name="anicatinfo", aliases=["aci"])
     async def anicatinfo(self, ctx: commands.Context, *, card: str):
