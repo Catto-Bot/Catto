@@ -52,6 +52,12 @@ CREATE TABLE IF NOT EXISTS anicat_claim (
     card_name  TEXT NOT NULL,
     PRIMARY KEY (user_id, card_name)
 );
+
+CREATE TABLE IF NOT EXISTS message_count (
+    user_id  INTEGER PRIMARY KEY,
+    username TEXT,
+    total    INTEGER NOT NULL DEFAULT 0
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -295,3 +301,19 @@ async def list_anicat_claims(user_id: int) -> list[str]:
     ) as cur:
         rows = await cur.fetchall()
     return [r[0] for r in rows]
+
+
+async def bump_message_count(user_id: int, username: str) -> int:
+    """Increment message count for user. Returns new total."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT INTO message_count (user_id, username, total) VALUES (?, ?, 1) "
+            "ON CONFLICT(user_id) DO UPDATE SET total = total + 1, username = excluded.username",
+            (user_id, username),
+        )
+        await db.commit()
+        async with db.execute(
+            "SELECT total FROM message_count WHERE user_id = ?", (user_id,)
+        ) as cur:
+            row = await cur.fetchone()
+    return row[0]

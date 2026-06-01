@@ -1,8 +1,7 @@
-import json
 import os
 
+import aiohttp
 import discord
-from discord import SyncWebhook
 from dotenv import load_dotenv
 
 from core import db
@@ -63,88 +62,46 @@ async def on_member_remove(member):
         print(f"Error: {e}")
 
 
-async def on_message(member):
-    if member.author.bot:
+LEVEL_THRESHOLDS = [
+    (1, 1),
+    (50, 2),
+    (100, 3),
+    (500, 4),
+    (1000, 5),
+    (5000, 6),
+    (10000, 7),
+    (20000, 8),
+    (40000, 9),
+    (50000, 10),
+    (100000, 11),
+]
+
+
+async def on_message(message):
+    if message.author.bot or message.guild is None:
         return
-    content = member.content.lower()
+    content = message.content.lower()
 
     if content == "cattoprefix":
-        prefix = await db.get_prefix(member.guild.id)
-        await member.channel.send(f"The Prefix Set For This Server Is: '{prefix}'")
+        prefix = await db.get_prefix(message.guild.id)
+        await message.channel.send(f"The prefix set for this server is: '{prefix}'")
+    elif content in ("gn", "goodnight"):
+        await message.channel.send(f"GoodNight, {message.author.mention}!")
+    elif content in ("gm", "goodmorning"):
+        await message.channel.send(f"GoodMorning, {message.author.mention}!")
+    elif content in ("hi", "hello"):
+        await message.channel.send(f"Hello, {message.author.mention}!")
 
-    if content == "gn" or content == "goodnight":
-        mention = member.author.mention
-        await member.channel.send(f"GoodNight, {mention}!")
-
-    if content == "gm" or content == "goodmorning":
-        mention = member.author.mention
-        await member.channel.send(f"GoodMorning, {mention}!")
-
-    if content == "hi" or content == "hello":
-        mention = member.author.mention
-        await member.channel.send(f"Hello, {mention}!")
-
-    try:
-        with open("messages.json") as f:
-            messages = json.load(f)
-        with open("gamblerdata/catomonie.json") as fe:
-            json.load(fe)
-    except Exception:
-        messages = {}
-
-    member_id = str(member.author.id)
-    user_name = str(member.author)
-
-    def levelupmsg(level):
-        level_message = f"Congratulations, {user_name}! You've reached Level {level}! 🎉"
-        embed = discord.Embed(
-            title="Level Up", description=level_message, color=discord.Color.green()
-        )
-        return embed
-
-    if member_id in messages:
-        try:
-            messages[member_id]["total_messages"] += 1
-            if messages[member_id]["total_messages"] == 1:
-                await member.channel.send(embed=levelupmsg(1))
-
-            if messages[member_id]["total_messages"] == 50:
-                await member.channel.send(embed=levelupmsg(2))
-
-            if messages[member_id]["total_messages"] == 100:
-                await member.channel.send(embed=levelupmsg(3))
-
-            if messages[member_id]["total_messages"] == 500:
-                await member.channel.send(embed=levelupmsg(4))
-
-            if messages[member_id]["total_messages"] == 1000:
-                await member.channel.send(embed=levelupmsg(5))
-
-            if messages[member_id]["total_messages"] == 5000:
-                await member.channel.send(embed=levelupmsg(6))
-
-            if messages[member_id]["total_messages"] == 10000:
-                await member.channel.send(embed=levelupmsg(7))
-
-            if messages[member_id]["total_messages"] == 20000:
-                await member.channel.send(embed=levelupmsg(8))
-
-            if messages[member_id]["total_messages"] == 20000:
-                await member.channel.send(embed=levelupmsg(9))
-
-            if messages[member_id]["total_messages"] == 50000:
-                await member.channel.send(embed=levelupmsg(10))
-
-            if messages[member_id]["total_messages"] == 40000:
-                await member.channel.send(embed=levelupmsg(11))
-        except Exception as err:
-            print(err)
-
-    else:
-        messages[member_id] = {"total_messages": 1, "Username": user_name}
-
-    with open("messages.json", "w") as f:
-        json.dump(messages, f, indent=4)
+    total = await db.bump_message_count(message.author.id, str(message.author))
+    for threshold, level in LEVEL_THRESHOLDS:
+        if total == threshold:
+            embed = discord.Embed(
+                title="Level Up",
+                description=f"Congratulations, {message.author}! You've reached Level {level}! 🎉",
+                color=discord.Color.green(),
+            )
+            await message.channel.send(embed=embed)
+            break
 
 
 async def on_guild_join(guild):
@@ -177,27 +134,31 @@ async def on_guild_join(guild):
     else:
         print("The specified channel does not exist in the guild.")
 
-    if WEBHOOK_URL:
-        webhook = SyncWebhook.from_url(WEBHOOK_URL)
-        webhook.send(
-            f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
-            f"**Guild Name**: `{guild.name}` \n"
-            f"**Guild ID**: `{guild.id}` \n"
-            f"**Member Count**: `{guild.member_count}`"
-        )
+    await _send_webhook(
+        f"\n\n ------------------ **NEW BOT JOINED** ------------------ \n\n"
+        f"**Guild Name**: `{guild.name}` \n"
+        f"**Guild ID**: `{guild.id}` \n"
+        f"**Member Count**: `{guild.member_count}`"
+    )
 
 
 async def on_guild_remove(guild):
     print("bot left")
     await db.delete_prefix(guild.id)
-    if WEBHOOK_URL:
-        webhook = SyncWebhook.from_url(WEBHOOK_URL)
-        webhook.send(
-            f"\n\n ------------------ **BOT LEFT** ------------------ \n\n"
-            f"**Guild Name**: `{guild.name}` \n"
-            f"**Guild ID**: `{guild.id}` \n"
-            f"**Member Count**: `{guild.member_count}`"
-        )
+    await _send_webhook(
+        f"\n\n ------------------ **BOT LEFT** ------------------ \n\n"
+        f"**Guild Name**: `{guild.name}` \n"
+        f"**Guild ID**: `{guild.id}` \n"
+        f"**Member Count**: `{guild.member_count}`"
+    )
+
+
+async def _send_webhook(message: str) -> None:
+    if not WEBHOOK_URL:
+        return
+    async with aiohttp.ClientSession() as session:
+        webhook = discord.Webhook.from_url(WEBHOOK_URL, session=session)
+        await webhook.send(message)
 
 
 def setup(bot):
