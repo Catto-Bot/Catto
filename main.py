@@ -25,7 +25,6 @@ from modules import (
     hangman,
     help,
     image_generation,
-    meme,
     moderation,
     qutoes,
     roles,
@@ -39,7 +38,7 @@ configure_logging()
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip", "cogs.dice"]
+COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip", "cogs.dice", "cogs.meme"]
 
 
 async def get_prefix(bot, message):
@@ -211,7 +210,6 @@ async def test_slash(interaction: discord.Interaction):
 
 bot.add_command(vote)
 bot.add_command(uptime)
-bot.add_command(meme.meme)
 bot.add_command(qutoes.quote)
 bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
