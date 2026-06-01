@@ -10,7 +10,7 @@ class Hangman(commands.Cog):
         self.bot = bot
         self.games: dict[int, dict] = {}
 
-    @commands.hybrid_command(name="hangman")
+    @commands.hybrid_command(name="hangman", description="Start a new hangman game in this server")
     async def hangman(self, ctx: commands.Context):
         log_command(ctx)
         if ctx.guild.id in self.games:
@@ -37,7 +37,7 @@ class Hangman(commands.Cog):
         await loading.delete()
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="guess", aliases=["g"])
+    @commands.hybrid_command(name="guess", aliases=["g"], description="Guess a letter in the current hangman game")
     async def guess(self, ctx: commands.Context, letter: str):
         log_command(ctx)
         game = self.games.get(ctx.guild.id)

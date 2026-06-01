@@ -10,7 +10,7 @@ class Ship(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="ship")
+    @commands.hybrid_command(name="ship", description="Match-make yourself with another member and get a love %")
     async def ship(self, ctx: commands.Context, member: discord.Member):
         log_command(ctx)
         percent = random.randint(0, 100)

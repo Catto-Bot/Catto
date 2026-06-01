@@ -50,7 +50,7 @@ class Emoji(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="emojify", aliases=["e"])
+    @commands.hybrid_command(name="emojify", aliases=["e"], description="Convert your message into regional-indicator emoji letters")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def emojify(self, ctx: commands.Context, *, msg: str):
         log_command(ctx)

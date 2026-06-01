@@ -12,7 +12,7 @@ class Coinflip(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="flip")
+    @commands.hybrid_command(name="flip", description="Flip a coin (mention a user to flip against them)")
     async def flip(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         result1 = random.choice(["Heads", "Tails"])
@@ -29,7 +29,7 @@ class Coinflip(commands.Cog):
             )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="rps")
+    @commands.hybrid_command(name="rps", description="Play rock-paper-scissors against the bot")
     async def rps(self, ctx: commands.Context, choice: str | None = None):
         log_command(ctx)
         options = ["rock", "paper", "scissors"]
@@ -60,7 +60,7 @@ class Coinflip(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="announce", aliases=["announcement"])
+    @commands.hybrid_command(name="announce", aliases=["announcement"], description="Post an announcement (asks whether to embed)")
     @commands.has_permissions(administrator=True)
     async def announce(self, ctx: commands.Context, *, message: str):
         log_command(ctx)
@@ -76,7 +76,7 @@ class Coinflip(commands.Cog):
         elif view.value is False:
             await ctx.send(message)
 
-    @commands.hybrid_command(name="joke", aliases=["jokes"])
+    @commands.hybrid_command(name="joke", aliases=["jokes"], description="Get a random dad joke")
     async def joke(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -94,7 +94,7 @@ class Coinflip(commands.Cog):
         except Exception as err:
             await ctx.send(f"Could not fetch a joke: {err}")
 
-    @commands.hybrid_command(name="catfact", aliases=["cfact", "catfacts"])
+    @commands.hybrid_command(name="catfact", aliases=["cfact", "catfacts"], description="Get a random cat fact")
     async def catfact(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -106,7 +106,7 @@ class Coinflip(commands.Cog):
         except Exception as err:
             await ctx.send(f"Could not fetch a cat fact: {err}")
 
-    @commands.hybrid_command(name="bored")
+    @commands.hybrid_command(name="bored", description="Suggest an activity when you're bored")
     async def bored(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()

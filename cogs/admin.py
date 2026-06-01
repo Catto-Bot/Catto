@@ -32,7 +32,7 @@ class Admin(commands.Cog):
         self.bot = bot
         self.start_time = time.time()
 
-    @commands.hybrid_command(name="ping")
+    @commands.hybrid_command(name="ping", description="Show the bot's API and gateway latency")
     async def ping(self, ctx: commands.Context):
         log_command(ctx)
         start = time.time()
@@ -48,7 +48,7 @@ class Admin(commands.Cog):
         await msg.delete()
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="info")
+    @commands.hybrid_command(name="info", description="Show developer credits and bot info")
     async def info(self, ctx: commands.Context):
         log_command(ctx)
         devs = ["Ghost Riley#6077", "Nitrix#1271", "kadota#1408", "aryn#5511"]
@@ -69,7 +69,7 @@ class Admin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="invite")
+    @commands.hybrid_command(name="invite", description="Get the link to invite Catto to your server")
     async def invite(self, ctx: commands.Context):
         log_command(ctx)
         embed = discord.Embed(
@@ -79,7 +79,7 @@ class Admin(commands.Cog):
         embed.set_footer(text="Thank you for using Catto!")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="uptime")
+    @commands.hybrid_command(name="uptime", description="Show how long the bot has been running and host resource usage")
     async def uptime(self, ctx: commands.Context):
         log_command(ctx)
         elapsed = time.time() - self.start_time
@@ -96,7 +96,7 @@ class Admin(commands.Cog):
         )
         await ctx.send(f"```{out}```")
 
-    @commands.hybrid_command(name="vote")
+    @commands.hybrid_command(name="vote", description="Get the vote link on top.gg")
     async def vote(self, ctx: commands.Context):
         log_command(ctx)
         embed = discord.Embed(
@@ -106,7 +106,7 @@ class Admin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="servers")
+    @commands.hybrid_command(name="servers", description="Owner-only: dump the list of servers the bot is in")
     @is_owner()
     async def servers(self, ctx: commands.Context):
         log_command(ctx)
@@ -121,7 +121,7 @@ class Admin(commands.Cog):
             file=discord.File(__import__("io").BytesIO(out.encode()), filename="servers.txt"),
         )
 
-    @commands.hybrid_command(name="addai")
+    @commands.hybrid_command(name="addai", description="Primary owner only: grant a user access to the AI command")
     @is_primary_owner()
     async def addai(self, ctx: commands.Context, user_id: str):
         log_command(ctx)
@@ -131,7 +131,7 @@ class Admin(commands.Cog):
         await db.add_ai_allowed(int(user_id))
         await ctx.send("done")
 
-    @commands.hybrid_command(name="sync")
+    @commands.hybrid_command(name="sync", description="Owner-only: sync slash commands (guild | global | unglobal)")
     @is_owner()
     async def sync(self, ctx: commands.Context, scope: str = "guild"):
         """Sync slash commands.

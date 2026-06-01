@@ -25,7 +25,7 @@ class Dice(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="rolldice")
+    @commands.hybrid_command(name="rolldice", description="Roll a die (mention someone to roll against them)")
     async def rolldice(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         roll = random.randint(1, 6)
@@ -54,7 +54,7 @@ class Dice(commands.Cog):
             embed.set_thumbnail(url=img)
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="cat")
+    @commands.hybrid_command(name="cat", description="Send a random cat picture")
     async def cat(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()

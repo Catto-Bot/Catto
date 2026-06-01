@@ -8,7 +8,7 @@ class Roles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="setuprole")
+    @commands.hybrid_command(name="setuprole", description="Give a role to a member by name")
     @commands.has_permissions(manage_roles=True)
     async def setuprole(
         self, ctx: commands.Context, rolename: str, member: discord.Member | None = None
@@ -25,7 +25,7 @@ class Roles(commands.Cog):
         await member.add_roles(role)
         await ctx.send(f"Role {rolename} added for {member.mention}!")
 
-    @commands.hybrid_command(name="createrole")
+    @commands.hybrid_command(name="createrole", description="Create a new role on this server")
     @commands.has_permissions(administrator=True)
     async def createrole(self, ctx: commands.Context, rolename: str):
         log_command(ctx)
@@ -35,7 +35,7 @@ class Roles(commands.Cog):
         await ctx.guild.create_role(name=rolename)
         await ctx.send(f"Role {rolename} has been created!")
 
-    @commands.hybrid_command(name="deleterole")
+    @commands.hybrid_command(name="deleterole", description="Delete a role from this server")
     @commands.has_permissions(administrator=True)
     async def deleterole(self, ctx: commands.Context, rolename: str):
         log_command(ctx)
@@ -46,7 +46,7 @@ class Roles(commands.Cog):
         await role.delete()
         await ctx.send(f"Role {rolename} deleted!")
 
-    @commands.hybrid_command(name="removerole")
+    @commands.hybrid_command(name="removerole", description="Remove a role from a member by name")
     @commands.has_permissions(manage_roles=True)
     async def removerole(
         self, ctx: commands.Context, rolename: str, member: discord.Member | None = None

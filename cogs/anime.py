@@ -9,7 +9,7 @@ class Anime(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="animequote", aliases=["animeQuote"])
+    @commands.hybrid_command(name="animequote", aliases=["animeQuote"], description="Get a random anime quote")
     async def anime_quote(self, ctx: commands.Context):
         log_command(ctx)
         loading = await ctx.send("loading…")
@@ -29,7 +29,7 @@ class Anime(commands.Cog):
             await loading.delete()
             await ctx.send("TATAKAE! 🕊️ - Eren Yeager")
 
-    @commands.hybrid_command(name="something")
+    @commands.hybrid_command(name="something", description="Placeholder for a future feature")
     async def something(self, ctx: commands.Context):
         log_command(ctx)
         embed = discord.Embed(

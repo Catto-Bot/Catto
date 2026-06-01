@@ -62,7 +62,7 @@ class AniCat(commands.Cog):
         with DATA_PATH.open(encoding="utf8") as f:
             self.cards = json.load(f)
 
-    @commands.hybrid_command(name="anicat", aliases=["ac", "anic"])
+    @commands.hybrid_command(name="anicat", aliases=["ac", "anic"], description="Spawn a random anicat card — first to click the button claims it")
     @commands.cooldown(20, COOLDOWN, commands.BucketType.user)
     async def anicat(self, ctx: commands.Context):
         log_command(ctx)
@@ -74,7 +74,7 @@ class AniCat(commands.Cog):
         msg = await ctx.send(embed=embed, view=view)
         view.message = msg
 
-    @commands.hybrid_command(name="anicatstats", aliases=["as", "stats"])
+    @commands.hybrid_command(name="anicatstats", aliases=["as", "stats"], description="Show how many anicat cards a member has claimed")
     async def anicatstats(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         target = member or ctx.author
@@ -103,7 +103,7 @@ class AniCat(commands.Cog):
         view = Paginator(ctx.author.id, page_count, render)
         await ctx.send(embed=render(0), view=view)
 
-    @commands.hybrid_command(name="anicatinfo", aliases=["aci"])
+    @commands.hybrid_command(name="anicatinfo", aliases=["aci"], description="Look up an anicat card by name")
     async def anicatinfo(self, ctx: commands.Context, *, card: str):
         log_command(ctx)
         match = next((c for c in self.cards if card.lower() in c["Name"].lower()), None)

@@ -8,7 +8,7 @@ class Avatar(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="avatar", aliases=["av"])
+    @commands.hybrid_command(name="avatar", aliases=["av"], description="Show a member's avatar in full size")
     async def avatar(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         member = member or ctx.author

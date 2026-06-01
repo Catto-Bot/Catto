@@ -17,7 +17,7 @@ class Valostats(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="vstats")
+    @commands.hybrid_command(name="vstats", description="Show Valorant account stats — usage: username#tag")
     async def vstats(self, ctx: commands.Context, *, name: str):
         log_command(ctx)
         if "#" not in name:
@@ -48,7 +48,7 @@ class Valostats(commands.Cog):
         await loading.delete()
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="valofight", aliases=["vf"])
+    @commands.hybrid_command(name="valofight", aliases=["vf"], description="Turn-based Valorant duel against another member")
     async def valofight(self, ctx: commands.Context, member: discord.Member):
         log_command(ctx)
         hp = {ctx.author.id: 150, member.id: 150}

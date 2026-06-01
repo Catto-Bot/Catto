@@ -22,7 +22,7 @@ class AIImage(commands.Cog):
         self.bot = bot
         self.lock = asyncio.Lock()
 
-    @commands.hybrid_command(name="aiterms")
+    @commands.hybrid_command(name="aiterms", description="Read and accept the terms before using the AI image generator")
     async def aiterms(self, ctx: commands.Context):
         log_command(ctx)
         if await db.is_ai_allowed(ctx.author.id):
@@ -55,7 +55,7 @@ class AIImage(commands.Cog):
         else:
             await msg.edit(content="``Expired.``", embed=None)
 
-    @commands.hybrid_command(name="ai")
+    @commands.hybrid_command(name="ai", description="Generate an AI image from a text prompt")
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def ai(self, ctx: commands.Context, *, msg: str):
         log_command(ctx)

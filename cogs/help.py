@@ -43,7 +43,7 @@ class Help(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="help")
+    @commands.hybrid_command(name="help", description="List every available command, grouped by feature")
     async def help(self, ctx: commands.Context):
         log_command(ctx)
         prefix = await db.get_prefix(ctx.guild.id) if ctx.guild else db.DEFAULT_PREFIX

@@ -65,7 +65,7 @@ class Tickets(commands.Cog):
         self.bot = bot
         bot.add_view(OpenTicketButton())  # restore persistence on cog load
 
-    @commands.hybrid_command(name="ticketsetup")
+    @commands.hybrid_command(name="ticketsetup", description="Post a persistent ticket-open button in this channel")
     @commands.has_permissions(administrator=True)
     async def ticketsetup(self, ctx: commands.Context) -> None:
         log_command(ctx)
@@ -79,7 +79,7 @@ class Tickets(commands.Cog):
         embed.set_footer(text="Thank you for using Catickets!")
         await ctx.send(embed=embed, view=OpenTicketButton())
 
-    @commands.hybrid_command(name="deleteticket")
+    @commands.hybrid_command(name="deleteticket", description="Delete the current ticket channel")
     @commands.has_permissions(administrator=True)
     async def deleteticket(self, ctx: commands.Context) -> None:
         log_command(ctx)

@@ -14,7 +14,7 @@ class FakeInfo(commands.Cog):
         self.fake = Faker()
         self.fake.add_provider(internet)
 
-    @commands.hybrid_command(name="fakeinfo")
+    @commands.hybrid_command(name="fakeinfo", description="Generate a fake identity (name, address, SSN, etc.)")
     async def fakeinfo(self, ctx: commands.Context):
         log_command(ctx)
         embed = discord.Embed(title="Generating Info, Please Wait! ⏲", description="")

@@ -46,7 +46,7 @@ class Polls(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="poll")
+    @commands.hybrid_command(name="poll", description="Start a poll — usage: question | option1 | option2 | ...")
     async def poll(self, ctx: commands.Context, *, spec: str):
         """Usage: /poll question | option1 | option2 | option3 ..."""
         log_command(ctx)

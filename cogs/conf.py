@@ -43,7 +43,7 @@ class Confession(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="confessionsetup")
+    @commands.hybrid_command(name="confessionsetup", description="Set the channel where anonymous confessions are posted")
     @commands.has_permissions(administrator=True)
     async def confessionsetup(self, ctx: commands.Context, channel: discord.TextChannel):
         await db.set_confession_channel(ctx.guild.id, channel.id)

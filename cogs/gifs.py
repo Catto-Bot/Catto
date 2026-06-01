@@ -36,7 +36,7 @@ class Gifs(commands.Cog):
         embed.set_footer(text="Thank You For Using Catto! :D")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="hug")
+    @commands.hybrid_command(name="hug", description="Hug another member (or yourself) with a cute gif")
     async def hug(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -47,7 +47,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/XEEmDlNSmEcAAAAM/spongebob-love.gif",
         )
 
-    @commands.hybrid_command(name="slap")
+    @commands.hybrid_command(name="slap", description="Slap another member with an anime gif")
     async def slap(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -58,7 +58,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/rXAnv88yrFwAAAAM/anime-slapping-face.gif",
         )
 
-    @commands.hybrid_command(name="kiss")
+    @commands.hybrid_command(name="kiss", description="Kiss another member with an anime gif")
     async def kiss(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -68,7 +68,7 @@ class Gifs(commands.Cog):
             "You can't kiss yourself! ( ಥ۝ಥ )",
         )
 
-    @commands.hybrid_command(name="lick")
+    @commands.hybrid_command(name="lick", description="Lick another member (gif)")
     async def lick(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -79,7 +79,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/6StCIWYFkOcAAAAC/adalfarus-adal.gif",
         )
 
-    @commands.hybrid_command(name="bite")
+    @commands.hybrid_command(name="bite", description="Bite another member (gif)")
     async def bite(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -90,7 +90,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/D7XNyUe6Q7UAAAAS/hit-self-kitten.gif",
         )
 
-    @commands.hybrid_command(name="bully")
+    @commands.hybrid_command(name="bully", description="Bully another member (gif)")
     async def bully(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -101,7 +101,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/qlhSFpPh0Q8AAAAd/wassup-whats-up.gif",
         )
 
-    @commands.hybrid_command(name="cuddle")
+    @commands.hybrid_command(name="cuddle", description="Cuddle another member (gif)")
     async def cuddle(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -112,7 +112,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/1vBnYuMNhPMAAAAS/bts-hug.gif",
         )
 
-    @commands.hybrid_command(name="cry")
+    @commands.hybrid_command(name="cry", description="Cry (gif) — optionally because of someone")
     async def cry(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -123,7 +123,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/pRTPXrxI2UAAAAS/crying-meme-black-guy-cries.gif",
         )
 
-    @commands.hybrid_command(name="pat")
+    @commands.hybrid_command(name="pat", description="Pat another member on the head (gif)")
     async def pat(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -134,7 +134,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/WOKtiwXYGogAAAAC/you-did-good-self-love.gif",
         )
 
-    @commands.hybrid_command(name="bonk")
+    @commands.hybrid_command(name="bonk", description="Bonk another member (gif)")
     async def bonk(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -145,7 +145,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/qnL-0us4GjwAAAAS/hammer-bonk.gif",
         )
 
-    @commands.hybrid_command(name="smug")
+    @commands.hybrid_command(name="smug", description="Smug face (gif) at another member")
     async def smug(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -155,7 +155,7 @@ class Gifs(commands.Cog):
             f"{ctx.author.display_name} is smugging! (￣‿￣)",
         )
 
-    @commands.hybrid_command(name="blush")
+    @commands.hybrid_command(name="blush", description="Blush (gif) — optionally because of someone")
     async def blush(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -166,7 +166,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/C0h6HyoKLkEAAAAC/pepe-blush.gif",
         )
 
-    @commands.hybrid_command(name="handhold")
+    @commands.hybrid_command(name="handhold", description="Hold hands with another member (gif)")
     async def handhold(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -177,7 +177,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/Nfzei0rwvSsAAAAS/hands.gif",
         )
 
-    @commands.hybrid_command(name="nom")
+    @commands.hybrid_command(name="nom", description="Nom another member's head (gif)")
     async def nom(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -188,7 +188,7 @@ class Gifs(commands.Cog):
             "https://cdn.discordapp.com/emojis/749763703158734859.gif?size=128",
         )
 
-    @commands.hybrid_command(name="kill")
+    @commands.hybrid_command(name="kill", description="Kill another member (gif)")
     async def kill(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -198,7 +198,7 @@ class Gifs(commands.Cog):
             f"{ctx.author.display_name} killed themselves! (⌐■_■)",
         )
 
-    @commands.hybrid_command(name="wink")
+    @commands.hybrid_command(name="wink", description="Wink at another member (gif)")
     async def wink(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -208,7 +208,7 @@ class Gifs(commands.Cog):
             f"{ctx.author.display_name} winked at themselves! (◕‿↼)",
         )
 
-    @commands.hybrid_command(name="poke")
+    @commands.hybrid_command(name="poke", description="Poke another member (gif)")
     async def poke(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,

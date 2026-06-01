@@ -9,7 +9,7 @@ class Profile(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="profile")
+    @commands.hybrid_command(name="profile", description="Combined wallet + anicat + message-count stats")
     async def profile(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         target = member or ctx.author
@@ -32,7 +32,7 @@ class Profile(commands.Cog):
         embed.add_field(name="💬 Messages", value=f"{msg_total:,}", inline=True)
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="topchat")
+    @commands.hybrid_command(name="topchat", description="Top 10 most-active chatters in the bot")
     async def topchat(self, ctx: commands.Context):
         log_command(ctx)
         top = await db.top_messages(10)

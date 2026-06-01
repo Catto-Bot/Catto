@@ -13,7 +13,7 @@ class Quotes(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="quote")
+    @commands.hybrid_command(name="quote", description="Get a random inspirational quote")
     async def quote(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -32,7 +32,7 @@ class Quotes(commands.Cog):
         except Exception:
             await ctx.send("Error. Try Again!")
 
-    @commands.hybrid_command(name="devjoke")
+    @commands.hybrid_command(name="devjoke", description="Get a random programming joke")
     async def devjoke(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -52,7 +52,7 @@ class Quotes(commands.Cog):
         except Exception as err:
             await ctx.send(f"Couldn't fetch a dev joke: {err}")
 
-    @commands.hybrid_command(name="dadjoke")
+    @commands.hybrid_command(name="dadjoke", description="Get a dad joke")
     async def dadjoke(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -70,7 +70,7 @@ class Quotes(commands.Cog):
         except Exception:
             await ctx.send("My dad left me like your dad left to buy milk 😁")
 
-    @commands.hybrid_command(name="trivia")
+    @commands.hybrid_command(name="trivia", description="Answer a True/False trivia question")
     async def trivia(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -126,7 +126,7 @@ class TriviaView(discord.ui.View):
         with contextlib.suppress(discord.NotFound):
             await self.message.edit(view=self)
 
-    @commands.hybrid_command(name="insult")
+    @commands.hybrid_command(name="insult", description="Get a random insult (for entertainment only)")
     async def insult(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -140,12 +140,12 @@ class TriviaView(discord.ui.View):
         except Exception as err:
             await ctx.send(f"Couldn't fetch an insult: {err}")
 
-    @commands.hybrid_command(name="darkmeme")
+    @commands.hybrid_command(name="darkmeme", description="Get a dark two-part joke")
     async def darkmeme(self, ctx: commands.Context):
         log_command(ctx)
         await self._twopart_joke(ctx, "Dark", "💀")
 
-    @commands.hybrid_command(name="spooky")
+    @commands.hybrid_command(name="spooky", description="Get a spooky two-part joke")
     async def spooky(self, ctx: commands.Context):
         log_command(ctx)
         await self._twopart_joke(ctx, "Spooky", "👍", "👎")
@@ -169,7 +169,7 @@ class TriviaView(discord.ui.View):
         except Exception as err:
             await ctx.send(f"Couldn't fetch the joke: {err}")
 
-    @commands.hybrid_command(name="advice")
+    @commands.hybrid_command(name="advice", description="Get a random piece of advice")
     async def advice(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()

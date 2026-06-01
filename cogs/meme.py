@@ -9,7 +9,7 @@ class Meme(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="meme")
+    @commands.hybrid_command(name="meme", description="Get a random meme from reddit")
     async def meme(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()

@@ -9,7 +9,7 @@ class Chat(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="learn", aliases=["l"])
+    @commands.hybrid_command(name="learn", aliases=["l"], description="Teach the bot: <input> | <response>")
     async def learn(self, ctx: commands.Context, *, input_str: str):
         log_command(ctx)
         try:
@@ -30,7 +30,7 @@ class Chat(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="c", aliases=["s", "talk", "chat", "t"])
+    @commands.hybrid_command(name="c", aliases=["s", "talk", "chat", "t"], description="Look up a learned response")
     async def c(self, ctx: commands.Context, *, input_text: str):
         log_command(ctx)
         response = await db.get_chat_response(input_text)

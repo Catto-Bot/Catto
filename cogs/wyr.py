@@ -53,7 +53,7 @@ class WouldYouRather(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="wyr")
+    @commands.hybrid_command(name="wyr", description="Would you rather… vote between two options")
     async def wyr(self, ctx: commands.Context):
         log_command(ctx)
         session = await get_session()
@@ -73,12 +73,12 @@ class WouldYouRather(commands.Cog):
         view = WyrView(option1, option2)
         view.message = await ctx.send(embed=view._embed(), view=view)
 
-    @commands.hybrid_command(name="truth")
+    @commands.hybrid_command(name="truth", description="Get a random truth question")
     async def truth(self, ctx: commands.Context):
         log_command(ctx)
         await self._fetch(ctx, "https://api.truthordarebot.xyz/api/truth")
 
-    @commands.hybrid_command(name="dare")
+    @commands.hybrid_command(name="dare", description="Get a random dare")
     async def dare(self, ctx: commands.Context):
         log_command(ctx)
         await self._fetch(ctx, "https://api.truthordarebot.xyz/api/dare")
