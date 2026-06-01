@@ -15,7 +15,6 @@ from core import db
 from core.logging import configure as configure_logging
 from events import events
 from modules import (
-    anime,
     avatar,
     chat,
     emoji,
@@ -38,7 +37,15 @@ configure_logging()
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip", "cogs.dice", "cogs.meme"]
+COGS = [
+    "cogs.prefix",
+    "cogs.greet",
+    "cogs.conf",
+    "cogs.coinflip",
+    "cogs.dice",
+    "cogs.meme",
+    "cogs.anime",
+]
 
 
 async def get_prefix(bot, message):
@@ -263,9 +270,6 @@ bot.add_command(valostats.valofight)
 
 bot.add_command(avatar.avatar)
 
-
-bot.add_command(anime.animeQuote)
-bot.add_command(anime.something)
 
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kick)
