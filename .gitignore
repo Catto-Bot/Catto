@@ -1,5 +1,6 @@
 .env
 .venv/
+catto.db
 modules/__pycache__/
 gamblerdata
 __pycache__/

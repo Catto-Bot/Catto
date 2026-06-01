@@ -10,6 +10,8 @@ dependencies = [
     "psutil>=5.9",
     "Faker>=18",
     "Pillow>=10",
+    "aiosqlite>=0.20",
+    "aiohttp>=3.9",
 ]
 
 [dependency-groups]
