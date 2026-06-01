@@ -1,7 +1,5 @@
-import contextlib
 import json
 import random
-import time
 from pathlib import Path
 
 import discord
@@ -9,10 +7,54 @@ from discord.ext import commands
 
 from core import db
 from core.logging import log_command
+from core.views import Paginator
 
 DATA_PATH = Path("data/data.json")
 COOLDOWN = 60 * 60
 PAGE_SIZE = 10
+CLAIM_EMOJI = "<:anicat:1105722682160447550>"
+
+
+class ClaimView(discord.ui.View):
+    def __init__(self, card: dict, message: discord.Message | None = None):
+        super().__init__(timeout=20.0)
+        self.card = card
+        self.claimed: discord.User | None = None
+        self.message = message
+
+    @discord.ui.button(label="Claim", emoji=CLAIM_EMOJI, style=discord.ButtonStyle.primary)
+    async def claim(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        if self.claimed is not None:
+            await interaction.response.send_message("Already claimed.", ephemeral=True)
+            return
+        self.claimed = interaction.user
+        await db.record_anicat_claim(
+            interaction.user.id,
+            str(interaction.user),
+            self.card["Name"],
+            self.card["Points"],
+        )
+        embed = discord.Embed(title=f"Claimed by {interaction.user}")
+        embed.set_image(url=self.card["Source"])
+        embed.set_author(name=self.card["Name"])
+        embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
+        for child in self.children:
+            child.disabled = True
+        await interaction.response.edit_message(embed=embed, view=self)
+        self.stop()
+
+    async def on_timeout(self) -> None:
+        if self.claimed is not None or self.message is None:
+            return
+        embed = discord.Embed(title="Expired!", description="Nobody claimed in time.")
+        embed.set_image(url=self.card["Source"])
+        embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
+        for child in self.children:
+            child.disabled = True
+        try:
+            await self.message.edit(embed=embed, view=self)
+        except discord.NotFound:
+            pass
 
 
 class AniCat(commands.Cog):
@@ -26,38 +68,12 @@ class AniCat(commands.Cog):
     async def anicat(self, ctx: commands.Context):
         log_command(ctx)
         card = random.choice(self.cards)
-        embed = discord.Embed(title=card["Name"], description="")
+        embed = discord.Embed(title=card["Name"])
         embed.set_image(url=card["Source"])
-        embed.set_footer(text=f"Points: {card['Points']}\nReact to claim")
-        msg = await ctx.send(embed=embed)
-        await msg.add_reaction("<:anicat:1105722682160447550>")
-
-        def check(reaction, user):
-            return (
-                reaction.message.id == msg.id
-                and user != ctx.bot.user
-                and str(reaction.emoji) == "<:anicat:1105722682160447550>"
-            )
-
-        try:
-            _, user = await ctx.bot.wait_for("reaction_add", timeout=20.0, check=check)
-        except TimeoutError:
-            expired = discord.Embed(
-                title="Expired!", description="Nobody claimed in time."
-            )
-            expired.set_image(url=card["Source"])
-            expired.set_footer(text="Thank you for using Catto Bot (AniCat)")
-            await msg.clear_reactions()
-            await msg.edit(embed=expired)
-            return
-
-        await db.record_anicat_claim(user.id, str(user), card["Name"], card["Points"])
-        claimed = discord.Embed(title=f"Claimed by {user}", description="")
-        claimed.set_image(url=card["Source"])
-        claimed.set_author(name=card["Name"])
-        claimed.set_footer(text="Thank you for using Catto Bot (AniCat)")
-        await msg.clear_reactions()
-        await msg.edit(embed=claimed)
+        embed.set_footer(text=f"Points: {card['Points']}\nClick to claim")
+        view = ClaimView(card)
+        msg = await ctx.send(embed=embed, view=view)
+        view.message = msg
 
     @commands.hybrid_command(name="anicatstats", aliases=["as", "stats"])
     async def anicatstats(self, ctx: commands.Context, member: discord.Member | None = None):
@@ -68,11 +84,10 @@ class AniCat(commands.Cog):
             await ctx.send("No record found.")
             return
         names = await db.list_anicat_claims(target.id)
+        page_count = max(1, (len(names) + PAGE_SIZE - 1) // PAGE_SIZE)
 
-        page = 0
-
-        def build_embed(p: int):
-            start, end = p * PAGE_SIZE, (p + 1) * PAGE_SIZE
+        def render(page: int) -> discord.Embed:
+            start, end = page * PAGE_SIZE, (page + 1) * PAGE_SIZE
             embed = discord.Embed(
                 title=f"AniCat Info for {stats['username']}", color=discord.Color.magenta()
             )
@@ -83,42 +98,16 @@ class AniCat(commands.Cog):
                 value="\n".join(names[start:end]) or "(none)",
                 inline=False,
             )
-            embed.set_footer(text=f"Page: {p + 1}/{max(1, (len(names) + PAGE_SIZE - 1) // PAGE_SIZE)}")
+            embed.set_footer(text=f"Page: {page + 1}/{page_count}")
             return embed
 
-        msg = await ctx.send(embed=build_embed(page))
-        await msg.add_reaction("⬅️")
-        await msg.add_reaction("➡️")
-
-        def check(reaction, user):
-            return (
-                user == ctx.author
-                and reaction.message.id == msg.id
-                and str(reaction.emoji) in ["⬅️", "➡️"]
-            )
-
-        end_time = time.time() + 60
-        while time.time() < end_time:
-            try:
-                reaction, user = await ctx.bot.wait_for(
-                    "reaction_add", timeout=end_time - time.time(), check=check
-                )
-            except TimeoutError:
-                break
-            if str(reaction.emoji) == "➡️" and (page + 1) * PAGE_SIZE < len(names):
-                page += 1
-            elif str(reaction.emoji) == "⬅️" and page > 0:
-                page -= 1
-            await msg.edit(embed=build_embed(page))
-            with contextlib.suppress(discord.Forbidden, discord.NotFound):
-                await msg.remove_reaction(reaction, user)
+        view = Paginator(ctx.author.id, page_count, render)
+        await ctx.send(embed=render(0), view=view)
 
     @commands.hybrid_command(name="anicatinfo", aliases=["aci"])
     async def anicatinfo(self, ctx: commands.Context, *, card: str):
         log_command(ctx)
-        match = next(
-            (c for c in self.cards if card.lower() in c["Name"].lower()), None
-        )
+        match = next((c for c in self.cards if card.lower() in c["Name"].lower()), None)
         if not match:
             await ctx.send("Not found")
             return
@@ -126,16 +115,6 @@ class AniCat(commands.Cog):
         embed.set_image(url=match["Source"])
         embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
         await ctx.send(embed=embed)
-
-    @anicat.error
-    async def anicat_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            minutes = round(error.retry_after / 60)
-            embed = discord.Embed(
-                title="This command is on cooldown!",
-                description=f"Try again in {minutes} minute(s)",
-            )
-            await ctx.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
