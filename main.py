@@ -15,7 +15,6 @@ from core import db
 from core.logging import configure as configure_logging
 from events import events
 from modules import (
-    chat,
     gambler,
     image_generation,
     ticket,
@@ -45,6 +44,7 @@ COGS = [
     "cogs.moderation",
     "cogs.hangman",
     "cogs.gifs",
+    "cogs.chat",
 ]
 
 
@@ -226,10 +226,6 @@ bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
 bot.add_command(gambler.leaderboard)
 bot.add_command(gambler.give)
-
-
-bot.add_command(chat.learn)
-bot.add_command(chat.c)
 
 
 bot.add_command(ticket.ticketsetup)

@@ -22,6 +22,11 @@ CREATE TABLE IF NOT EXISTS confession_channel (
     guild_id   INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS chat_response (
+    input_text    TEXT PRIMARY KEY,
+    response_text TEXT NOT NULL
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -123,3 +128,21 @@ async def set_confession_channel(guild_id: int, channel_id: int) -> None:
 
 async def delete_confession_channel(guild_id: int) -> None:
     await _delete_channel("confession_channel", guild_id)
+
+
+async def set_chat_response(input_text: str, response_text: str) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT INTO chat_response (input_text, response_text) VALUES (?, ?) "
+            "ON CONFLICT(input_text) DO UPDATE SET response_text = excluded.response_text",
+            (input_text.lower(), response_text.lower()),
+        )
+        await db.commit()
+
+
+async def get_chat_response(input_text: str) -> str | None:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT response_text FROM chat_response WHERE input_text = ?", (input_text.lower(),)
+    ) as cur:
+        row = await cur.fetchone()
+    return row[0] if row else None
