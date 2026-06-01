@@ -131,7 +131,7 @@ class Admin(commands.Cog):
         await db.add_ai_allowed(int(user_id))
         await ctx.send("done")
 
-    @commands.command(name="sync")
+    @commands.hybrid_command(name="sync")
     @is_owner()
     async def sync(self, ctx: commands.Context, scope: str = "guild"):
         """Sync slash commands. scope=guild (default, instant) or global (slow)."""
