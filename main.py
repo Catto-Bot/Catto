@@ -20,7 +20,6 @@ from modules import (
     anime,
     avatar,
     chat,
-    coinflip,
     dice,
     emoji,
     fakeinfo,
@@ -42,7 +41,7 @@ from modules import (
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix", "cogs.greet", "cogs.conf"]
+COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip"]
 
 
 async def get_prefix(bot, message):
@@ -98,6 +97,12 @@ class CattoBot(commands.Bot):
         await migrate_confession_json()
         for ext in COGS:
             await self.load_extension(ext)
+
+    async def close(self) -> None:
+        from core.http import close_session
+
+        await close_session()
+        await super().close()
 
 
 bot = CattoBot(command_prefix=get_prefix, intents=intents, help_command=None)
@@ -195,12 +200,6 @@ async def test_slash(interaction: discord.Interaction):
 
 bot.add_command(vote)
 bot.add_command(uptime)
-bot.add_command(coinflip.coin_flip)
-bot.add_command(coinflip.rps_game)
-bot.add_command(coinflip.announce)
-bot.add_command(coinflip.joke)
-bot.add_command(coinflip.catfact)
-bot.add_command(coinflip.bored)
 bot.add_command(meme.meme)
 bot.add_command(dice.rolldice)
 bot.add_command(dice.cat)
