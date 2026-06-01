@@ -10,6 +10,7 @@ from PIL import Image
 from core import db
 from core.http import get_session
 from core.logging import log_command
+from core.views import ConfirmView
 
 load_dotenv()
 HUGGING_FACE_KEY = os.getenv("HUGGING_FACE_KEY")
@@ -42,31 +43,17 @@ class AIImage(commands.Cog):
             value="By using the ai command, you acknowledge and agree that you are solely "
             "responsible for the images generated and their usage.",
         )
-        embed.set_footer(text="React ✅ to agree, ❌ to abort.")
-        verify = await ctx.send(embed=embed)
-        await verify.add_reaction("✅")
-        await verify.add_reaction("❌")
-
-        def check(reaction, user):
-            return (
-                user == ctx.author
-                and reaction.message.id == verify.id
-                and str(reaction.emoji) in ["✅", "❌"]
-            )
-
-        try:
-            reaction, _ = await ctx.bot.wait_for("reaction_add", timeout=20.0, check=check)
-        except TimeoutError:
-            await verify.edit(embed=discord.Embed(title="Expired"))
-            await verify.clear_reactions()
-            return
-
-        if str(reaction.emoji) == "✅":
+        embed.set_footer(text="Click Yes to agree.")
+        view = ConfirmView(ctx.author.id, timeout=30.0)
+        msg = await ctx.send(embed=embed, view=view)
+        await view.wait()
+        if view.value is True:
             await db.add_ai_allowed(ctx.author.id)
-            await verify.edit(content=f"``Access granted to {ctx.author.name}.``", embed=None)
+            await msg.edit(content=f"``Access granted to {ctx.author.name}.``", embed=None)
+        elif view.value is False:
+            await msg.edit(content="``Aborted.``", embed=None)
         else:
-            await verify.edit(content="``Aborted.``", embed=None)
-        await verify.clear_reactions()
+            await msg.edit(content="``Expired.``", embed=None)
 
     @commands.hybrid_command(name="ai")
     @commands.cooldown(1, 30, commands.BucketType.user)

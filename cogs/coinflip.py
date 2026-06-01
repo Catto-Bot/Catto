@@ -1,4 +1,3 @@
-import asyncio
 import random
 
 import discord
@@ -6,6 +5,7 @@ from discord.ext import commands
 
 from core.http import get_session
 from core.logging import log_command
+from core.views import ConfirmView
 
 
 class Coinflip(commands.Cog):
@@ -60,38 +60,21 @@ class Coinflip(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.command(name="announce", aliases=["announcement"])
+    @commands.hybrid_command(name="announce", aliases=["announcement"])
     @commands.has_permissions(administrator=True)
     async def announce(self, ctx: commands.Context, *, message: str):
         log_command(ctx)
-        await ctx.message.delete()
-        embed = discord.Embed(title="Would you like to embed this announcement?")
-        announce_msg = await ctx.send(embed=embed)
-        await announce_msg.add_reaction("✅")
-        await announce_msg.add_reaction("❌")
-
-        def check(reaction, user):
-            return (
-                user == ctx.author
-                and reaction.message.id == announce_msg.id
-                and str(reaction.emoji) in ["✅", "❌"]
+        view = ConfirmView(ctx.author.id)
+        prompt = await ctx.send("Embed this announcement?", view=view)
+        await view.wait()
+        await prompt.delete()
+        if view.value is True:
+            embed = discord.Embed(
+                title="Announcement 🔊", description=message, color=0x333333
             )
-
-        try:
-            reaction, _ = await ctx.bot.wait_for("reaction_add", timeout=10.0, check=check)
-            await announce_msg.delete()
-            if str(reaction.emoji) == "✅":
-                embed = discord.Embed(
-                    title="Announcement 🔊", description=f"\n{message}", color=0x333333
-                )
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(message)
-        except TimeoutError:
-            await announce_msg.delete()
-            timeout = await ctx.send("You did not respond in time")
-            await asyncio.sleep(5)
-            await timeout.delete()
+            await ctx.send(embed=embed)
+        elif view.value is False:
+            await ctx.send(message)
 
     @commands.hybrid_command(name="joke", aliases=["jokes"])
     async def joke(self, ctx: commands.Context):
