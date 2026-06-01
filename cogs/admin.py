@@ -135,18 +135,20 @@ class Admin(commands.Cog):
     @is_owner()
     async def sync(self, ctx: commands.Context, scope: str = "guild"):
         """Sync slash commands.
-        scope=guild  → copy tree to current guild (instant)
-        scope=global → register globally (~1h propagation)
-        scope=clear  → wipe both globals and this guild's commands
+        scope=guild   → copy tree to current guild (instant)
+        scope=global  → register globally (~1h propagation)
+        scope=unglobal → tell Discord the global list is empty (clears duplicates)
         """
         log_command(ctx)
-        if scope == "clear":
+        if scope == "unglobal":
+            # Snapshot global tree state, swap it out for "nothing", push to Discord, restore.
+            saved = ctx.bot.tree.get_commands(guild=None)
             ctx.bot.tree.clear_commands(guild=None)
-            ctx.bot.tree.clear_commands(guild=ctx.guild)
-            await ctx.bot.tree.sync(guild=ctx.guild)
             await ctx.bot.tree.sync()
+            for cmd in saved:
+                ctx.bot.tree.add_command(cmd)
             await ctx.send(
-                "Cleared all slash commands (global + this guild). Run `/sync` to re-register."
+                "Pushed empty global command list to Discord. Run `!sync` (or `/sync`) to re-register in this guild."
             )
             return
         if scope == "global":
