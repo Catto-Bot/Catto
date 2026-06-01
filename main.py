@@ -30,7 +30,6 @@ from modules import (
     ship,
     ticket,
     valostats,
-    wyr,
 )
 
 configure_logging()
@@ -45,6 +44,7 @@ COGS = [
     "cogs.dice",
     "cogs.meme",
     "cogs.anime",
+    "cogs.wyr",
 ]
 
 
@@ -280,11 +280,6 @@ bot.add_command(roles.setuprole)
 bot.add_command(roles.createrole)
 bot.add_command(roles.removerole)
 bot.add_command(roles.deleterole)
-
-bot.add_command(wyr.wyr)
-bot.add_command(wyr.truth)
-bot.add_command(wyr.dare)
-
 
 bot.add_command(admin.ping)
 bot.add_command(admin.servers)
