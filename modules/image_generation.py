@@ -12,6 +12,7 @@ load_dotenv()
 
 HUGGING_FACE_KEY= os.getenv('HUGGING_FACE_KEY')
 HUGGING_FACE_PRIVATE_KEY= os.getenv('HUGGING_FACE_PRIVATE_KEY')
+PRIVAI_ALLOWED_IDS = {int(uid) for uid in os.getenv('PRIVAI_ALLOWED_IDS', '').split(',') if uid.strip()}
 
 def save(ctx, msg):
     with open("logs.txt", "a") as file:
@@ -157,7 +158,7 @@ ai.locked = False
 
 lock = asyncio.Lock()
 @commands.command(name="privai")
-@commands.check(lambda ctx: ctx.author.id == 780639741866409984 or ctx.author.id == 839691122481299506 or ctx.author.id == 534977801116319745 or ctx.author.id == 540405934367703050 or ctx.author.id == 582506141959979008 or ctx.author.id == 374959702242754560 or ctx.author.id == 851012067552788511 or ctx.author.id == 588025801455304707)
+@commands.check(lambda ctx: ctx.author.id in PRIVAI_ALLOWED_IDS)
 @commands.cooldown(1, 15, commands.BucketType.user)
 async def privai(ctx, *, msg):
     # Acquire the lock
