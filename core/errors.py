@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import traceback
 
@@ -30,10 +31,8 @@ def attach(bot: commands.Bot) -> None:
         original = getattr(error, "original", error)
         msg = _user_facing(error)
         if msg:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await ctx.send(embed=discord.Embed(title="Error", description=msg))
-            except discord.HTTPException:
-                pass
         if not isinstance(
             error,
             (
