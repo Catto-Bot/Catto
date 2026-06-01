@@ -18,7 +18,6 @@ from modules import (
     chat,
     gambler,
     gifs,
-    hangman,
     image_generation,
     ticket,
     valostats,
@@ -45,6 +44,7 @@ COGS = [
     "cogs.quotes",
     "cogs.help",
     "cogs.moderation",
+    "cogs.hangman",
 ]
 
 
@@ -273,8 +273,6 @@ bot.add_command(anicat.anicatinfo)
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
 
-bot.add_command(hangman.hangman)
-bot.add_command(hangman.guess)
 
 
 bot.run(DISCORD_KEY)
