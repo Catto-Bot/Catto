@@ -1,3 +1,4 @@
+import contextlib
 import json
 import random
 from pathlib import Path
@@ -51,10 +52,8 @@ class ClaimView(discord.ui.View):
         embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
         for child in self.children:
             child.disabled = True
-        try:
+        with contextlib.suppress(discord.NotFound):
             await self.message.edit(embed=embed, view=self)
-        except discord.NotFound:
-            pass
 
 
 class AniCat(commands.Cog):
