@@ -76,6 +76,9 @@ LEVEL_THRESHOLDS = [
     (100000, 11),
 ]
 
+LEVEL_COOLDOWN_SECS = 15
+_last_counted: dict[int, float] = {}
+
 
 async def on_message(message):
     if message.author.bot or message.guild is None:
@@ -91,6 +94,15 @@ async def on_message(message):
         await message.channel.send(f"GoodMorning, {message.author.mention}!")
     elif content in ("hi", "hello"):
         await message.channel.send(f"Hello, {message.author.mention}!")
+
+    # Anti-spam cooldown for leveling
+    import time as _time
+
+    now = _time.time()
+    last = _last_counted.get(message.author.id, 0.0)
+    if now - last < LEVEL_COOLDOWN_SECS:
+        return
+    _last_counted[message.author.id] = now
 
     total = await db.bump_message_count(message.author.id, str(message.author))
     for threshold, level in LEVEL_THRESHOLDS:

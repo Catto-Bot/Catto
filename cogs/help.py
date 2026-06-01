@@ -1,10 +1,37 @@
-import datetime
-
 import discord
 from discord.ext import commands
 
 from core import db
 from core.logging import log_command
+
+# Friendly section emojis per cog name
+COG_EMOJI: dict[str, str] = {
+    "Coinflip": "🎲",
+    "Dice": "🎲",
+    "Meme": "🎭",
+    "Anime": "🐱",
+    "WouldYouRather": "❓",
+    "Emoji": "✨",
+    "Ship": "❤️",
+    "Avatar": "🖼️",
+    "FakeInfo": "🕵️",
+    "Roles": "🔒",
+    "Quotes": "📜",
+    "Help": "📖",
+    "Moderation": "🔨",
+    "Hangman": "🎮",
+    "Gifs": "🎥",
+    "Chat": "💬",
+    "AIImage": "🤖",
+    "Gambler": "💰",
+    "Tickets": "🎫",
+    "Admin": "👨‍💻",
+    "AniCat": "😼",
+    "Valostats": "🎯",
+    "Prefix": "⚙️",
+    "Greet": "👋",
+    "Confession": "🤫",
+}
 
 
 class Help(commands.Cog):
@@ -15,54 +42,23 @@ class Help(commands.Cog):
     async def help(self, ctx: commands.Context):
         log_command(ctx)
         prefix = await db.get_prefix(ctx.guild.id) if ctx.guild else db.DEFAULT_PREFIX
+        groups: dict[str, list[str]] = {}
+        for cmd in self.bot.commands:
+            if cmd.hidden or cmd.cog_name in (None, "Help"):
+                continue
+            groups.setdefault(cmd.cog_name, []).append(cmd.name)
         embed = discord.Embed(
             title="Catto Commands",
-            description="Here are the available commands:",
+            description=f"Prefix for this server: `{prefix}` — slash variants also work.",
             color=discord.Color.blue(),
         )
-        embed.add_field(name="👨‍💻 Main", value="info, ai, uptime", inline=False)
-        embed.add_field(name="😼 AniCat", value="anicat, anicatstats, anicatinfo", inline=False)
-        embed.add_field(
-            name="💰 CattoGamble",
-            value="monie, balance, daily, weekly, bet, steal, leaderboard, give",
-            inline=False,
-        )
-        embed.add_field(name="🎮 ValoStats", value="vstats, valofight", inline=False)
-        embed.add_field(name="💬 Chat", value="chat, learn", inline=False)
-        embed.add_field(name="🐱 Anime", value="animequote", inline=False)
-        embed.add_field(name="🖼️ Avatar", value="avatar", inline=False)
-        embed.add_field(name="✨ Emojify", value="emojify", inline=False)
-        embed.add_field(
-            name="🎥 Gifs",
-            value="hug, slap, kiss, lick, bite, bully, blush, cry, cuddle, smug, bonk, pat, handhold, nom, kill, wink, poke",
-            inline=False,
-        )
-        embed.add_field(
-            name="👋 Greet",
-            value="setwelcomechannel, setleavechannel, deletewelcomechannel, deleteleavechannel",
-            inline=False,
-        )
-        embed.add_field(
-            name="🎭 Meme", value="meme, darkmeme, dadjoke, devjoke, bored", inline=False
-        )
-        embed.add_field(name="🎮 Games", value="trivia, hangman", inline=False)
-        embed.add_field(name="🔨 Moderation", value="mute, kick, ban, unmute", inline=False)
-        embed.add_field(name="⚙️ Prefix", value="prefix, setprefix", inline=False)
-        embed.add_field(name="📜 Quotes", value="quote, insult, spooky, advice", inline=False)
-        embed.add_field(
-            name="🔒 Roles",
-            value="setuprole, createrole, removerole, deleterole",
-            inline=False,
-        )
-        embed.add_field(name="🎫 Ticket", value="ticketsetup, deleteticket", inline=False)
-        embed.add_field(name="❓ Would You Rather?", value="wyr, truth, dare", inline=False)
-        embed.add_field(
-            name="🎲 Other",
-            value="flip, rps, announce, cat, rolldice, ship, catfact, fakeinfo",
-            inline=False,
-        )
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        embed.set_footer(text=f"Prefix for this server: {prefix} | Generated at: {now}")
+        for cog_name in sorted(groups):
+            emoji = COG_EMOJI.get(cog_name, "•")
+            embed.add_field(
+                name=f"{emoji} {cog_name}",
+                value=", ".join(sorted(groups[cog_name])),
+                inline=False,
+            )
         await ctx.send(embed=embed)
 
 
