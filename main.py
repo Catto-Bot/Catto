@@ -17,7 +17,6 @@ from events import events
 from modules import (
     chat,
     gambler,
-    gifs,
     image_generation,
     ticket,
     valostats,
@@ -45,6 +44,7 @@ COGS = [
     "cogs.help",
     "cogs.moderation",
     "cogs.hangman",
+    "cogs.gifs",
 ]
 
 
@@ -226,25 +226,6 @@ bot.add_command(gambler.bet)
 bot.add_command(gambler.steal)
 bot.add_command(gambler.leaderboard)
 bot.add_command(gambler.give)
-
-
-bot.add_command(gifs.hug)
-bot.add_command(gifs.slap)
-bot.add_command(gifs.kiss)
-bot.add_command(gifs.lick)
-bot.add_command(gifs.bite)
-bot.add_command(gifs.bully)
-bot.add_command(gifs.blush)
-bot.add_command(gifs.cry)
-bot.add_command(gifs.cuddle)
-bot.add_command(gifs.smug)
-bot.add_command(gifs.bonk)
-bot.add_command(gifs.pat)
-bot.add_command(gifs.handhold)
-bot.add_command(gifs.nom)
-bot.add_command(gifs.kill)
-bot.add_command(gifs.wink)
-bot.add_command(gifs.poke)
 
 
 bot.add_command(chat.learn)
