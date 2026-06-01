@@ -153,6 +153,8 @@ class Music(commands.Cog):
     @music.command(name="play", description="Play or queue a YouTube song by URL or keyword")
     async def play(self, ctx: commands.Context, *, query: str):
         log_command(ctx)
+        if ctx.interaction is not None:
+            await ctx.defer()
         voice = await self._ensure_voice(ctx)
         if voice is None:
             return
