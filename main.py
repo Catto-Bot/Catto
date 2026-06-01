@@ -12,7 +12,10 @@ from dotenv import load_dotenv
 from admin import admin
 from anicat import anicat
 from core import db
+from core.logging import configure as configure_logging
 from events import events
+
+configure_logging()
 from modules import (
     anime,
     avatar,
