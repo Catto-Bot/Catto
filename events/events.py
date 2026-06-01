@@ -2,10 +2,6 @@ from discord.ext import commands
 import discord
 import json
 import os
-from easy_pil import Canvas, Font
-import io
-from discord import File
-from easy_pil import Editor, load_image_async, Font
 from discord import SyncWebhook
 from dotenv import load_dotenv
 

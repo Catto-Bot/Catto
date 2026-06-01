@@ -1,14 +1,6 @@
-async-timeout==4.0.2
-cookies-discord-components==3.0.0
-diffusers==0.16.1
-discord==2.2.2
-discord-py-slash-command==4.2.1
-discord-ui==5.1.6
 discord.py @ git+https://github.com/Rapptz/discord.py@23352fba7949a491257cc06d2d88377035f0a39f
-easy-pil==0.2.3
+python-dotenv==1.0.0
+requests==2.31.0
+psutil==5.9.6
 Faker==18.7.0
 Pillow==10.2.0
-pipenv==2023.4.29
-virtualenv==20.26.6
-virtualenv-clone==0.5.7
-
