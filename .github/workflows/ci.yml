@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main, v2]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.11
+      - name: Sync deps
+        run: uv sync --all-groups
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format check
+        run: uv run ruff format --check .
+      - name: Tests
+        run: uv run pytest -q
