@@ -53,7 +53,6 @@ class Confession(commands.Cog):
     async def confess(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_modal(ConfessionModal())
 
-    # Backward-compatible !ch (prefix only) — kept so old users aren't broken
     @commands.command(name="ch")
     async def ch(self, ctx: commands.Context, *, message: str):
         configured = await db.get_confession_channel(ctx.guild.id)

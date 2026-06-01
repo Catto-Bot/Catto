@@ -112,7 +112,7 @@ class Gifs(commands.Cog):
             "https://media.tenor.com/1vBnYuMNhPMAAAAS/bts-hug.gif",
         )
 
-    @commands.hybrid_command(name="cry", description="Cry (gif) — optionally because of someone")
+    @commands.hybrid_command(name="cry", description="Cry (gif), optionally because of someone")
     async def cry(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,
@@ -155,7 +155,7 @@ class Gifs(commands.Cog):
             f"{ctx.author.display_name} is smugging! (￣‿￣)",
         )
 
-    @commands.hybrid_command(name="blush", description="Blush (gif) — optionally because of someone")
+    @commands.hybrid_command(name="blush", description="Blush (gif), optionally because of someone")
     async def blush(self, ctx: commands.Context, member: discord.Member | None = None):
         await self._send_gif(
             ctx,

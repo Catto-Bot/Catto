@@ -42,7 +42,21 @@ class Reminders(commands.Cog):
     async def before_check(self) -> None:
         await self.bot.wait_until_ready()
 
-    @commands.hybrid_command(name="remind", description="Set a reminder — duration like 30s, 5m, 2h, 1d")
+    @commands.hybrid_group(name="reminder", fallback="list", description="Reminder commands")
+    async def reminder(self, ctx: commands.Context):
+        """Default: list your reminders."""
+        log_command(ctx)
+        items = await db.list_reminders(ctx.author.id)
+        if not items:
+            await ctx.send("You have no active reminders.")
+            return
+        lines = [f"#{r['id']} <t:{r['due_at']}:R>: {r['message']}" for r in items]
+        embed = discord.Embed(
+            title=f"{ctx.author}'s reminders", description="\n".join(lines)
+        )
+        await ctx.send(embed=embed)
+
+    @reminder.command(name="add", description="Set a reminder. Duration like 30s, 5m, 2h, 1d")
     async def remind(self, ctx: commands.Context, duration: str, *, message: str):
         log_command(ctx)
         secs = parse_duration(duration)
@@ -60,20 +74,7 @@ class Reminders(commands.Cog):
         ts = f"<t:{due}:R>"
         await ctx.send(f"Reminder #{rid} set for {ts}: {message}")
 
-    @commands.hybrid_command(name="reminders", description="List your active reminders")
-    async def reminders(self, ctx: commands.Context):
-        log_command(ctx)
-        items = await db.list_reminders(ctx.author.id)
-        if not items:
-            await ctx.send("You have no active reminders.")
-            return
-        lines = [f"#{r['id']} — <t:{r['due_at']}:R>: {r['message']}" for r in items]
-        embed = discord.Embed(
-            title=f"{ctx.author}'s reminders", description="\n".join(lines)
-        )
-        await ctx.send(embed=embed)
-
-    @commands.hybrid_command(name="cancelreminder", description="Cancel one of your reminders by its ID")
+    @reminder.command(name="cancel", description="Cancel one of your reminders by its ID")
     async def cancelreminder(self, ctx: commands.Context, reminder_id: int):
         log_command(ctx)
         items = await db.list_reminders(ctx.author.id)

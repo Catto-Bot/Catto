@@ -17,7 +17,7 @@ class Valostats(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="vstats", description="Show Valorant account stats — usage: username#tag")
+    @commands.hybrid_command(name="vstats", description="Show Valorant account stats. Usage: username#tag")
     async def vstats(self, ctx: commands.Context, *, name: str):
         log_command(ctx)
         if "#" not in name:
@@ -55,7 +55,7 @@ class Valostats(commands.Cog):
         turn_msg = await ctx.send(
             embed=discord.Embed(
                 title=f"{ctx.author.name} (Jett) vs {member.name} (Raze)",
-                description=f"{ctx.author.name}'s turn — Vandal or Smoke",
+                description=f"{ctx.author.name}'s turn. Vandal or Smoke?",
             )
         )
         await turn_msg.add_reaction(VANDAL)
@@ -101,7 +101,7 @@ class Valostats(commands.Cog):
                 embed=discord.Embed(
                     title=f"{ctx.author.name} vs {member.name}",
                     description=(
-                        f"{member.name}'s turn — Vandal or Satchel\n"
+                        f"{member.name}'s turn. Vandal or Satchel?\n"
                         f"{ctx.author.name}: {hp[ctx.author.id]} HP | "
                         f"{member.name}: {hp[member.id]} HP"
                     ),
@@ -148,7 +148,7 @@ class Valostats(commands.Cog):
                 embed=discord.Embed(
                     title=f"{ctx.author.name} vs {member.name}",
                     description=(
-                        f"{ctx.author.name}'s turn — Vandal or Smoke\n"
+                        f"{ctx.author.name}'s turn. Vandal or Smoke?\n"
                         f"{ctx.author.name}: {hp[ctx.author.id]} HP | "
                         f"{member.name}: {hp[member.id]} HP"
                     ),

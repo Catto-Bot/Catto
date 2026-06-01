@@ -60,7 +60,7 @@ class Help(commands.Cog):
             start, end = page * FIELDS_PER_PAGE, (page + 1) * FIELDS_PER_PAGE
             embed = discord.Embed(
                 title="Catto Commands",
-                description=f"Prefix for this server: `{prefix}` — slash variants also work.",
+                description=f"Prefix for this server: `{prefix}`. Slash variants also work.",
                 color=discord.Color.blue(),
             )
             for cog_name, names in ordered[start:end]:

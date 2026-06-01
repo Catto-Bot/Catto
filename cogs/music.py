@@ -131,7 +131,26 @@ class Music(commands.Cog):
         player.text_channel = ctx.channel
         return player.voice
 
-    @commands.command(name="play", help="Play or queue a YouTube song by URL or keyword")
+    @commands.hybrid_group(name="music", fallback="np", description="Music playback commands")
+    async def music(self, ctx: commands.Context):
+        """Default: show now playing."""
+        log_command(ctx)
+        player = self._player(ctx.guild.id)
+        if player.current is None:
+            await ctx.send("Nothing is playing. Use `/music play <song>` to start.")
+            return
+        t = player.current
+        embed = discord.Embed(
+            title="🎵 Now playing",
+            description=f"[{t.title}]({t.web_url}) `{_fmt_duration(t.duration)}`",
+            color=discord.Color.green(),
+        )
+        if t.thumbnail:
+            embed.set_thumbnail(url=t.thumbnail)
+        embed.set_footer(text=f"requested by {t.requester}")
+        await ctx.send(embed=embed)
+
+    @music.command(name="play", description="Play or queue a YouTube song by URL or keyword")
     async def play(self, ctx: commands.Context, *, query: str):
         log_command(ctx)
         voice = await self._ensure_voice(ctx)
@@ -152,35 +171,17 @@ class Music(commands.Cog):
                 f"➕ Queued **{track.title}** (#{len(player.queue)}, `{_fmt_duration(track.duration)}`)"
             )
 
-    @commands.command(name="nowplaying", aliases=["np"], help="Show the currently playing track")
-    async def nowplaying(self, ctx: commands.Context):
-        log_command(ctx)
-        player = self._player(ctx.guild.id)
-        if player.current is None:
-            await ctx.send("Nothing is playing.")
-            return
-        t = player.current
-        embed = discord.Embed(
-            title="🎵 Now playing",
-            description=f"[{t.title}]({t.web_url}) `{_fmt_duration(t.duration)}`",
-            color=discord.Color.green(),
-        )
-        if t.thumbnail:
-            embed.set_thumbnail(url=t.thumbnail)
-        embed.set_footer(text=f"requested by {t.requester}")
-        await ctx.send(embed=embed)
-
-    @commands.command(name="queue", aliases=["q"], help="Show the upcoming queue")
+    @music.command(name="queue", aliases=["q"], description="Show the upcoming queue")
     async def queue(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
         lines: list[str] = []
         if player.current:
             lines.append(
-                f"▶ **{player.current.title}** `{_fmt_duration(player.current.duration)}` — {player.current.requester}"
+                f"▶ **{player.current.title}** `{_fmt_duration(player.current.duration)}` by {player.current.requester}"
             )
         for i, t in enumerate(list(player.queue)[:20], 1):
-            lines.append(f"`{i}.` {t.title} `{_fmt_duration(t.duration)}` — {t.requester}")
+            lines.append(f"`{i}.` {t.title} `{_fmt_duration(t.duration)}` by {t.requester}")
         if not lines:
             await ctx.send("Queue is empty.")
             return
@@ -194,7 +195,7 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.command(name="skip", aliases=["next"], help="Skip the current track")
+    @music.command(name="skip", aliases=["next"], description="Skip the current track")
     async def skip(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -204,7 +205,7 @@ class Music(commands.Cog):
         player.voice.stop()  # triggers _after_play → _start_next
         await ctx.send("⏭ Skipped.")
 
-    @commands.command(name="stop", help="Stop playback and clear the queue")
+    @music.command(name="stop", description="Stop playback and clear the queue")
     async def stop(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -217,7 +218,7 @@ class Music(commands.Cog):
         player.voice = None
         await ctx.send("⏹ Stopped and disconnected.")
 
-    @commands.command(name="pause", help="Pause the current track")
+    @music.command(name="pause", description="Pause the current track")
     async def pause(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -227,7 +228,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("Nothing playing.")
 
-    @commands.command(name="resume", help="Resume a paused track")
+    @music.command(name="resume", description="Resume a paused track")
     async def resume(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -237,7 +238,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("Nothing paused.")
 
-    @commands.command(name="remove", help="Remove a track from the queue by 1-based index")
+    @music.command(name="remove", description="Remove a track from the queue by 1-based index")
     async def remove(self, ctx: commands.Context, index: int):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -248,7 +249,7 @@ class Music(commands.Cog):
         del player.queue[index - 1]
         await ctx.send(f"🗑 Removed **{track.title}** from the queue.")
 
-    @commands.command(name="clearqueue", help="Empty the queue without stopping the current track")
+    @music.command(name="clearqueue", description="Empty the queue without stopping the current track")
     async def clearqueue(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -256,7 +257,7 @@ class Music(commands.Cog):
         player.queue.clear()
         await ctx.send(f"🧹 Cleared {n} track(s) from the queue.")
 
-    @commands.command(name="loop", help="Set loop mode: off | track | queue")
+    @music.command(name="loop", description="Set loop mode: off | track | queue")
     async def loop(self, ctx: commands.Context, mode: str):
         log_command(ctx)
         mode = mode.lower()
@@ -266,7 +267,7 @@ class Music(commands.Cog):
         self._player(ctx.guild.id).loop_mode = mode
         await ctx.send(f"🔁 Loop mode → **{mode}**.")
 
-    @commands.command(name="leave", aliases=["disconnect", "dc"], help="Disconnect the bot from voice")
+    @music.command(name="leave", aliases=["disconnect", "dc"], description="Disconnect the bot from voice")
     async def leave(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)

@@ -4,7 +4,7 @@ Usage:
     uv run python scripts/backup.py [destination_dir]
 
 Defaults to ./backups/. Creates catto-YYYYmmdd-HHMMSS.db. Safe to run while the bot
-is live — SQLite's online backup API holds a shared lock and copies pages
+is live. SQLite's online backup API holds a shared lock and copies pages
 between concurrent writes.
 """
 

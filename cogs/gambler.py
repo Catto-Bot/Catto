@@ -28,7 +28,12 @@ class Gambler(commands.Cog):
         await ctx.send(embed=embed)
         return False
 
-    @commands.hybrid_command(name="monie", description="Create your catomonie wallet")
+    @commands.hybrid_group(name="economy", aliases=["eco"], fallback="balance", description="Catomonie economy commands")
+    async def economy(self, ctx: commands.Context, member: discord.Member | None = None):
+        """Default: show your balance."""
+        await self.balance.callback(self, ctx, member)
+
+    @economy.command(name="monie", description="Create your catomonie wallet")
     async def monie(self, ctx: commands.Context):
         log_command(ctx)
         if await db.wallet_exists(ctx.author.id):
@@ -43,7 +48,7 @@ class Gambler(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="daily", description="Claim your daily catomonie reward")
+    @economy.command(name="daily", description="Claim your daily catomonie reward")
     async def daily(self, ctx: commands.Context):
         log_command(ctx)
         if not await self._ensure_wallet_or_error(ctx):
@@ -69,7 +74,7 @@ class Gambler(commands.Cog):
         embed.set_footer(text="Thank you for playing catto gamble!")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="weekly", description="Claim your weekly catomonie reward")
+    @economy.command(name="weekly", description="Claim your weekly catomonie reward")
     async def weekly(self, ctx: commands.Context):
         log_command(ctx)
         if not await self._ensure_wallet_or_error(ctx):
@@ -97,7 +102,7 @@ class Gambler(commands.Cog):
         embed.set_footer(text="Thank you for playing catto gamble!")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="balance", aliases=["wallet", "bal"], description="Show your or someone else's catomonie balance")
+    @economy.command(name="bal", aliases=["wallet"], description="Show your or someone else's catomonie balance")
     async def balance(self, ctx: commands.Context, member: discord.Member | None = None):
         log_command(ctx)
         target = member or ctx.author
@@ -115,7 +120,7 @@ class Gambler(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="bet", description="Bet catomonie on a number 1-N to win amount * number")
+    @economy.command(name="bet", description="Bet catomonie on a number 1-N to win amount * number")
     async def bet(self, ctx: commands.Context, number: int, amount: int):
         log_command(ctx)
         if not await self._ensure_wallet_or_error(ctx):
@@ -172,7 +177,7 @@ class Gambler(commands.Cog):
             embed.set_footer(text=f"The number was {roll}")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="steal", description="Attempt to steal catomonie from another member (50/50)")
+    @economy.command(name="steal", description="Attempt to steal catomonie from another member (50/50)")
     @commands.cooldown(1, STEAL_COOLDOWN, commands.BucketType.user)
     async def steal(self, ctx: commands.Context, member: discord.Member):
         log_command(ctx)
@@ -236,7 +241,7 @@ class Gambler(commands.Cog):
                 )
             )
 
-    @commands.hybrid_command(name="leaderboard", description="Top 10 catomonie holders")
+    @economy.command(name="leaderboard", aliases=["lb"], description="Top 10 catomonie holders")
     async def leaderboard(self, ctx: commands.Context):
         log_command(ctx)
         top = await db.top_wallets(10)
@@ -250,7 +255,7 @@ class Gambler(commands.Cog):
             )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="give", description="Send catomonie to another member")
+    @economy.command(name="give", description="Send catomonie to another member")
     async def give(self, ctx: commands.Context, amount: int, member: discord.Member):
         log_command(ctx)
         if amount <= 0:
