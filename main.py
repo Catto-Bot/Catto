@@ -2,8 +2,8 @@ import json
 import os
 from pathlib import Path
 
-import discord
 import aiosqlite
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
