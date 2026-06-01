@@ -1,7 +1,7 @@
-from discord.ext import commands
-import discord
 import json
 import os
+
+import discord
 from discord import SyncWebhook
 from dotenv import load_dotenv
 
@@ -11,7 +11,7 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
 async def on_member_join(member):
     try:
-        with open("channelgreet.json", "r") as f:
+        with open("channelgreet.json") as f:
             channelgreet = json.load(f)
 
         guild = member.guild
@@ -44,7 +44,7 @@ async def on_member_join(member):
 
 async def on_member_remove(member):
     try:
-        with open("channeleave.json", "r") as f:
+        with open("channeleave.json") as f:
             channelgreet = json.load(f)
 
         guild = member.guild
@@ -78,7 +78,7 @@ async def on_message(member):
     content = member.content.lower()
 
     if content == "cattoprefix":
-        with open("prefixes.json", "r") as f:
+        with open("prefixes.json") as f:
             prefixes = json.load(f)
             await member.channel.send(
                 f"The Prefix Set For This Server Is: '{prefixes[str(member.guild.id)]}'"
@@ -97,9 +97,9 @@ async def on_message(member):
         await member.channel.send(f"Hello, {mention}!")
 
     try:
-        with open("messages.json", "r") as f:
+        with open("messages.json") as f:
             messages = json.load(f)
-        with open("gamblerdata/catomonie.json", "r") as fe:
+        with open("gamblerdata/catomonie.json") as fe:
             catomonie = json.load(fe)
     except:
         messages = {}
@@ -161,7 +161,7 @@ async def on_message(member):
 
 async def on_guild_join(guild):
     print("Bot joined")
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
 
     prefixes[str(guild.id)] = "!"
@@ -207,7 +207,7 @@ async def on_guild_join(guild):
 
 async def on_guild_remove(guild):
     print("bot left")
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
 
     prefixes.pop(str(guild.id))

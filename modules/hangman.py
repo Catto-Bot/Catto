@@ -1,8 +1,8 @@
-import discord
-from discord.ext import commands
-import random
-import requests
 import json
+
+import discord
+import requests
+from discord.ext import commands
 
 hangman_games = {}
 

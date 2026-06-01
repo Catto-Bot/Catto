@@ -1,6 +1,7 @@
-from discord.ext import commands
-import discord
 import json
+
+import discord
+from discord.ext import commands
 
 
 def welcomemessage(message):
@@ -27,7 +28,7 @@ async def setwelcomechannel(ctx, channe_lid):
         )
         embed.set_footer(text="Thank you for using Catto Bot!")
 
-        with open("channelgreet.json", "r") as f:
+        with open("channelgreet.json") as f:
             channelgreet = json.load(f)
 
         channelgreet[str(ctx.guild.id)] = str(channelid)
@@ -50,7 +51,7 @@ async def deletewelcomechannel(ctx):
         )
         embed.set_footer(text="Thank you for using Catto Bot!")
 
-        with open("channelgreet.json", "r") as f:
+        with open("channelgreet.json") as f:
             channelgreet = json.load(f)
 
         del channelgreet[str(ctx.guild.id)]
@@ -74,7 +75,7 @@ async def setleavechannel(ctx, channe_lid):
         )
         embed.set_footer(text="Thank you for using Catto Bot!")
 
-        with open("channeleave.json", "r") as f:
+        with open("channeleave.json") as f:
             channelgreet = json.load(f)
 
         channelgreet[str(ctx.guild.id)] = str(channelid)
@@ -97,7 +98,7 @@ async def deleteleavechannel(ctx):
         )
         embed.set_footer(text="Thank you for using Catto Bot!")
 
-        with open("channeleave.json", "r") as f:
+        with open("channeleave.json") as f:
             channelgreet = json.load(f)
 
         del channelgreet[str(ctx.guild.id)]

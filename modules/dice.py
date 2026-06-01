@@ -1,9 +1,10 @@
 # kadota
-import discord
-from discord.ext import commands
-import random
-import requests
 import os
+import random
+
+import discord
+import requests
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()

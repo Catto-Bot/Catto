@@ -1,9 +1,9 @@
-from discord.ext import commands
-import discord
 import json
 import random
-import asyncio
 import time
+
+import discord
+from discord.ext import commands
 
 
 def save(ctx):
@@ -22,7 +22,7 @@ cooldown_time = 1 * 60 * 60
 async def anicat(ctx):
     save(ctx)
 
-    with open("data/data.json", "r", encoding="utf8") as file:
+    with open("data/data.json", encoding="utf8") as file:
         data = json.load(file)
 
     names = [item["Name"] for item in data]
@@ -49,13 +49,13 @@ async def anicat(ctx):
         if str(reaction.emoji) == "<:anicat:1105722682160447550>":
             embed = discord.Embed(title=f"claimed by {user}", description="")
             embed.set_image(url=source[random_index])
-            embed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
+            embed.set_footer(text="Thank You For Using Catto Bot(Anicat)")
             embed.set_author(name=names[random_index])
             await final.edit(embed=embed)
             await final.clear_reactions()
             user_name = str(user)
             try:
-                with open("data/anicat.json", "r", encoding="utf8") as file:
+                with open("data/anicat.json", encoding="utf8") as file:
                     anicatdata = json.load(file)
             except:
                 anicatdata = {}
@@ -77,11 +77,11 @@ async def anicat(ctx):
             with open("data/anicat.json", "w") as final:
                 json.dump(anicatdata, final)
 
-    except Exception as e:
+    except Exception:
         editembed = discord.Embed(title="Expired!", description="You Took Too Long To Claim!")
         editembed.set_image(url=source[random_index])
         embed.set_author(name=names[random_index])
-        editembed.set_footer(text=f"Thank You For Using Catto Bot(Anicat)")
+        editembed.set_footer(text="Thank You For Using Catto Bot(Anicat)")
         await final.clear_reactions()
         await final.edit(embed=editembed)
         return
@@ -94,7 +94,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
     starting = 0
     ending = 10
     try:
-        with open("data/anicat.json", "r", encoding="utf8") as file:
+        with open("data/anicat.json", encoding="utf8") as file:
             anicatdata = json.load(file)
 
         if member:
@@ -185,7 +185,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                                     content="``You are already on the first page.``"
                                 )
 
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         break
 
             else:
@@ -278,7 +278,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
                                     content="``You are already on the first page.``"
                                 )
 
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         break
 
             else:
@@ -293,7 +293,7 @@ async def anicatstats(ctx, *, member: discord.Member = None):
 async def anicatinfo(ctx, *, card):
     save(ctx)
     try:
-        with open("data/data.json", "r") as read:
+        with open("data/data.json") as read:
             data = json.load(read)
 
         card_lower = card.lower()
@@ -330,10 +330,10 @@ async def anicat_error(ctx, error):
 
 @anicatinfo.error
 async def anicatinfo_error(ctx, error):
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
     embed = discord.Embed(
-        title="Error!", description=f"Error While Retrieving Data. Please Try Again Later"
+        title="Error!", description="Error While Retrieving Data. Please Try Again Later"
     )
     embed.add_field(
         inline=False,

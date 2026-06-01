@@ -1,8 +1,9 @@
-import discord
-from discord.ext import commands
-import random
-import requests
 import asyncio
+import random
+
+import discord
+import requests
+from discord.ext import commands
 
 ####################################################################################
 # COINFLIP
@@ -49,9 +50,9 @@ async def rps_game(ctx, user_choice=None):
     list = ["rock", "paper", "scissors"]
     bot_choice = random.choice(list)
 
-    if not user_choice in list:
+    if user_choice not in list:
         embed = discord.Embed(
-            title=f"Correct Syntax:",
+            title="Correct Syntax:",
             description="!rps <choice> (rock, paper, scissors)",
             color=0xFF0000,
         )
@@ -121,7 +122,7 @@ async def announce(ctx, *, message: str):
                 await ctx.send(message)
                 return
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             no_response_del = await ctx.send("You did not respond in time")
             await asyncio.sleep(5)
             await no_response_del.delete()

@@ -1,6 +1,7 @@
-from discord.ext import commands
 import json
+
 import discord
+from discord.ext import commands
 
 
 def save(ctx):
@@ -15,7 +16,7 @@ def save(ctx):
 @commands.has_permissions(administrator=True)
 async def setprefix(ctx, prefix):
     save(ctx)
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
 
     prefixes[str(ctx.guild.id)] = prefix
@@ -30,7 +31,7 @@ async def setprefix(ctx, prefix):
 @commands.command(name="prefix")
 async def prefix(ctx):
     save(ctx)
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
     embed = discord.Embed(
         title="Prefix", description=f"The Prefix For This Server Is '{prefixes[str(ctx.guild.id)]}'"

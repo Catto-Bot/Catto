@@ -1,10 +1,7 @@
-from discord.ext import commands
-import discord
-import json
-import requests
-from time import sleep
 import asyncio
 
+import discord
+from discord.ext import commands
 
 #########################################################################
 # COMPLETED 😁😁😁😁
@@ -80,7 +77,7 @@ async def unmute(ctx, user: discord.Member):
         embeded.set_footer(text="Error")
         await joke.edit(embed=embeded)
 
-    except Exception as err:
+    except Exception:
         embeded = discord.Embed(title='First use !mute <User> to use the unmute command"')
         await ctx.send(embed=embeded)
 

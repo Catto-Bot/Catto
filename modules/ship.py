@@ -1,6 +1,7 @@
+import random
+
 import discord
 from discord.ext import commands
-import random
 
 
 def save(ctx):
@@ -27,7 +28,7 @@ async def ship(ctx, *, member: discord.Member = None):
         embed = discord.Embed(title="❤️ **MATCHMAKING** ❤️", color=0xFF69B4)
         embed.set_thumbnail(url=member.avatar)
         embed.add_field(name=user, value="🔻", inline=True)
-        embed.add_field(name="💖💖", value="{}%".format(shippercen), inline=True)
+        embed.add_field(name="💖💖", value=f"{shippercen}%", inline=True)
         embed.add_field(name=hellohi, value="🔻", inline=True)
 
         embed.set_footer(

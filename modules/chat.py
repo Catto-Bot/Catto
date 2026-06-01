@@ -1,8 +1,8 @@
-from discord.ext import commands
-import discord
 import json
 import sqlite3
 
+import discord
+from discord.ext import commands
 
 conn = sqlite3.connect("responses.db")
 cursor = conn.cursor()
@@ -70,7 +70,7 @@ async def c(ctx, *input_text: str):
         embed = discord.Embed(description=result[0], color=discord.Color.dark_gray())
         await ctx.send(embed=embed)
     else:
-        with open("prefixes.json", "r") as f:
+        with open("prefixes.json") as f:
             prefixes = json.load(f)
         embed = discord.Embed(
             title="Error!", description="What Do I Say Here?", color=discord.Color.dark_gray()

@@ -1,14 +1,15 @@
-from discord.ext import commands
-import discord
 import json
 from datetime import datetime
+
+import discord
+from discord.ext import commands
 
 
 @commands.command(name="confessionsetup")
 @commands.has_permissions(administrator=True)
 async def confessionsetup(ctx, channel):
     if channel:
-        with open("conf.json", "r") as r:
+        with open("conf.json") as r:
             conf = json.load(r)
         conf[str(ctx.guild.id)] = channel
 
@@ -22,13 +23,13 @@ async def confessionsetup(ctx, channel):
 @commands.command(name="ch")
 async def ch(ctx, *, message):
     if message:
-        with open("conf.json", "r") as r:
+        with open("conf.json") as r:
             conf = json.load(r)
         checkchannel = f"<#{ctx.channel.id}>"
         if checkchannel == conf[str(ctx.guild.id)]:
             confession = f"{message}"
             await ctx.message.delete()
-            with open("prefixes.json", "r") as f:
+            with open("prefixes.json") as f:
                 prefixes = json.load(f)
             embed = discord.Embed(
                 title="",

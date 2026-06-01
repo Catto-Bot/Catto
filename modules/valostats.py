@@ -1,9 +1,9 @@
-from discord.ext import commands
-import discord
-import requests
 import json
 import random
-import asyncio
+
+import discord
+import requests
+from discord.ext import commands
 
 
 def save(ctx):
@@ -45,7 +45,7 @@ async def vstats(ctx, *, name):
 async def valofight(ctx, *, member: discord.Member = None):
     save(ctx)
     if not member:
-        with open("prefixes.json", "r") as f:
+        with open("prefixes.json") as f:
             prefixes = json.load(f)
         embed = discord.Embed(title="Error!", description="Please mention a user to fight!")
         embed.set_thumbnail(
@@ -122,7 +122,7 @@ async def valofight(ctx, *, member: discord.Member = None):
             await deleteraze.delete(delay=5)
             agent_pick[ctx.author.name] = "Jett"
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         await ctx.send("Time Limit Reached")
         return
 
@@ -290,9 +290,9 @@ async def valofight_error(ctx, error):
 @vstats.error
 async def vstats_error(ctx, err):
     print(err)
-    with open("prefixes.json", "r") as f:
+    with open("prefixes.json") as f:
         prefixes = json.load(f)
-    embed = discord.Embed(title="Error!", description=f"User Not Found")
+    embed = discord.Embed(title="Error!", description="User Not Found")
     embed.add_field(
         inline=False,
         name="Format",

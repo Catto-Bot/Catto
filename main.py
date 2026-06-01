@@ -1,42 +1,41 @@
 # ------------------------MODULES-------------------------------------------------------------#
-import discord
-from discord.ext import commands
-from discord import Intents
-import os
-from dotenv import load_dotenv
 import json
-from events import events
-from modules import (
-    coinflip,
-    meme,
-    dice,
-    qutoes,
-    gambler,
-    chat,
-    gifs,
-    ticket,
-    valostats,
-    avatar,
-    anime,
-    prefix,
-    moderation,
-    greet,
-    roles,
-    wyr,
-    emoji,
-    fakeinfo,
-    help,
-    ship,
-    conf,
-    image_generation,
-    hangman,
-)
+import os
+import time
+
+import discord
+import psutil
+from discord.ext import commands
+from dotenv import load_dotenv
+
 from admin import admin
 from anicat import anicat
-import time
-import datetime
-import psutil
-
+from events import events
+from modules import (
+    anime,
+    avatar,
+    chat,
+    coinflip,
+    conf,
+    dice,
+    emoji,
+    fakeinfo,
+    gambler,
+    gifs,
+    greet,
+    hangman,
+    help,
+    image_generation,
+    meme,
+    moderation,
+    prefix,
+    qutoes,
+    roles,
+    ship,
+    ticket,
+    valostats,
+    wyr,
+)
 
 load_dotenv()
 
@@ -46,7 +45,7 @@ DISCORD_KEY = os.getenv("DISCORD_ID")
 
 def get_prefix(bot, message):
     try:
-        with open("prefixes.json", "r") as f:
+        with open("prefixes.json") as f:
             prefixes = json.load(f)
         return prefixes[str(message.guild.id)]
     except:
@@ -69,7 +68,7 @@ async def on_ready():
     print("The bot is ready")
 
     await bot.change_presence(
-        activity=discord.Activity(type=discord.ActivityType.watching, name=f"!help & cattoprefix")
+        activity=discord.Activity(type=discord.ActivityType.watching, name="!help & cattoprefix")
     )
 
 

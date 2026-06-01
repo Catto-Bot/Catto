@@ -1,8 +1,9 @@
 # aryn
-from discord.ext import commands
 import json
-import requests
+
 import discord
+import requests
+from discord.ext import commands
 
 
 @commands.command(name="meme")

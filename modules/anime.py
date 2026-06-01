@@ -1,6 +1,7 @@
-from discord.ext import commands
 import discord
 import requests
+from discord.ext import commands
+
 from admin import messages
 
 
@@ -24,7 +25,7 @@ async def animeQuote(ctx):
         await hello.delete()
         await ctx.send(embed=embed)
     except:
-        await ctx.send(f"TATAKAE!🕊️- Eren Yeager")
+        await ctx.send("TATAKAE!🕊️- Eren Yeager")
 
 
 @commands.command()

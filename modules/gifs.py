@@ -1,7 +1,8 @@
-from discord.ext import commands
-import discord
 import json
+
+import discord
 import requests
+from discord.ext import commands
 
 
 def save(ctx):
@@ -136,7 +137,7 @@ async def bully(ctx, member: commands.MemberConverter = None):
         embed.set_footer(text="Thank You For Using Catto! :D")
         await ctx.send(embed=embed)
     else:
-        embed = discord.Embed(title=f"You Bullied Yourself! )-(")
+        embed = discord.Embed(title="You Bullied Yourself! )-(")
         embed.set_image(url="https://media.tenor.com/qlhSFpPh0Q8AAAAd/wassup-whats-up.gif")
         embed.set_footer(text="Next Time Mention A User To Bully Them :D")
         await ctx.send(embed=embed)

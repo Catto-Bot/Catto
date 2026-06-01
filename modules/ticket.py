@@ -1,6 +1,7 @@
-from discord.ext import commands
-import discord
 import asyncio
+
+import discord
+from discord.ext import commands
 
 
 def save(ctx):
@@ -113,7 +114,7 @@ async def ticketsetup(ctx):
             await asyncio.sleep(5)
             await abort.delete()
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         await ctx.send("You didn't react in time. Please start over.")
 
 
@@ -140,9 +141,9 @@ async def deleteticket(ctx):
                 await ctx.channel.delete()
             else:
                 await sure.delete()
-        except Exception as err:
+        except Exception:
             await ctx.send("An error ocurred while deleting the channel")
-    except Exception as err:
+    except Exception:
         await ctx.send("An error ocurred while deleting the channel")
 
 

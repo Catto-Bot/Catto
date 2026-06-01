@@ -1,11 +1,9 @@
-from discord.ext import commands
-import discord
-import time
-import requests
-import asyncio
-from datetime import datetime
 import os
+import time
 
+import discord
+import requests
+from discord.ext import commands
 
 bot_version = "2.0"
 github_repo = "Soon To Be Public"

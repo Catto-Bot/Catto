@@ -1,12 +1,12 @@
-from discord.ext import commands
-import discord
-import requests
+import asyncio
 import io
 import os
-from PIL import Image
-import time
+
+import discord
+import requests
+from discord.ext import commands
 from dotenv import load_dotenv
-import asyncio
+from PIL import Image
 
 load_dotenv()
 
@@ -42,7 +42,7 @@ async def aiterms(ctx):
             )
 
         # Check if user already has access
-        with open("ai_allowed.txt", "r") as file:
+        with open("ai_allowed.txt") as file:
             allowed_users = file.read().splitlines()
             if str(ctx.author.id) in allowed_users:
                 await ctx.send(f"``{ctx.author.name}, you already have access.``")
@@ -92,7 +92,7 @@ async def aiterms(ctx):
                 await verify.edit(content="``Aborted.``")
                 await verify.clear_reactions()
                 return
-        except asyncio.TimeoutError:
+        except TimeoutError:
             embed = discord.Embed(title="Expired", description="")
             await verify.edit(embed=embed)
             await verify.clear_reactions()
@@ -118,7 +118,7 @@ async def ai(ctx, *, msg):
     if msg:
         save(ctx, msg)
         try:
-            with open("ai_allowed.txt", "r") as read:
+            with open("ai_allowed.txt") as read:
                 allowed_users = read.readlines()
             allowed_users = [int(user_id.strip()) for user_id in allowed_users]
             if ctx.author.id not in allowed_users:

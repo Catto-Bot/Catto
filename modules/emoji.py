@@ -1,7 +1,4 @@
 from discord.ext import commands
-import discord
-import requests
-
 
 cooldown_time = 10
 

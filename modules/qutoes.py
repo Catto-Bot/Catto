@@ -1,10 +1,11 @@
 # ghost
-import discord
-from discord.ext import commands
-import requests
-import json
-import html
 import asyncio
+import html
+import json
+
+import discord
+import requests
+from discord.ext import commands
 
 
 def save(ctx):
@@ -38,7 +39,7 @@ async def quote(ctx):
         await quote.add_reaction("👎")
 
     except:
-        await ctx.channel.send(f"Error. Try Again!")
+        await ctx.channel.send("Error. Try Again!")
 
 
 ########################################################################################################################
@@ -162,7 +163,7 @@ async def insult(ctx):
 async def darkmeme(ctx):
     save(ctx)
     try:
-        api_url = f"https://v2.jokeapi.dev/joke/Dark?type=twopart"
+        api_url = "https://v2.jokeapi.dev/joke/Dark?type=twopart"
         response = requests.get(api_url)
         d = response.json()
         setup = html.unescape(d["setup"])
@@ -189,7 +190,7 @@ async def darkmeme(ctx):
 async def spooky(ctx):
     save(ctx)
     try:
-        api_url = f"https://v2.jokeapi.dev/joke/Spooky?type=twopart"
+        api_url = "https://v2.jokeapi.dev/joke/Spooky?type=twopart"
         response = requests.get(api_url)
         d = response.json()
         setup = html.unescape(d["setup"])
@@ -217,7 +218,7 @@ async def spooky(ctx):
 async def advice(ctx):
     save(ctx)
     try:
-        api_url = f"https://api.adviceslip.com/advice"
+        api_url = "https://api.adviceslip.com/advice"
         response = requests.get(api_url)
         d = response.json()
         setup = html.unescape(d["slip"]["advice"])

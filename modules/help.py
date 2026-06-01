@@ -1,7 +1,8 @@
-from discord.ext import commands
-import discord
-import json
 import datetime
+import json
+
+import discord
+from discord.ext import commands
 
 
 def save(ctx):
@@ -15,7 +16,7 @@ def save(ctx):
 @commands.command(name="help")
 async def help(ctx):
     save(ctx)
-    with open("prefixes.json", "r") as read:
+    with open("prefixes.json") as read:
         prefixes = json.load(read)
 
     embed = discord.Embed(title="Catto Commands", description="Here are the available commands:")
