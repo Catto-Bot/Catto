@@ -12,9 +12,6 @@ from dotenv import load_dotenv
 from core import db
 from core.logging import configure as configure_logging
 from events import events
-from modules import (
-    valostats,
-)
 
 configure_logging()
 load_dotenv()
@@ -45,6 +42,7 @@ COGS = [
     "cogs.ticket",
     "cogs.admin",
     "cogs.anicat",
+    "cogs.valostats",
 ]
 
 
@@ -188,10 +186,6 @@ events.setup(bot)
 #                 await message.channel.send(prefixes[str(message.guild.id)] )
 #         except:
 #             prefixes = {}
-
-
-bot.add_command(valostats.vstats)
-bot.add_command(valostats.valofight)
 
 
 bot.run(DISCORD_KEY)
