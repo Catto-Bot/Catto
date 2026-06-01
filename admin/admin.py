@@ -68,13 +68,11 @@ async def ping(ctx):
     )
 )
 async def servers(ctx):
-    a = 0
     total_members = 0
     server_info = ""
 
-    for guild in ctx.bot.guilds:
+    for a, guild in enumerate(ctx.bot.guilds):
         server_info += f"#{a}, {guild}, {guild.member_count}, id = {guild.id}\n"
-        a += 1
         total_members += guild.member_count
 
     with open("server_info.txt", "w") as file:
