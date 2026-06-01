@@ -44,6 +44,7 @@ COGS = [
     "cogs.profile",
     "cogs.reminders",
     "cogs.polls",
+    "cogs.music",
 ]
 
 

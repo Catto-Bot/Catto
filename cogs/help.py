@@ -34,6 +34,7 @@ COG_EMOJI: dict[str, str] = {
     "Profile": "👤",
     "Reminders": "⏰",
     "Polls": "📊",
+    "Music": "🎵",
 }
 
 FIELDS_PER_PAGE = 10
