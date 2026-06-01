@@ -348,3 +348,19 @@ async def bump_message_count(user_id: int, username: str) -> int:
     ) as cur:
         row = await cur.fetchone()
     return row[0]
+
+
+async def get_message_count(user_id: int) -> int:
+    async with conn().execute(
+        "SELECT total FROM message_count WHERE user_id = ?", (user_id,)
+    ) as cur:
+        row = await cur.fetchone()
+    return row[0] if row else 0
+
+
+async def top_messages(limit: int = 10) -> list[dict]:
+    async with conn().execute(
+        "SELECT username, total FROM message_count ORDER BY total DESC LIMIT ?", (limit,)
+    ) as cur:
+        rows = await cur.fetchall()
+    return [{"username": r[0], "total": r[1]} for r in rows]

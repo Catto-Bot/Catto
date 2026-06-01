@@ -42,6 +42,7 @@ COGS = [
     "cogs.admin",
     "cogs.anicat",
     "cogs.valostats",
+    "cogs.profile",
 ]
 
 
