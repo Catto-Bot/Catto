@@ -134,11 +134,24 @@ class Admin(commands.Cog):
     @commands.hybrid_command(name="sync")
     @is_owner()
     async def sync(self, ctx: commands.Context, scope: str = "guild"):
-        """Sync slash commands. scope=guild (default, instant) or global (slow)."""
+        """Sync slash commands.
+        scope=guild  → copy tree to current guild (instant)
+        scope=global → register globally (~1h propagation)
+        scope=clear  → wipe both globals and this guild's commands
+        """
         log_command(ctx)
+        if scope == "clear":
+            ctx.bot.tree.clear_commands(guild=None)
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            await ctx.bot.tree.sync()
+            await ctx.send(
+                "Cleared all slash commands (global + this guild). Run `/sync` to re-register."
+            )
+            return
         if scope == "global":
             synced = await ctx.bot.tree.sync()
-            await ctx.send(f"Synced {len(synced)} commands globally (may take up to 1h to appear).")
+            await ctx.send(f"Synced {len(synced)} commands globally (up to 1h to appear).")
             return
         ctx.bot.tree.copy_global_to(guild=ctx.guild)
         synced = await ctx.bot.tree.sync(guild=ctx.guild)

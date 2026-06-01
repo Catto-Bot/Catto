@@ -141,7 +141,8 @@ class CattoBot(commands.Bot):
             await self.load_extension(ext)
 
     async def on_ready(self):  # type: ignore[override]
-        await self.tree.sync()
+        # Note: no automatic tree.sync() — use the /sync command to register
+        # slash commands per-guild (instant) or globally (slow propagation).
         print("The bot is ready", flush=True)
         await self.change_presence(
             activity=discord.Activity(
