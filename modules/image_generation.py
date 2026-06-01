@@ -1,4 +1,3 @@
-import asyncio
 import io
 import os
 
@@ -11,10 +10,6 @@ from PIL import Image
 load_dotenv()
 
 HUGGING_FACE_KEY = os.getenv("HUGGING_FACE_KEY")
-HUGGING_FACE_PRIVATE_KEY = os.getenv("HUGGING_FACE_PRIVATE_KEY")
-PRIVAI_ALLOWED_IDS = {
-    int(uid) for uid in os.getenv("PRIVAI_ALLOWED_IDS", "").split(",") if uid.strip()
-}
 
 
 def save(ctx, msg):
@@ -187,58 +182,3 @@ async def ai_error(ctx, error):
 
 
 ai.locked = False
-
-
-lock = asyncio.Lock()
-
-
-@commands.command(name="privai")
-@commands.check(lambda ctx: ctx.author.id in PRIVAI_ALLOWED_IDS)
-@commands.cooldown(1, 15, commands.BucketType.user)
-async def privai(ctx, *, msg):
-    # Acquire the lock
-    async with lock:
-        save(ctx, msg)
-
-        try:
-            hello = await ctx.send("Loading..")
-            API_URL = "https://api-inference.huggingface.co/models/AIARTCHAN/AbyssMapleVer3"
-            headers = {"Authorization": HUGGING_FACE_PRIVATE_KEY}
-
-            def query(payload):
-                response = requests.post(API_URL, headers=headers, json=payload)
-                return response.content
-
-            image_bytes = query(
-                {
-                    "inputs": msg,
-                }
-            )
-
-            image = Image.open(io.BytesIO(image_bytes))
-
-            image.save("output2.png")
-
-            with open("output2.png", "rb") as f:
-                picture = discord.File(f)
-                embed = discord.Embed(
-                    title="Generated Image", description=f"Prompt: {msg}", color=0x000000
-                )
-                embed.set_image(url="attachment://output2.png")
-                embed.set_footer(text="Note: Generating Explicit Images Will Result In A Ban")
-                await hello.delete()
-                await ctx.reply(embed=embed, file=picture)
-
-        except Exception as err:
-            await ctx.send(err)
-
-        finally:
-            os.remove("output2.png")
-
-
-# Cooldown error handler
-@privai.error
-async def privai_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        remaining = round(error.retry_after)
-        await ctx.send(f"This command is on cooldown. Please try again in {remaining} second(s).")
