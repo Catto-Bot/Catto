@@ -18,7 +18,6 @@ from modules import (
     anime,
     avatar,
     chat,
-    dice,
     emoji,
     fakeinfo,
     gambler,
@@ -40,7 +39,7 @@ configure_logging()
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip"]
+COGS = ["cogs.prefix", "cogs.greet", "cogs.conf", "cogs.coinflip", "cogs.dice"]
 
 
 async def get_prefix(bot, message):
@@ -200,8 +199,6 @@ async def test_slash(interaction: discord.Interaction):
 bot.add_command(vote)
 bot.add_command(uptime)
 bot.add_command(meme.meme)
-bot.add_command(dice.rolldice)
-bot.add_command(dice.cat)
 bot.add_command(qutoes.quote)
 bot.add_command(qutoes.devjoke)
 bot.add_command(qutoes.dadjoke)
