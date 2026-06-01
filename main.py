@@ -303,7 +303,6 @@ bot.add_command(ship.ship)
 
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
-bot.add_command(image_generation.privai)
 
 bot.add_command(hangman.hangman)
 bot.add_command(hangman.guess)
