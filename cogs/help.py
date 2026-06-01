@@ -86,7 +86,7 @@ class HelpSelect(discord.ui.Select):
         top = by_size[: MAX_SELECT_OPTIONS - 1]
         rest = by_size[MAX_SELECT_OPTIONS - 1 :]
         self.misc: list[tuple[str, str]] = []
-        for cog, cmds in rest:
+        for _cog, cmds in rest:
             self.misc.extend(cmds)
         self.misc.sort()
         options = [
