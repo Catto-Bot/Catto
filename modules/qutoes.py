@@ -38,7 +38,7 @@ async def quote(ctx):
         await quote.add_reaction("👍")
         await quote.add_reaction("👎")
 
-    except:
+    except Exception:
         await ctx.channel.send("Error. Try Again!")
 
 
@@ -113,7 +113,7 @@ async def trivia(ctx):
 
         await asyncio.sleep(10)
 
-    except:
+    except Exception:
         embed = discord.Embed(title="Nobody reacted on time 😔", color=0xFF0000)
         await ctx.send(embed=embed)
 
@@ -135,7 +135,7 @@ async def dadjoke(ctx):
         dadjoke = await ctx.send(embed=embed)
         await dadjoke.add_reaction("👍")
         await dadjoke.add_reaction("👎")
-    except:
+    except Exception:
         await ctx.channel.send("My dad left me like your left to buy milk 😁")
 
 

@@ -57,7 +57,7 @@ async def anicat(ctx):
             try:
                 with open("data/anicat.json", encoding="utf8") as file:
                     anicatdata = json.load(file)
-            except:
+            except Exception:
                 anicatdata = {}
 
             if user_name in anicatdata:

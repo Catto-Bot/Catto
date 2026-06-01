@@ -165,7 +165,7 @@ async def joke(ctx):
         await joke_embed.add_reaction("👍")
         await joke_embed.add_reaction("👎")
 
-    except:
+    except Exception:
         print("error")
 
 
@@ -186,7 +186,7 @@ async def catfact(ctx):
         embed = discord.Embed(title=f"{cat}", color=0x555555)
         await ctx.send(embed=embed)
 
-    except:
+    except Exception:
         print("error")
 
 
@@ -208,5 +208,5 @@ async def bored(ctx):
         embed = discord.Embed(title=f"{bored}", color=0x555555)
         await ctx.send(embed=embed)
 
-    except:
+    except Exception:
         print("error")

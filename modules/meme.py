@@ -22,5 +22,5 @@ async def meme(ctx):
         meme = await ctx.send(embed=embed)
         await meme.add_reaction("👍")
         await meme.add_reaction("👎")
-    except:
+    except Exception:
         await ctx.send("There was an error!")

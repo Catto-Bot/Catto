@@ -101,7 +101,7 @@ async def on_message(member):
             messages = json.load(f)
         with open("gamblerdata/catomonie.json") as fe:
             json.load(fe)
-    except:
+    except Exception:
         messages = {}
 
     member_id = str(member.author.id)

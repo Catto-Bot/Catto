@@ -16,7 +16,7 @@ async def daily(ctx):
     try:
         with open("gamblerdata/catomonie.json") as f:
             catomonie = json.load(f)
-    except:
+    except Exception:
         catomonie = {}
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
@@ -64,7 +64,7 @@ async def weekly(ctx):
     try:
         with open("gamblerdata/catomonie.json") as f:
             catomonie = json.load(f)
-    except:
+    except Exception:
         catomonie = {}
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
@@ -113,7 +113,7 @@ async def monie(ctx):
     try:
         with open("gamblerdata/catomonie.json") as f:
             catomonie = json.load(f)
-    except:
+    except Exception:
         catomonie = {}
     user_id = str(ctx.author.id)
     user_name = str(ctx.author)
@@ -155,7 +155,7 @@ async def balance(ctx, member: discord.Member = None):
             try:
                 with open("gamblerdata/catomonie.json") as f:
                     catomonie = json.load(f)
-            except:
+            except Exception:
                 catomonie = {}
             user_id = str(ctx.author.id)
             user_name = str(ctx.author)
@@ -189,7 +189,7 @@ async def balance(ctx, member: discord.Member = None):
             try:
                 with open("gamblerdata/catomonie.json") as f:
                     catomonie = json.load(f)
-            except:
+            except Exception:
                 catomonie = {}
             user_id = str(member.id)
             user_name = str(member.name)
@@ -222,7 +222,7 @@ async def bet(ctx, n, m):
     try:
         with open("gamblerdata/catomonie.json") as f:
             catomonie = json.load(f)
-    except:
+    except Exception:
         catomonie = {}
 
     user_id = str(ctx.author.id)
@@ -320,7 +320,7 @@ async def steal(ctx, username: discord.Member):
             try:
                 with open("gamblerdata/catomonie.json") as f:
                     catomonie = json.load(f)
-            except:
+            except Exception:
                 catomonie = {}
             user_id = str(ctx.author.id)
             steal_id = str(username.id)
@@ -471,7 +471,7 @@ async def steal_error(ctx, error):
     try:
         with open("gamblerdata/catomonie.json") as f:
             catomonie = json.load(f)
-    except:
+    except Exception:
         catomonie = {}
     user_id = str(ctx.author.id)
     if catomonie[user_id]["coins"] <= 100:

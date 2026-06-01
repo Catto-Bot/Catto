@@ -48,7 +48,7 @@ def get_prefix(bot, message):
         with open("prefixes.json") as f:
             prefixes = json.load(f)
         return prefixes[str(message.guild.id)]
-    except:
+    except Exception:
         prefixes = {}
 
 

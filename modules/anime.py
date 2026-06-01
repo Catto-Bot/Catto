@@ -24,7 +24,7 @@ async def animeQuote(ctx):
         embed.set_footer(text=f"-{aniChara}")
         await hello.delete()
         await ctx.send(embed=embed)
-    except:
+    except Exception:
         await ctx.send("TATAKAE!🕊️- Eren Yeager")
 
 

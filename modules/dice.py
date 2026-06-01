@@ -70,5 +70,5 @@ async def cat(ctx):
         cat = data[0]["url"]
 
         await ctx.send(cat)
-    except:
+    except Exception:
         await ctx.send("Can't find cute cat image :(")
