@@ -1,3 +1,4 @@
+import contextlib
 from datetime import datetime
 
 import discord
@@ -21,10 +22,8 @@ class Confession(commands.Cog):
         configured = await db.get_confession_channel(ctx.guild.id)
         if configured != ctx.channel.id:
             return
-        try:
+        with contextlib.suppress(discord.Forbidden, discord.NotFound):
             await ctx.message.delete()
-        except (discord.Forbidden, discord.NotFound):
-            pass
         prefix = await db.get_prefix(ctx.guild.id)
         embed = discord.Embed(
             description=message,
