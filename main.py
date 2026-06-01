@@ -22,7 +22,6 @@ from modules import (
     help,
     image_generation,
     moderation,
-    qutoes,
     ticket,
     valostats,
 )
@@ -45,6 +44,7 @@ COGS = [
     "cogs.avatar",
     "cogs.fakeinfo",
     "cogs.roles",
+    "cogs.quotes",
 ]
 
 
@@ -217,15 +217,6 @@ async def test_slash(interaction: discord.Interaction):
 
 bot.add_command(vote)
 bot.add_command(uptime)
-bot.add_command(qutoes.quote)
-bot.add_command(qutoes.devjoke)
-bot.add_command(qutoes.dadjoke)
-bot.add_command(qutoes.trivia)
-bot.add_command(qutoes.insult)
-bot.add_command(qutoes.darkmeme)
-bot.add_command(qutoes.spooky)
-bot.add_command(qutoes.advice)
-
 # gmabler
 bot.add_command(gambler.daily)
 bot.add_command(gambler.weekly)
