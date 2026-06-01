@@ -15,7 +15,6 @@ from core import db
 from core.logging import configure as configure_logging
 from events import events
 from modules import (
-    ticket,
     valostats,
 )
 
@@ -45,6 +44,7 @@ COGS = [
     "cogs.chat",
     "cogs.ai",
     "cogs.gambler",
+    "cogs.ticket",
 ]
 
 
@@ -257,10 +257,6 @@ async def test_slash(interaction: discord.Interaction):
 
 bot.add_command(vote)
 bot.add_command(uptime)
-bot.add_command(ticket.ticketsetup)
-bot.add_command(ticket.deleteticket)
-
-
 bot.add_command(valostats.vstats)
 bot.add_command(valostats.valofight)
 
