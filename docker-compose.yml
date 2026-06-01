@@ -1,0 +1,14 @@
+services:
+  catto:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - catto-data:/app/data-runtime
+    working_dir: /app
+    environment:
+      # Persist sqlite + logs in the named volume by relative path
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  catto-data:

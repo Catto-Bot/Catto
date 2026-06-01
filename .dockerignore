@@ -1,0 +1,14 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+catto.db
+catto.db-journal
+prefixes.json
+logs.txt
+.env
+CLAUDE.md
+tests
