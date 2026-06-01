@@ -6,6 +6,7 @@ import json
 
 hangman_games = {}
 
+
 @commands.command(name="hangman")
 async def hangman(ctx):
     global hangman_games
@@ -20,17 +21,22 @@ async def hangman(ctx):
     chosen_word = data[0]
     print(chosen_word)
 
-    guessed_word = ['_'] * len(chosen_word)
+    guessed_word = ["_"] * len(chosen_word)
     no_of_guesses = 0
     max_guess = 6
 
     hangman_games[ctx.guild.id] = {
-        'chosen_word': chosen_word,
-        'guessed_word': guessed_word,
-        'no_of_guesses': no_of_guesses,
-        'max_guess': max_guess
+        "chosen_word": chosen_word,
+        "guessed_word": guessed_word,
+        "no_of_guesses": no_of_guesses,
+        "max_guess": max_guess,
     }
-    embed = discord.Embed(title="Welcome To Hangman", description="Use !guess <letter>\n\nGuess The Word: " + " ".join(guessed_word).replace("_", "⬛"), color=0x333333)
+    embed = discord.Embed(
+        title="Welcome To Hangman",
+        description="Use !guess <letter>\n\nGuess The Word: "
+        + " ".join(guessed_word).replace("_", "⬛"),
+        color=0x333333,
+    )
     embed.set_footer(text="Total guesses: 6")
     await hello.delete()
     await ctx.send(embed=embed)
@@ -45,10 +51,10 @@ async def guess(ctx, guess):
         return
 
     game = hangman_games[ctx.guild.id]
-    chosen_word = game['chosen_word']
-    guessed_word = game['guessed_word']
-    no_of_guesses = game['no_of_guesses']
-    max_guess = game['max_guess']
+    chosen_word = game["chosen_word"]
+    guessed_word = game["guessed_word"]
+    no_of_guesses = game["no_of_guesses"]
+    max_guess = game["max_guess"]
 
     if len(guess) != 1:
         await ctx.send("Enter a single letter.")
@@ -59,15 +65,21 @@ async def guess(ctx, guess):
             if chosen_word[i] == guess:
                 guessed_word[i] = guess
 
-        if '_' not in guessed_word:
-            embed = discord.Embed(title="Correct!", description=" ".join(guessed_word).replace("_", "⬛"), color=0x333333)
+        if "_" not in guessed_word:
+            embed = discord.Embed(
+                title="Correct!",
+                description=" ".join(guessed_word).replace("_", "⬛"),
+                color=0x333333,
+            )
             await ctx.send(embed=embed)
-            await ctx.send(f"Congratulations, {ctx.message.author.mention}! You guessed the correct word: {''.join(guessed_word)}")
+            await ctx.send(
+                f"Congratulations, {ctx.message.author.mention}! You guessed the correct word: {''.join(guessed_word)}"
+            )
             del hangman_games[ctx.guild.id]
             return
     else:
         no_of_guesses += 1
-        hangman_games[ctx.guild.id]['no_of_guesses'] = no_of_guesses
+        hangman_games[ctx.guild.id]["no_of_guesses"] = no_of_guesses
 
     if no_of_guesses >= max_guess:
         await ctx.send(f"Game Over! The correct word was {chosen_word}")
@@ -75,14 +87,16 @@ async def guess(ctx, guess):
         return
 
     chances_left = max_guess - no_of_guesses
-    embed = discord.Embed(title="Guess The Word", description=" ".join(guessed_word).replace("_", "⬛"), color=0x333333)
+    embed = discord.Embed(
+        title="Guess The Word",
+        description=" ".join(guessed_word).replace("_", "⬛"),
+        color=0x333333,
+    )
     embed.set_footer(text=f"Chances left: {chances_left}")
     await ctx.send(embed=embed)
-
 
 
 @guess.error
 async def guess_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("`Correct format is !guess <letter>`")
-    

@@ -1,13 +1,14 @@
 import discord
-from discord.ext import commands 
+from discord.ext import commands
+
 
 @commands.command(name="setuprole")
 @commands.has_permissions(manage_roles=True)
-async def setuprole(ctx, rolename, member: discord.Member = None ):
+async def setuprole(ctx, rolename, member: discord.Member = None):
     if member is None:
         member = ctx.author
 
-    role = discord.utils.get(ctx.guild.roles, name = rolename)
+    role = discord.utils.get(ctx.guild.roles, name=rolename)
     if role is None:
         await ctx.send(f"Role {rolename} not found!")
     elif role in member.roles:
@@ -15,65 +16,68 @@ async def setuprole(ctx, rolename, member: discord.Member = None ):
     else:
         await member.add_roles(role)
         if member is None:
-            await ctx.send(f'Role {rolename} added for {ctx.author.mention}!') 
+            await ctx.send(f"Role {rolename} added for {ctx.author.mention}!")
         else:
-            await ctx.send(f'Role {rolename} added for {member.mention}!') 
+            await ctx.send(f"Role {rolename} added for {member.mention}!")
 
 
 @commands.command(name="createrole")
-@commands.has_permissions(administrator = True)
-
-async def createrole(ctx,rolename):
+@commands.has_permissions(administrator=True)
+async def createrole(ctx, rolename):
     guild = ctx.guild
-    exisitng_role = discord.utils.get(guild.roles, name = rolename)
+    exisitng_role = discord.utils.get(guild.roles, name=rolename)
     if exisitng_role is None:
-        await guild.create_role(name = rolename)
+        await guild.create_role(name=rolename)
         await ctx.send(f"Role {rolename} has been created!")
     else:
         await ctx.send(f"Role {rolename} already exists!")
 
-@commands.command(name = "deleterole")
-@commands.has_permissions(administrator = True)
 
+@commands.command(name="deleterole")
+@commands.has_permissions(administrator=True)
 async def deleterole(ctx, rolename):
     role = discord.utils.get(ctx.guild.roles, name=rolename)
     if role is None:
-        await ctx.send(f'Role {rolename} not found!')
+        await ctx.send(f"Role {rolename} not found!")
     else:
         await role.delete()
-        await ctx.send(f'Role {rolename} deleted!')
+        await ctx.send(f"Role {rolename} deleted!")
 
-@commands.command(name = "removerole")
+
+@commands.command(name="removerole")
 @commands.has_permissions(manage_roles=True)
-
 async def removerole(ctx, rolename, member: discord.Member = None):
     if member is None:
         member = ctx.author
-    role = discord.utils.get(ctx.guild.roles, name = rolename)
+    role = discord.utils.get(ctx.guild.roles, name=rolename)
     if role is None:
         await ctx.send(f"Role {rolename} not found!")
-    elif not(role in member.roles):
+    elif not (role in member.roles):
         await ctx.send(f"{member.display_name} does not have the Role {rolename}!")
     else:
         await member.remove_roles(role)
         await ctx.send(f"Removed Role {rolename} from {member.display_name}!")
 
+
 @deleterole.error
-async def deleterole_error(ctx,error):
+async def deleterole_error(ctx, error):
     embed = discord.Embed(title=error, description="")
     await ctx.send(embed=embed)
+
 
 @removerole.error
-async def removerole_error(ctx,error):
+async def removerole_error(ctx, error):
     embed = discord.Embed(title=error, description="")
     await ctx.send(embed=embed)
+
 
 @createrole.error
-async def createrole_error(ctx,error):
+async def createrole_error(ctx, error):
     embed = discord.Embed(title=error, description="")
     await ctx.send(embed=embed)
 
+
 @setuprole.error
-async def setuprole_error(ctx,error):
+async def setuprole_error(ctx, error):
     embed = discord.Embed(title=error, description="")
     await ctx.send(embed=embed)

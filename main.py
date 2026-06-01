@@ -1,4 +1,4 @@
-#------------------------MODULES-------------------------------------------------------------#
+# ------------------------MODULES-------------------------------------------------------------#
 import discord
 from discord.ext import commands
 from discord import Intents
@@ -6,7 +6,31 @@ import os
 from dotenv import load_dotenv
 import json
 from events import events
-from modules import coinflip,meme,dice,qutoes,gambler,chat,gifs,ticket,valostats,avatar,anime,prefix,moderation,greet,roles,wyr,emoji,fakeinfo,help,ship,conf,image_generation,hangman
+from modules import (
+    coinflip,
+    meme,
+    dice,
+    qutoes,
+    gambler,
+    chat,
+    gifs,
+    ticket,
+    valostats,
+    avatar,
+    anime,
+    prefix,
+    moderation,
+    greet,
+    roles,
+    wyr,
+    emoji,
+    fakeinfo,
+    help,
+    ship,
+    conf,
+    image_generation,
+    hangman,
+)
 from admin import admin
 from anicat import anicat
 import time
@@ -14,37 +38,39 @@ import datetime
 import psutil
 
 
-
-
-
 load_dotenv()
 
-DISCORD_KEY= os.getenv('DISCORD_ID')
-#from discord import app_commands
+DISCORD_KEY = os.getenv("DISCORD_ID")
+# from discord import app_commands
 
-def get_prefix(bot, message): 
+
+def get_prefix(bot, message):
     try:
-        with open('prefixes.json', 'r') as f: 
-            prefixes = json.load(f) 
-        return prefixes[str(message.guild.id)] 
+        with open("prefixes.json", "r") as f:
+            prefixes = json.load(f)
+        return prefixes[str(message.guild.id)]
     except:
         prefixes = {}
 
-start_time = time.time() 
+
+start_time = time.time()
 
 
 intents = discord.Intents.all()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
-bot.remove_command('help')
+bot.remove_command("help")
+
+
 @bot.event
 async def on_ready():
     await bot.tree.sync()
     print("The bot is ready")
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'!help & cattoprefix'))
-    
+    await bot.change_presence(
+        activity=discord.Activity(type=discord.ActivityType.watching, name=f"!help & cattoprefix")
+    )
 
 
 events.setup(bot)
@@ -54,39 +80,47 @@ events.setup(bot)
 #     content = member.content.lower()
 #     if content == "cattoprefix":
 #         try:
-#             with open('prefixes.json', 'r') as f: 
+#             with open('prefixes.json', 'r') as f:
 #                 prefixes = json.load(f)
 #                 await message.channel.send(prefixes[str(message.guild.id)] )
 #         except:
 #             prefixes = {}
 
+
 @commands.command(name="vote")
 async def vote(ctx):
-    vote_link = "https://top.gg/bot/1108380972950491146/invite"  
-    embed = discord.Embed(title="Vote for the Bot!", description=f"Click [here]({vote_link}) to vote for the bot!", color=discord.Color.blue())
+    vote_link = "https://top.gg/bot/1108380972950491146/invite"
+    embed = discord.Embed(
+        title="Vote for the Bot!",
+        description=f"Click [here]({vote_link}) to vote for the bot!",
+        color=discord.Color.blue(),
+    )
     await ctx.send(embed=embed)
 
 
-
-@bot.tree.command(name="vote",description="use this command to vote for the bot")
-async def slash_command(interaction:discord.Interaction):
-    vote_link = "https://top.gg/bot/1108380972950491146/invite"  
-    embed = discord.Embed(title="Vote for the Bot!", description=f"Click [here]({vote_link}) to vote for the bot!", color=discord.Color.blue())
+@bot.tree.command(name="vote", description="use this command to vote for the bot")
+async def slash_command(interaction: discord.Interaction):
+    vote_link = "https://top.gg/bot/1108380972950491146/invite"
+    embed = discord.Embed(
+        title="Vote for the Bot!",
+        description=f"Click [here]({vote_link}) to vote for the bot!",
+        color=discord.Color.blue(),
+    )
     await interaction.response.send_message(embed=embed)
 
 
-@bot.tree.command(name="uptime",description="displays the stats for the bot")
-async def slash_command(interaction:discord.Interaction):
+@bot.tree.command(name="uptime", description="displays the stats for the bot")
+async def slash_command(interaction: discord.Interaction):
     end_time = time.time()
     uptime = end_time - start_time
 
-    weeks, uptime = divmod(uptime, 604800)  
-    days, uptime = divmod(uptime, 86400)    
-    hours, uptime = divmod(uptime, 3600)     
+    weeks, uptime = divmod(uptime, 604800)
+    days, uptime = divmod(uptime, 86400)
+    hours, uptime = divmod(uptime, 3600)
     minutes, seconds = divmod(uptime, 60)
     cpu_percent = psutil.cpu_percent(interval=1)
     memory_usage = psutil.virtual_memory()
-    disk_usage = psutil.disk_usage('/')
+    disk_usage = psutil.disk_usage("/")
 
     uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
 
@@ -99,13 +133,13 @@ async def uptime(ctx):
         end_time = time.time()
         uptime = end_time - start_time
 
-        weeks, uptime = divmod(uptime, 604800)  
-        days, uptime = divmod(uptime, 86400)    
-        hours, uptime = divmod(uptime, 3600)     
+        weeks, uptime = divmod(uptime, 604800)
+        days, uptime = divmod(uptime, 86400)
+        hours, uptime = divmod(uptime, 3600)
         minutes, seconds = divmod(uptime, 60)
         cpu_percent = psutil.cpu_percent(interval=1)
         memory_usage = psutil.virtual_memory()
-        disk_usage = psutil.disk_usage('/')
+        disk_usage = psutil.disk_usage("/")
 
         uptime_str = f"{int(weeks)} weeks, {int(days)} days, {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds\nCPU Usage: {cpu_percent}%, Memory Usage: {memory_usage.percent}%, Disk Usage: {disk_usage.percent}%"
         await ctx.send(f"Bot uptime: ``{uptime_str}``")
@@ -113,14 +147,9 @@ async def uptime(ctx):
         await ctx.send(f"An error occurred while retrieving the uptime: {err}")
 
 
-
-@bot.tree.command(name="test",description="This is a test for the application command")
-async def slash_command(interaction:discord.Interaction):
+@bot.tree.command(name="test", description="This is a test for the application command")
+async def slash_command(interaction: discord.Interaction):
     await interaction.response.send_message("Hello World!")
-
-
-    
-
 
 
 bot.add_command(vote)
@@ -143,7 +172,7 @@ bot.add_command(qutoes.darkmeme)
 bot.add_command(qutoes.spooky)
 bot.add_command(qutoes.advice)
 
-#gmabler
+# gmabler
 bot.add_command(gambler.daily)
 bot.add_command(gambler.weekly)
 bot.add_command(gambler.balance)
@@ -209,7 +238,6 @@ bot.add_command(wyr.truth)
 bot.add_command(wyr.dare)
 
 
-
 bot.add_command(greet.setwelcomechannel)
 bot.add_command(greet.setleavechannel)
 bot.add_command(greet.deletewelcomechannel)
@@ -237,19 +265,12 @@ bot.add_command(conf.confessionsetup)
 bot.add_command(conf.ch)
 
 
-
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
 bot.add_command(image_generation.privai)
 
 bot.add_command(hangman.hangman)
 bot.add_command(hangman.guess)
-
-
-
-
-
-
 
 
 bot.run(DISCORD_KEY)
