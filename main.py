@@ -16,7 +16,6 @@ from core.logging import configure as configure_logging
 from events import events
 from modules import (
     gambler,
-    image_generation,
     ticket,
     valostats,
 )
@@ -45,6 +44,7 @@ COGS = [
     "cogs.hangman",
     "cogs.gifs",
     "cogs.chat",
+    "cogs.ai",
 ]
 
 
@@ -92,6 +92,16 @@ async def migrate_confession_json() -> None:
         await db.set_confession_channel(int(guild_id), channel_id)
 
 
+async def migrate_ai_allowed_txt() -> None:
+    path = Path("ai_allowed.txt")
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if line.isdigit():
+            await db.add_ai_allowed(int(line))
+
+
 start_time = time.time()
 
 
@@ -106,6 +116,7 @@ class CattoBot(commands.Bot):
         await migrate_channel_json("channelgreet.json", db.set_welcome_channel)
         await migrate_channel_json("channeleave.json", db.set_leave_channel)
         await migrate_confession_json()
+        await migrate_ai_allowed_txt()
         for ext in COGS:
             await self.load_extension(ext)
 
@@ -246,9 +257,6 @@ bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
 bot.add_command(anicat.anicatinfo)
 
-
-bot.add_command(image_generation.ai)
-bot.add_command(image_generation.aiterms)
 
 
 

@@ -27,6 +27,10 @@ CREATE TABLE IF NOT EXISTS chat_response (
     input_text    TEXT PRIMARY KEY,
     response_text TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS ai_allowed_user (
+    user_id INTEGER PRIMARY KEY
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -146,3 +150,16 @@ async def get_chat_response(input_text: str) -> str | None:
     ) as cur:
         row = await cur.fetchone()
     return row[0] if row else None
+
+
+async def is_ai_allowed(user_id: int) -> bool:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT 1 FROM ai_allowed_user WHERE user_id = ?", (user_id,)
+    ) as cur:
+        return (await cur.fetchone()) is not None
+
+
+async def add_ai_allowed(user_id: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("INSERT OR IGNORE INTO ai_allowed_user (user_id) VALUES (?)", (user_id,))
+        await db.commit()
