@@ -44,6 +44,7 @@ COGS = [
     "cogs.valostats",
     "cogs.profile",
     "cogs.reminders",
+    "cogs.polls",
 ]
 
 
