@@ -4,51 +4,45 @@ from discord.ext import commands
 from core import db
 from core.logging import log_command
 
-COG_EMOJI: dict[str, str] = {
-    "Coinflip": "🎲",
-    "Dice": "🎲",
-    "Meme": "🎭",
-    "Anime": "🐱",
-    "WouldYouRather": "❓",
-    "Emoji": "✨",
-    "Ship": "❤️",
-    "Avatar": "🖼️",
-    "FakeInfo": "🕵️",
-    "Roles": "🔒",
-    "Quotes": "📜",
-    "Moderation": "🔨",
-    "Hangman": "🎮",
-    "Gifs": "🎥",
-    "Chat": "💬",
-    "AIImage": "🤖",
-    "Gambler": "💰",
-    "Tickets": "🎫",
-    "Admin": "👨‍💻",
-    "AniCat": "😼",
-    "Valostats": "🎯",
-    "Prefix": "⚙️",
-    "Greet": "👋",
-    "Confession": "🤫",
-    "Profile": "👤",
-    "Reminders": "⏰",
-    "Polls": "📊",
-    "Music": "🎵",
+# Map every cog into a clean user-facing meta-category.
+# (meta name, emoji)
+META: dict[str, tuple[str, str]] = {
+    "Music": ("Music", "🎵"),
+    "Gambler": ("Economy", "💰"),
+    "AniCat": ("AniCat", "🐱"),
+    "AIImage": ("AI", "🤖"),
+    "Valostats": ("Valorant", "🎯"),
+    "Moderation": ("Moderation", "🔨"),
+    "Roles": ("Roles", "🔒"),
+    "Tickets": ("Tickets", "🎫"),
+    "Greet": ("Welcome", "👋"),
+    "Prefix": ("Config", "⚙️"),
+    "Profile": ("Profile", "👤"),
+    "Reminders": ("Reminders", "⏰"),
+    "Admin": ("Admin", "👨‍💻"),
+    "Gifs": ("Social", "💞"),
+    "Chat": ("Social", "💞"),
+    "Confession": ("Social", "💞"),
+    "Coinflip": ("Games", "🎮"),
+    "Dice": ("Games", "🎮"),
+    "WouldYouRather": ("Games", "🎮"),
+    "Hangman": ("Games", "🎮"),
+    "Polls": ("Games", "🎮"),
+    "Ship": ("Games", "🎮"),
+    "Meme": ("Fun", "🎭"),
+    "Anime": ("Fun", "🎭"),
+    "Quotes": ("Fun", "🎭"),
+    "Emoji": ("Fun", "🎭"),
+    "Avatar": ("Fun", "🎭"),
+    "FakeInfo": ("Fun", "🎭"),
 }
 
-COG_DISPLAY: dict[str, str] = {
-    "WouldYouRather": "Would You Rather",
-    "AIImage": "AI Image",
-    "AniCat": "AniCat",
-    "FakeInfo": "Fake Info",
-    "Valostats": "Valorant",
-    "Gambler": "Economy",
-    "Greet": "Welcome",
-    "Moderation": "Moderation",
-}
-
-# Discord limits
-MAX_FIELDS = 25
-MAX_SELECT_OPTIONS = 25
+# Display order for the overview embed
+META_ORDER = [
+    "Music", "Economy", "Games", "Fun", "Social", "AniCat",
+    "AI", "Valorant", "Moderation", "Roles", "Tickets",
+    "Welcome", "Reminders", "Profile", "Config", "Admin",
+]
 
 
 def _expand(cmd: commands.Command, prefix: str = "") -> list[tuple[str, str]]:
@@ -63,74 +57,60 @@ def _expand(cmd: commands.Command, prefix: str = "") -> list[tuple[str, str]]:
 
 
 def _collect(bot: commands.Bot) -> dict[str, list[tuple[str, str]]]:
-    groups: dict[str, list[tuple[str, str]]] = {}
+    """Return {meta_name: [(cmd_name, desc), ...]} grouped by META."""
+    by_meta: dict[str, list[tuple[str, str]]] = {}
     for cmd in bot.commands:
         if cmd.hidden or cmd.cog_name in (None, "Help"):
             continue
-        groups.setdefault(cmd.cog_name, []).extend(_expand(cmd))
-    for k in groups:
-        groups[k].sort()
-    return groups
+        meta_name = META.get(cmd.cog_name, ("Other", "✨"))[0]
+        by_meta.setdefault(meta_name, []).extend(_expand(cmd))
+    for k in by_meta:
+        by_meta[k].sort()
+    return by_meta
 
 
-def _display_name(cog: str) -> str:
-    return COG_DISPLAY.get(cog, cog)
+def _meta_emoji(meta: str) -> str:
+    for _, (m, e) in META.items():
+        if m == meta:
+            return e
+    return "✨"
 
 
 class HelpSelect(discord.ui.Select):
-    def __init__(self, groups: dict[str, list[tuple[str, str]]], prefix: str):
-        self.groups = groups
+    def __init__(self, by_meta: dict[str, list[tuple[str, str]]], prefix: str):
+        self.by_meta = by_meta
         self.prefix = prefix
-        # Sort by command count desc, take top 24, group rest as Misc
-        by_size = sorted(groups.items(), key=lambda kv: -len(kv[1]))
-        top = by_size[: MAX_SELECT_OPTIONS - 1]
-        rest = by_size[MAX_SELECT_OPTIONS - 1 :]
-        self.misc: list[tuple[str, str]] = []
-        for _cog, cmds in rest:
-            self.misc.extend(cmds)
-        self.misc.sort()
         options = [
             discord.SelectOption(
-                label=_display_name(cog)[:25],
-                value=cog,
-                emoji=COG_EMOJI.get(cog),
-                description=f"{len(cmds)} commands"[:50],
+                label=meta,
+                value=meta,
+                emoji=_meta_emoji(meta),
+                description=f"{len(by_meta[meta])} commands",
             )
-            for cog, cmds in top
-        ]
-        if self.misc:
-            options.append(
-                discord.SelectOption(
-                    label="Other",
-                    value="__misc__",
-                    emoji="✨",
-                    description=f"{len(self.misc)} commands",
-                )
-            )
-        super().__init__(placeholder="Pick a category for details", options=options)
+            for meta in META_ORDER
+            if meta in by_meta
+        ][:25]
+        super().__init__(placeholder="Pick a category to see commands", options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        cog = self.values[0]
-        if cog == "__misc__":
-            cmds = self.misc
-            title = "✨ Other"
-            color = discord.Color.greyple()
-        else:
-            cmds = self.groups[cog]
-            title = f"{COG_EMOJI.get(cog, '•')} {_display_name(cog)}"
-            color = discord.Color.blurple()
-        embed = discord.Embed(title=title, color=color)
-        for name, desc in cmds[:MAX_FIELDS]:
-            embed.add_field(name=f"/{name}", value=desc or "No description.", inline=False)
-        embed.set_footer(text=f"Prefix: {self.prefix} . Pick another category below.")
+        meta = self.values[0]
+        cmds = self.by_meta[meta]
+        embed = discord.Embed(
+            title=f"{_meta_emoji(meta)}  {meta}",
+            description=f"{len(cmds)} command(s)",
+            color=discord.Color.blurple(),
+        )
+        for name, desc in cmds[:25]:
+            embed.add_field(name=f"/{name}", value=desc or "\u200b", inline=False)
+        embed.set_footer(text=f"Prefix: {self.prefix}  .  /help <command> for details")
         await interaction.response.edit_message(embed=embed, view=self.view)
 
 
 class HelpView(discord.ui.View):
-    def __init__(self, author_id: int, groups: dict[str, list[tuple[str, str]]], prefix: str):
+    def __init__(self, author_id: int, by_meta: dict[str, list[tuple[str, str]]], prefix: str):
         super().__init__(timeout=180)
         self.author_id = author_id
-        self.add_item(HelpSelect(groups, prefix))
+        self.add_item(HelpSelect(by_meta, prefix))
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
@@ -149,11 +129,12 @@ class Help(commands.Cog):
     async def help(self, ctx: commands.Context, *, query: str | None = None):
         log_command(ctx)
         prefix = await db.get_prefix(ctx.guild.id) if ctx.guild else db.DEFAULT_PREFIX
-        groups = _collect(self.bot)
+        by_meta = _collect(self.bot)
 
+        # Single-command lookup
         if query:
             target = query.lstrip("/").lstrip(prefix).lower()
-            for cog, cmds in groups.items():
+            for meta, cmds in by_meta.items():
                 for name, desc in cmds:
                     if name.lower() == target:
                         embed = discord.Embed(
@@ -161,34 +142,38 @@ class Help(commands.Cog):
                             description=desc or "No description.",
                             color=discord.Color.blurple(),
                         )
-                        embed.add_field(name="Category", value=_display_name(cog), inline=True)
+                        embed.add_field(name="Category", value=meta, inline=True)
                         await ctx.send(embed=embed)
                         return
             await ctx.send(f"No command matches `{query}`.")
             return
 
-        total = sum(len(v) for v in groups.values())
-        lines: list[str] = []
-        for cog in sorted(groups):
-            emoji = COG_EMOJI.get(cog, "•")
-            names = ", ".join(f"`/{n}`" for n, _ in groups[cog])
-            if len(names) > 240:
-                names = names[:237] + "..."
-            lines.append(f"{emoji} **{_display_name(cog)}** ({len(groups[cog])}): {names}")
-        description = (
-            f"Server prefix: `{prefix}`. Slash variants also work.\n"
-            f"Total commands: **{total}** across {len(groups)} categories.\n"
-            f"Use `/help <command>` for details, or pick a category below.\n\n"
-            + "\n".join(lines)
-        )
-        if len(description) > 4000:
-            description = description[:3997] + "..."
+        total = sum(len(v) for v in by_meta.values())
         embed = discord.Embed(
-            title="Catto Commands",
-            description=description,
-            color=discord.Color.blue(),
+            title="Catto",
+            description=(
+                f"A multipurpose Discord bot. **{total} commands** across "
+                f"**{len(by_meta)} categories**.\n"
+                f"Server prefix: `{prefix}`.  Use `/help <command>` for details.\n"
+                f"Pick a category below to explore."
+            ),
+            color=discord.Color.from_rgb(88, 101, 242),
         )
-        view = HelpView(ctx.author.id, groups, prefix)
+        # Render as a 3-column grid via inline fields, max 24 to be safe
+        for meta in META_ORDER:
+            if meta not in by_meta:
+                continue
+            count = len(by_meta[meta])
+            preview = ", ".join(f"`{n.split()[-1]}`" for n, _ in by_meta[meta][:4])
+            if count > 4:
+                preview += f", +{count - 4}"
+            embed.add_field(
+                name=f"{_meta_emoji(meta)} {meta}  ({count})",
+                value=preview or "\u200b",
+                inline=True,
+            )
+        embed.set_footer(text="Tip: use the dropdown for full command details")
+        view = HelpView(ctx.author.id, by_meta, prefix)
         await ctx.send(embed=embed, view=view)
 
 
