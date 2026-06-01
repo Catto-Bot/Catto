@@ -25,7 +25,6 @@ async def setprefix(ctx, prefix):
         json.dump(prefixes, f, indent=4)
 
     await ctx.send(f"Prefix changed to: {prefix}")
-    name = f"{prefix}BotBot"
 
 
 @commands.command(name="prefix")

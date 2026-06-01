@@ -5,7 +5,6 @@ from discord.ext import commands
 
 
 def welcomemessage(message):
-    welcomemessage = message
     return
 
 

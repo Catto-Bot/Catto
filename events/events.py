@@ -100,7 +100,7 @@ async def on_message(member):
         with open("messages.json") as f:
             messages = json.load(f)
         with open("gamblerdata/catomonie.json") as fe:
-            catomonie = json.load(fe)
+            json.load(fe)
     except:
         messages = {}
 

@@ -354,7 +354,7 @@ async def steal(ctx, username: discord.Member):
             random_lose = random.choice(losemessagearay)
 
             if user_id not in catomonie:
-                with open("prefixes.json") as t:
+                with open("prefixes.json"):
                     prefixes = json.load(f)
                 embed = discord.Embed(
                     description=f"Use {prefixes[str(ctx.guild.id)]}monie to create a wallet first!"
