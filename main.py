@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from core import db
+from core import db, errors
 from core.logging import configure as configure_logging
 from events import events
 
@@ -172,6 +172,7 @@ class CattoBot(commands.Bot):
 
 bot = CattoBot(command_prefix=get_prefix, intents=intents, help_command=None)
 bot.remove_command("help")
+errors.attach(bot)
 
 
 events.setup(bot)

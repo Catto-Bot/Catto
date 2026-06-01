@@ -1,10 +1,10 @@
 import os
 
-import aiohttp
 import discord
 from dotenv import load_dotenv
 
 from core import db
+from core.http import get_session
 
 load_dotenv()
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -156,9 +156,9 @@ async def on_guild_remove(guild):
 async def _send_webhook(message: str) -> None:
     if not WEBHOOK_URL:
         return
-    async with aiohttp.ClientSession() as session:
-        webhook = discord.Webhook.from_url(WEBHOOK_URL, session=session)
-        await webhook.send(message)
+    session = await get_session()
+    webhook = discord.Webhook.from_url(WEBHOOK_URL, session=session)
+    await webhook.send(message)
 
 
 def setup(bot):

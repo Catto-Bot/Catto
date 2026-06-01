@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS message_count (
 DEFAULT_PREFIX = "!"
 
 _conn: aiosqlite.Connection | None = None
+_prefix_cache: dict[int, str] = {}
 
 
 def conn() -> aiosqlite.Connection:
@@ -89,11 +90,16 @@ async def close_db() -> None:
 
 
 async def get_prefix(guild_id: int) -> str:
+    cached = _prefix_cache.get(guild_id)
+    if cached is not None:
+        return cached
     async with conn().execute(
         "SELECT prefix FROM guild_prefix WHERE guild_id = ?", (guild_id,)
     ) as cur:
         row = await cur.fetchone()
-    return row[0] if row else DEFAULT_PREFIX
+    prefix = row[0] if row else DEFAULT_PREFIX
+    _prefix_cache[guild_id] = prefix
+    return prefix
 
 
 async def set_prefix(guild_id: int, prefix: str) -> None:
@@ -103,11 +109,13 @@ async def set_prefix(guild_id: int, prefix: str) -> None:
         (guild_id, prefix),
     )
     await conn().commit()
+    _prefix_cache[guild_id] = prefix
 
 
 async def delete_prefix(guild_id: int) -> None:
     await conn().execute("DELETE FROM guild_prefix WHERE guild_id = ?", (guild_id,))
     await conn().commit()
+    _prefix_cache.pop(guild_id, None)
 
 
 async def all_prefixes() -> dict[int, str]:
