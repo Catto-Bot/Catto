@@ -15,9 +15,7 @@ from core import db
 from core.logging import configure as configure_logging
 from events import events
 from modules import (
-    avatar,
     chat,
-    fakeinfo,
     gambler,
     gifs,
     hangman,
@@ -26,7 +24,6 @@ from modules import (
     moderation,
     qutoes,
     roles,
-    ship,
     ticket,
     valostats,
 )
@@ -45,6 +42,9 @@ COGS = [
     "cogs.anime",
     "cogs.wyr",
     "cogs.emoji",
+    "cogs.ship",
+    "cogs.avatar",
+    "cogs.fakeinfo",
 ]
 
 
@@ -268,9 +268,6 @@ bot.add_command(valostats.vstats)
 bot.add_command(valostats.valofight)
 
 
-bot.add_command(avatar.avatar)
-
-
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kick)
 bot.add_command(moderation.ban)
@@ -291,10 +288,7 @@ bot.add_command(anicat.anicat)
 bot.add_command(anicat.anicatstats)
 bot.add_command(anicat.anicatinfo)
 
-bot.add_command(fakeinfo.fakeinfo)
-
 bot.add_command(help.help)
-bot.add_command(ship.ship)
 
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
