@@ -87,7 +87,7 @@ class Coinflip(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(message)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             await announce_msg.delete()
             timeout = await ctx.send("You did not respond in time")
             await asyncio.sleep(5)
