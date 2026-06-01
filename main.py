@@ -166,6 +166,7 @@ class CattoBot(commands.Bot):
         from core.http import close_session
 
         await close_session()
+        await db.close_db()
         await super().close()
 
 
