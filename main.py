@@ -9,7 +9,6 @@ import psutil
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from anicat import anicat
 from core import db
 from core.logging import configure as configure_logging
 from events import events
@@ -45,6 +44,7 @@ COGS = [
     "cogs.gambler",
     "cogs.ticket",
     "cogs.admin",
+    "cogs.anicat",
 ]
 
 
@@ -192,13 +192,6 @@ events.setup(bot)
 
 bot.add_command(valostats.vstats)
 bot.add_command(valostats.valofight)
-
-
-bot.add_command(anicat.anicat)
-bot.add_command(anicat.anicatstats)
-bot.add_command(anicat.anicatinfo)
-
-
 
 
 bot.run(DISCORD_KEY)

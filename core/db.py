@@ -39,6 +39,19 @@ CREATE TABLE IF NOT EXISTS wallet (
     last_daily   INTEGER NOT NULL DEFAULT 0,
     last_weekly  INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS anicat_user (
+    user_id    INTEGER PRIMARY KEY,
+    username   TEXT,
+    total_cats INTEGER NOT NULL DEFAULT 0,
+    total_pts  INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS anicat_claim (
+    user_id    INTEGER NOT NULL,
+    card_name  TEXT NOT NULL,
+    PRIMARY KEY (user_id, card_name)
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -243,3 +256,42 @@ async def top_wallets(limit: int = 10) -> list[dict]:
     ) as cur:
         rows = await cur.fetchall()
     return [{"username": r[0], "coins": r[1]} for r in rows]
+
+
+async def record_anicat_claim(user_id: int, username: str, card_name: str, points: int) -> bool:
+    """Record a card claim. Returns True if this was a new card for the user."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT OR IGNORE INTO anicat_user (user_id, username) VALUES (?, ?)",
+            (user_id, username),
+        )
+        cur = await db.execute(
+            "INSERT OR IGNORE INTO anicat_claim (user_id, card_name) VALUES (?, ?)",
+            (user_id, card_name),
+        )
+        is_new = cur.rowcount > 0
+        await db.execute(
+            "UPDATE anicat_user SET total_cats = total_cats + 1, total_pts = total_pts + ?, username = ? WHERE user_id = ?",
+            (points, username, user_id),
+        )
+        await db.commit()
+    return is_new
+
+
+async def get_anicat_user(user_id: int) -> dict | None:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT user_id, username, total_cats, total_pts FROM anicat_user WHERE user_id = ?",
+        (user_id,),
+    ) as cur:
+        row = await cur.fetchone()
+    if not row:
+        return None
+    return {"user_id": row[0], "username": row[1], "total_cats": row[2], "total_pts": row[3]}
+
+
+async def list_anicat_claims(user_id: int) -> list[str]:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT card_name FROM anicat_claim WHERE user_id = ? ORDER BY card_name", (user_id,)
+    ) as cur:
+        rows = await cur.fetchall()
+    return [r[0] for r in rows]
