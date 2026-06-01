@@ -24,7 +24,6 @@ from modules import (
     fakeinfo,
     gambler,
     gifs,
-    greet,
     hangman,
     help,
     image_generation,
@@ -41,7 +40,7 @@ from modules import (
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix"]
+COGS = ["cogs.prefix", "cogs.greet"]
 
 
 async def get_prefix(bot, message):
@@ -60,6 +59,16 @@ async def migrate_prefixes_json() -> None:
         await db.set_prefix(int(guild_id), prefix)
 
 
+async def migrate_channel_json(filename: str, setter) -> None:
+    path = Path(filename)
+    if not path.exists():
+        return
+    with path.open() as f:
+        data = json.load(f)
+    for guild_id, channel_id in data.items():
+        await setter(int(guild_id), int(channel_id))
+
+
 start_time = time.time()
 
 
@@ -71,6 +80,8 @@ class CattoBot(commands.Bot):
     async def setup_hook(self) -> None:
         await db.init_db()
         await migrate_prefixes_json()
+        await migrate_channel_json("channelgreet.json", db.set_welcome_channel)
+        await migrate_channel_json("channeleave.json", db.set_leave_channel)
         for ext in COGS:
             await self.load_extension(ext)
 
@@ -249,12 +260,6 @@ bot.add_command(roles.deleterole)
 bot.add_command(wyr.wyr)
 bot.add_command(wyr.truth)
 bot.add_command(wyr.dare)
-
-
-bot.add_command(greet.setwelcomechannel)
-bot.add_command(greet.setleavechannel)
-bot.add_command(greet.deletewelcomechannel)
-bot.add_command(greet.deleteleavechannel)
 
 
 bot.add_command(admin.ping)

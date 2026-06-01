@@ -13,63 +13,52 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
 async def on_member_join(member):
     try:
-        with open("channelgreet.json") as f:
-            channelgreet = json.load(f)
-
-        guild = member.guild
-        guild_id = str(guild.id)
-
-        if guild_id in channelgreet:
-            channel_id = channelgreet[guild_id]
-            channel = guild.get_channel(int(channel_id))
-            embed = discord.Embed(
-                title=f"Welcome To Our Server {member}!",
-                description="Make Sure To Read The Server Rules 🐱",
-                color=discord.Color.dark_gray(),
-            )
-
-            embed.set_image(
-                url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.gif"
-            )
-            embed.set_thumbnail(
-                url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png"
-            )
-            embed.set_footer(
-                text="Thank You For Using Catto Bot 🐾",
-                icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
-            )
-            await channel.send(embed=embed)
-
+        channel_id = await db.get_welcome_channel(member.guild.id)
+        if channel_id is None:
+            return
+        channel = member.guild.get_channel(channel_id)
+        if channel is None:
+            return
+        embed = discord.Embed(
+            title=f"Welcome To Our Server {member}!",
+            description="Make Sure To Read The Server Rules 🐱",
+            color=discord.Color.dark_gray(),
+        )
+        embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.gif")
+        embed.set_thumbnail(
+            url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png"
+        )
+        embed.set_footer(
+            text="Thank You For Using Catto Bot 🐾",
+            icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
+        )
+        await channel.send(embed=embed)
     except Exception as e:
         print(f"Error: {e}")
 
 
 async def on_member_remove(member):
     try:
-        with open("channeleave.json") as f:
-            channelgreet = json.load(f)
-
-        guild = member.guild
-        guild_id = str(guild.id)
-
-        if guild_id in channelgreet:
-            channel_id = channelgreet[guild_id]
-            channel = guild.get_channel(int(channel_id))
-            embed = discord.Embed(
-                title=f"Sorry To See You Leave {member}!",
-                description="Hope You Had A Great Time!",
-                color=discord.Color.dark_gray(),
-            )
-            embed.set_thumbnail(
-                url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.gif"
-            )
-            embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.png")
-            embed.set_footer(
-                text="Thank You For Using Catto Bot 🐾",
-                icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
-            )
-            await channel.send(embed=embed)
-
+        channel_id = await db.get_leave_channel(member.guild.id)
+        if channel_id is None:
+            return
+        channel = member.guild.get_channel(channel_id)
+        if channel is None:
+            return
+        embed = discord.Embed(
+            title=f"Sorry To See You Leave {member}!",
+            description="Hope You Had A Great Time!",
+            color=discord.Color.dark_gray(),
+        )
+        embed.set_thumbnail(
+            url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.gif"
+        )
+        embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.png")
+        embed.set_footer(
+            text="Thank You For Using Catto Bot 🐾",
+            icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
+        )
+        await channel.send(embed=embed)
     except Exception as e:
         print(f"Error: {e}")
 
