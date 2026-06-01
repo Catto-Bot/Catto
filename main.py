@@ -43,6 +43,7 @@ COGS = [
     "cogs.anicat",
     "cogs.valostats",
     "cogs.profile",
+    "cogs.reminders",
 ]
 
 

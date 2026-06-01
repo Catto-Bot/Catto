@@ -58,6 +58,14 @@ CREATE TABLE IF NOT EXISTS message_count (
     username TEXT,
     total    INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS reminder (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL,
+    channel_id INTEGER NOT NULL,
+    due_at     INTEGER NOT NULL,
+    message    TEXT NOT NULL
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -364,3 +372,39 @@ async def top_messages(limit: int = 10) -> list[dict]:
     ) as cur:
         rows = await cur.fetchall()
     return [{"username": r[0], "total": r[1]} for r in rows]
+
+
+async def add_reminder(user_id: int, channel_id: int, due_at: int, message: str) -> int:
+    db = conn()
+    cur = await db.execute(
+        "INSERT INTO reminder (user_id, channel_id, due_at, message) VALUES (?, ?, ?, ?)",
+        (user_id, channel_id, due_at, message),
+    )
+    await db.commit()
+    return cur.lastrowid
+
+
+async def due_reminders(now: int) -> list[dict]:
+    async with conn().execute(
+        "SELECT id, user_id, channel_id, due_at, message FROM reminder WHERE due_at <= ?",
+        (now,),
+    ) as cur:
+        rows = await cur.fetchall()
+    return [
+        {"id": r[0], "user_id": r[1], "channel_id": r[2], "due_at": r[3], "message": r[4]}
+        for r in rows
+    ]
+
+
+async def delete_reminder(reminder_id: int) -> None:
+    await conn().execute("DELETE FROM reminder WHERE id = ?", (reminder_id,))
+    await conn().commit()
+
+
+async def list_reminders(user_id: int) -> list[dict]:
+    async with conn().execute(
+        "SELECT id, due_at, message FROM reminder WHERE user_id = ? ORDER BY due_at",
+        (user_id,),
+    ) as cur:
+        rows = await cur.fetchall()
+    return [{"id": r[0], "due_at": r[1], "message": r[2]} for r in rows]
