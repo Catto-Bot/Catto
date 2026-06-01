@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from core import db
 from core.logging import log_command
+from core.views import Paginator
 
 # Friendly section emojis per cog name
 COG_EMOJI: dict[str, str] = {
@@ -17,7 +18,6 @@ COG_EMOJI: dict[str, str] = {
     "FakeInfo": "🕵️",
     "Roles": "🔒",
     "Quotes": "📜",
-    "Help": "📖",
     "Moderation": "🔨",
     "Hangman": "🎮",
     "Gifs": "🎥",
@@ -31,7 +31,12 @@ COG_EMOJI: dict[str, str] = {
     "Prefix": "⚙️",
     "Greet": "👋",
     "Confession": "🤫",
+    "Profile": "👤",
+    "Reminders": "⏰",
+    "Polls": "📊",
 }
+
+FIELDS_PER_PAGE = 10
 
 
 class Help(commands.Cog):
@@ -47,19 +52,31 @@ class Help(commands.Cog):
             if cmd.hidden or cmd.cog_name in (None, "Help"):
                 continue
             groups.setdefault(cmd.cog_name, []).append(cmd.name)
-        embed = discord.Embed(
-            title="Catto Commands",
-            description=f"Prefix for this server: `{prefix}` — slash variants also work.",
-            color=discord.Color.blue(),
-        )
-        for cog_name in sorted(groups):
-            emoji = COG_EMOJI.get(cog_name, "•")
-            embed.add_field(
-                name=f"{emoji} {cog_name}",
-                value=", ".join(sorted(groups[cog_name])),
-                inline=False,
+        ordered = sorted(groups.items())
+        page_count = max(1, (len(ordered) + FIELDS_PER_PAGE - 1) // FIELDS_PER_PAGE)
+
+        def render(page: int) -> discord.Embed:
+            start, end = page * FIELDS_PER_PAGE, (page + 1) * FIELDS_PER_PAGE
+            embed = discord.Embed(
+                title="Catto Commands",
+                description=f"Prefix for this server: `{prefix}` — slash variants also work.",
+                color=discord.Color.blue(),
             )
-        await ctx.send(embed=embed)
+            for cog_name, names in ordered[start:end]:
+                emoji = COG_EMOJI.get(cog_name, "•")
+                embed.add_field(
+                    name=f"{emoji} {cog_name}",
+                    value=", ".join(sorted(names)),
+                    inline=False,
+                )
+            embed.set_footer(text=f"Page {page + 1}/{page_count}")
+            return embed
+
+        if page_count == 1:
+            await ctx.send(embed=render(0))
+            return
+        view = Paginator(ctx.author.id, page_count, render)
+        await ctx.send(embed=render(0), view=view)
 
 
 async def setup(bot: commands.Bot):
