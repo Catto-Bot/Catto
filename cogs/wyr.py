@@ -7,6 +7,49 @@ from core.http import get_session
 from core.logging import log_command
 
 
+class WyrView(discord.ui.View):
+    def __init__(self, option1: str, option2: str, *, timeout: float = 30.0):
+        super().__init__(timeout=timeout)
+        self.option1 = option1
+        self.option2 = option2
+        self.votes: dict[int, int] = {}  # user_id -> 0 or 1
+        self.message: discord.Message | None = None
+
+    def _embed(self) -> discord.Embed:
+        c1 = sum(1 for v in self.votes.values() if v == 0)
+        c2 = sum(1 for v in self.votes.values() if v == 1)
+        embed = discord.Embed(title="WOULD YOU RATHER?", color=0x333333)
+        embed.add_field(
+            name="Would you rather", value=f"{self.option1}\nVotes: {c1}", inline=True
+        )
+        embed.add_field(name="Or", value=f"{self.option2}\nVotes: {c2}", inline=True)
+        return embed
+
+    async def _vote(self, interaction: discord.Interaction, choice: int) -> None:
+        self.votes[interaction.user.id] = choice
+        await interaction.response.edit_message(embed=self._embed(), view=self)
+
+    @discord.ui.button(label="◀ Option 1", style=discord.ButtonStyle.primary)
+    async def opt1(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._vote(interaction, 0)
+
+    @discord.ui.button(label="Option 2 ▶", style=discord.ButtonStyle.primary)
+    async def opt2(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._vote(interaction, 1)
+
+    async def on_timeout(self) -> None:
+        if self.message is None:
+            return
+        for child in self.children:
+            child.disabled = True
+        embed = self._embed()
+        embed.title = "Voting closed"
+        try:
+            await self.message.edit(embed=embed, view=self)
+        except discord.NotFound:
+            pass
+
+
 class WouldYouRather(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -28,52 +71,8 @@ class WouldYouRather(commands.Cog):
             await ctx.send(question)
             return
         option1, option2 = options[0]
-
-        embed = discord.Embed(title="WOULD YOU RATHER?", color=0x333333)
-        embed.add_field(name="Would you rather", value=option1, inline=True)
-        embed.add_field(name="Or", value=option2, inline=True)
-        message = await ctx.send(embed=embed)
-        await message.add_reaction("⬅️")
-        await message.add_reaction("➡️")
-
-        voted: set[int] = set()
-        vote_count = {option1: 0, option2: 0}
-
-        def check(reaction, user):
-            return (
-                reaction.message.id == message.id
-                and user != ctx.bot.user
-                and str(reaction.emoji) in ["⬅️", "➡️"]
-                and user.id not in voted
-            )
-
-        try:
-            while True:
-                reaction, user = await ctx.bot.wait_for(
-                    "reaction_add", check=check, timeout=30
-                )
-                await message.remove_reaction(reaction, user)
-                voted.add(user.id)
-                if str(reaction.emoji) == "⬅️":
-                    vote_count[option1] += 1
-                else:
-                    vote_count[option2] += 1
-                embed.clear_fields()
-                embed.add_field(
-                    name="Would you rather",
-                    value=f"{option1}\nVotes: {vote_count[option1]}",
-                    inline=True,
-                )
-                embed.add_field(
-                    name="Or",
-                    value=f"{option2}\nVotes: {vote_count[option2]}",
-                    inline=True,
-                )
-                await message.edit(embed=embed)
-        except TimeoutError:
-            embed.title = "time limit reached"
-            await message.clear_reactions()
-            await message.edit(embed=embed)
+        view = WyrView(option1, option2)
+        view.message = await ctx.send(embed=view._embed(), view=view)
 
     @commands.hybrid_command(name="truth")
     async def truth(self, ctx: commands.Context):

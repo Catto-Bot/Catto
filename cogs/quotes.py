@@ -76,36 +76,56 @@ class Quotes(commands.Cog):
         async with session.get("https://opentdb.com/api.php?amount=1&type=boolean") as resp:
             data = (await resp.json())["results"][0]
         question = html.unescape(data["question"])
-        correct = "🟩" if data["correct_answer"] == "True" else "❌"
+        correct_value = data["correct_answer"] == "True"
         embed = discord.Embed(
             title=question,
             description=f"{data['category']} ({data['difficulty'].capitalize()})",
             color=0x333333,
         )
-        msg = await ctx.channel.send(embed=embed)
-        await msg.add_reaction("🟩")
-        await msg.add_reaction("❌")
+        view = TriviaView(correct_value)
+        view.message = await ctx.send(embed=embed, view=view)
 
-        def check(reaction, user):
-            return (
-                user != ctx.bot.user
-                and reaction.message.id == msg.id
-                and str(reaction.emoji) in ["🟩", "❌"]
-            )
 
+class TriviaView(discord.ui.View):
+    def __init__(self, correct: bool, *, timeout: float = 20.0):
+        super().__init__(timeout=timeout)
+        self.correct = correct
+        self.answered: set[int] = set()
+        self.message: discord.Message | None = None
+
+    async def _answer(self, interaction: discord.Interaction, guess: bool) -> None:
+        if interaction.user.id in self.answered:
+            await interaction.response.send_message("You already answered.", ephemeral=True)
+            return
+        self.answered.add(interaction.user.id)
+        right = guess == self.correct
+        verdict = (
+            f"{interaction.user.mention} was right"
+            if right
+            else f"{interaction.user.mention} was wrong"
+        )
+        color = 0x00FF00 if right else 0xFF0000
+        await interaction.response.send_message(
+            embed=discord.Embed(description=verdict, color=color)
+        )
+
+    @discord.ui.button(label="True", style=discord.ButtonStyle.success)
+    async def true_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._answer(interaction, True)
+
+    @discord.ui.button(label="False", style=discord.ButtonStyle.danger)
+    async def false_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._answer(interaction, False)
+
+    async def on_timeout(self) -> None:
+        if self.message is None:
+            return
+        for child in self.children:
+            child.disabled = True
         try:
-            reaction, user = await ctx.bot.wait_for("reaction_add", timeout=20.0, check=check)
-            verdict = (
-                f"{user.mention} was right"
-                if str(reaction.emoji) == correct
-                else f"{user.mention} was wrong"
-            )
-            color = 0x00FF00 if str(reaction.emoji) == correct else 0xFF0000
-            await ctx.send(embed=discord.Embed(description=verdict, color=color))
-        except TimeoutError:
-            await ctx.send(
-                embed=discord.Embed(title="Nobody reacted on time 😔", color=0xFF0000)
-            )
+            await self.message.edit(view=self)
+        except discord.NotFound:
+            pass
 
     @commands.hybrid_command(name="insult")
     async def insult(self, ctx: commands.Context):
