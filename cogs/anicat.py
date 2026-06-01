@@ -15,6 +15,34 @@ COOLDOWN = 60 * 60
 PAGE_SIZE = 10
 CLAIM_EMOJI = "<:anicat:1105722682160447550>"
 
+# (label, color, emoji, weight, points_range_inclusive)
+RARITY_TIERS = [
+    ("Common", 0x95A5A6, "⚪", 60, (0, 50)),
+    ("Uncommon", 0x2ECC71, "🟢", 25, (51, 100)),
+    ("Rare", 0x3498DB, "🔵", 10, (101, 150)),
+    ("Epic", 0x9B59B6, "🟣", 4, (151, 200)),
+    ("Legendary", 0xF1C40F, "🌟", 1, (201, 10_000)),
+]
+
+
+def _pick_rarity() -> tuple[str, int, str, tuple[int, int]]:
+    total = sum(t[3] for t in RARITY_TIERS)
+    roll = random.uniform(0, total)
+    acc = 0.0
+    for label, color, emoji, weight, rng in RARITY_TIERS:
+        acc += weight
+        if roll < acc:
+            return label, color, emoji, rng
+    label, color, emoji, _, rng = RARITY_TIERS[0]
+    return label, color, emoji, rng
+
+
+def _card_rarity_label(points: int) -> tuple[str, int, str]:
+    for label, color, emoji, _, (lo, hi) in RARITY_TIERS:
+        if lo <= points <= hi:
+            return label, color, emoji
+    return RARITY_TIERS[0][:3]
+
 
 class ClaimView(discord.ui.View):
     def __init__(self, card: dict, message: discord.Message | None = None):
@@ -35,10 +63,15 @@ class ClaimView(discord.ui.View):
             self.card["Name"],
             self.card["Points"],
         )
-        embed = discord.Embed(title=f"Claimed by {interaction.user}")
+        label, color, emoji = _card_rarity_label(self.card["Points"])
+        embed = discord.Embed(
+            title=f"Claimed by {interaction.user}",
+            description=f"{emoji} **{label}** card",
+            color=color,
+        )
         embed.set_image(url=self.card["Source"])
         embed.set_author(name=self.card["Name"])
-        embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
+        embed.set_footer(text=f"+{self.card['Points']} AniPoints")
         for child in self.children:
             child.disabled = True
         await interaction.response.edit_message(embed=embed, view=self)
@@ -67,10 +100,16 @@ class AniCat(commands.Cog):
     async def anicat(self, ctx: commands.Context):
         """Spawn a random anicat card. First to click the button claims it."""
         log_command(ctx)
-        card = random.choice(self.cards)
-        embed = discord.Embed(title=card["Name"])
+        label, color, emoji, (lo, hi) = _pick_rarity()
+        pool = [c for c in self.cards if lo <= c["Points"] <= hi]
+        card = random.choice(pool or self.cards)
+        embed = discord.Embed(
+            title=f"{emoji} {card['Name']}",
+            description=f"**{label}** card",
+            color=color,
+        )
         embed.set_image(url=card["Source"])
-        embed.set_footer(text=f"Points: {card['Points']}\nClick to claim")
+        embed.set_footer(text=f"Points: {card['Points']}  •  click below to claim")
         view = ClaimView(card)
         msg = await ctx.send(embed=embed, view=view)
         view.message = msg

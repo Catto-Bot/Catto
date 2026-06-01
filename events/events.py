@@ -1,3 +1,4 @@
+import io
 import os
 
 import discord
@@ -5,6 +6,7 @@ from dotenv import load_dotenv
 
 from core import db
 from core.http import get_session
+from core.welcomecard import render_leave_card, render_welcome_card
 
 load_dotenv()
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -18,22 +20,17 @@ async def on_member_join(member):
         channel = member.guild.get_channel(channel_id)
         if channel is None:
             return
+        png = await render_welcome_card(member)
+        file = discord.File(io.BytesIO(png), filename="welcome.png")
         embed = discord.Embed(
-            title=f"Welcome To Our Server {member}!",
-            description="Make Sure To Read The Server Rules 🐱",
-            color=discord.Color.dark_gray(),
+            title=f"Welcome to {member.guild.name}!",
+            description=f"{member.mention}, make sure to read the rules and enjoy your stay! 🐾",
+            color=discord.Color.from_rgb(88, 101, 242),
         )
-        embed.set_image(url="https://media.tenor.com/e976NPZxYp8AAAAd/peep-the-cat-rave-cat.gif")
-        embed.set_thumbnail(
-            url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.png"
-        )
-        embed.set_footer(
-            text="Thank You For Using Catto Bot 🐾",
-            icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
-        )
-        await channel.send(embed=embed)
+        embed.set_image(url="attachment://welcome.png")
+        await channel.send(embed=embed, file=file)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"welcome error: {e}")
 
 
 async def on_member_remove(member):
@@ -44,22 +41,17 @@ async def on_member_remove(member):
         channel = member.guild.get_channel(channel_id)
         if channel is None:
             return
+        png = await render_leave_card(member)
+        file = discord.File(io.BytesIO(png), filename="leave.png")
         embed = discord.Embed(
-            title=f"Sorry To See You Leave {member}!",
-            description="Hope You Had A Great Time!",
-            color=discord.Color.dark_gray(),
+            title=f"{member.display_name} has left",
+            description="Hope you had a great time!",
+            color=discord.Color.from_rgb(220, 110, 110),
         )
-        embed.set_thumbnail(
-            url="https://w7.pngwing.com/pngs/885/246/png-transparent-cat-pusheen-desktop-animation-cute-stickers-mammal-animals-cat-like-mammal.gif"
-        )
-        embed.set_image(url="https://media.tenor.com/uICGiTPlUpgAAAAd/cat-leaving.png")
-        embed.set_footer(
-            text="Thank You For Using Catto Bot 🐾",
-            icon_url="https://i.pinimg.com/originals/57/39/74/573974c8b4f31d1c4ebda9aed0b46676.gif",
-        )
-        await channel.send(embed=embed)
+        embed.set_image(url="attachment://leave.png")
+        await channel.send(embed=embed, file=file)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"leave error: {e}")
 
 
 LEVEL_THRESHOLDS = [

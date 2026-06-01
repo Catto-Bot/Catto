@@ -1,3 +1,4 @@
+import asyncio
 import random
 import time
 
@@ -12,6 +13,13 @@ WEEKLY_AMOUNT = 100_000
 DAILY_SECONDS = 86_400
 WEEKLY_SECONDS = 604_800
 STEAL_COOLDOWN = 25
+
+SLOT_REEL = ["🍒", "🍋", "🍊", "💎", "7️⃣"]
+SLOT_WEIGHTS = [40, 30, 18, 10, 2]
+SLOT_PAYOUT_TRIPLE = {"🍒": 3, "🍋": 5, "🍊": 8, "💎": 20, "7️⃣": 50}
+SLOT_PAYOUT_DOUBLE = 1.5
+SLOT_MIN_BET = 100
+SLOT_MAX_BET = 25_000
 
 
 class Gambler(commands.Cog):
@@ -253,6 +261,92 @@ class Gambler(commands.Cog):
             embed.add_field(
                 name=f"#{i}: {w['username']}", value=f"Coins: {w['coins']:,}", inline=False
             )
+        await ctx.send(embed=embed)
+
+    @economy.command(name="slots", description="Spin the slot machine. Bet between 100 and 25,000 catomonie")
+    async def slots(self, ctx: commands.Context, bet: int):
+        log_command(ctx)
+        if not await self._ensure_wallet_or_error(ctx):
+            return
+        if bet < SLOT_MIN_BET or bet > SLOT_MAX_BET:
+            await ctx.send(
+                f"Bet must be between {SLOT_MIN_BET:,} and {SLOT_MAX_BET:,} catomonie."
+            )
+            return
+        wallet = await db.get_wallet(ctx.author.id)
+        if wallet["coins"] < bet:
+            await ctx.send("You don't have enough catomonie.")
+            return
+
+        reels = [random.choices(SLOT_REEL, weights=SLOT_WEIGHTS, k=1)[0] for _ in range(3)]
+        # Three-of-a-kind
+        if reels[0] == reels[1] == reels[2]:
+            mult = SLOT_PAYOUT_TRIPLE[reels[0]]
+            winnings = bet * mult
+            net = winnings - bet
+            outcome = f"🎰 JACKPOT! Three {reels[0]} ⇒ **+{net:,}** catomonie ({mult}x payout)"
+            color = discord.Color.gold()
+        # Two-of-a-kind
+        elif reels[0] == reels[1] or reels[1] == reels[2] or reels[0] == reels[2]:
+            winnings = int(bet * SLOT_PAYOUT_DOUBLE)
+            net = winnings - bet
+            outcome = f"Two matched. Soft win **+{net:,}** catomonie."
+            color = discord.Color.green()
+        else:
+            net = -bet
+            outcome = f"No match. You lost **{bet:,}** catomonie."
+            color = discord.Color.red()
+
+        spin_msg = await ctx.send(
+            embed=discord.Embed(title="🎰 Spinning...", description="❓ | ❓ | ❓", color=0x555555)
+        )
+        await asyncio.sleep(1.0)
+        await db.update_coins(ctx.author.id, net)
+        new_balance = (await db.get_wallet(ctx.author.id))["coins"]
+        embed = discord.Embed(
+            title="🎰 Slot Machine",
+            description=f"**{reels[0]} | {reels[1]} | {reels[2]}**\n\n{outcome}",
+            color=color,
+        )
+        embed.set_footer(text=f"Balance: {new_balance:,} catomonie")
+        await spin_msg.edit(embed=embed)
+
+    @economy.command(name="coinflip", aliases=["cf"], description="Coinflip betting. Pick heads or tails to double your bet")
+    async def cf(self, ctx: commands.Context, bet: int, choice: str):
+        log_command(ctx)
+        if not await self._ensure_wallet_or_error(ctx):
+            return
+        choice = choice.lower()
+        if choice not in ("heads", "h", "tails", "t"):
+            await ctx.send("choice must be `heads` or `tails`.")
+            return
+        if bet < 50 or bet > 25_000:
+            await ctx.send("Bet must be between 50 and 25,000.")
+            return
+        wallet = await db.get_wallet(ctx.author.id)
+        if wallet["coins"] < bet:
+            await ctx.send("You don't have enough catomonie.")
+            return
+        result = random.choice(["heads", "tails"])
+        won = (result == "heads" and choice in ("heads", "h")) or (
+            result == "tails" and choice in ("tails", "t")
+        )
+        net = bet if won else -bet
+        await db.update_coins(ctx.author.id, net)
+        new_balance = (await db.get_wallet(ctx.author.id))["coins"]
+        if won:
+            embed = discord.Embed(
+                title=f"🪙 {result.title()}!",
+                description=f"You won **+{bet:,}** catomonie.",
+                color=discord.Color.green(),
+            )
+        else:
+            embed = discord.Embed(
+                title=f"🪙 {result.title()}!",
+                description=f"You lost **{bet:,}** catomonie.",
+                color=discord.Color.red(),
+            )
+        embed.set_footer(text=f"Balance: {new_balance:,} catomonie")
         await ctx.send(embed=embed)
 
     @economy.command(name="give", description="Send catomonie to another member")
