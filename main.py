@@ -2,6 +2,7 @@
 import json
 import os
 import time
+from pathlib import Path
 
 import discord
 import psutil
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 
 from admin import admin
 from anicat import anicat
+from core import db
 from events import events
 from modules import (
     anime,
@@ -28,7 +30,6 @@ from modules import (
     image_generation,
     meme,
     moderation,
-    prefix,
     qutoes,
     roles,
     ship,
@@ -40,16 +41,23 @@ from modules import (
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-# from discord import app_commands
+COGS = ["cogs.prefix"]
 
 
-def get_prefix(bot, message):
-    try:
-        with open("prefixes.json") as f:
-            prefixes = json.load(f)
-        return prefixes[str(message.guild.id)]
-    except Exception:
-        prefixes = {}
+async def get_prefix(bot, message):
+    if message.guild is None:
+        return db.DEFAULT_PREFIX
+    return await db.get_prefix(message.guild.id)
+
+
+async def migrate_prefixes_json() -> None:
+    path = Path("prefixes.json")
+    if not path.exists():
+        return
+    with path.open() as f:
+        prefixes = json.load(f)
+    for guild_id, prefix in prefixes.items():
+        await db.set_prefix(int(guild_id), prefix)
 
 
 start_time = time.time()
@@ -58,7 +66,16 @@ start_time = time.time()
 intents = discord.Intents.all()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
+
+class CattoBot(commands.Bot):
+    async def setup_hook(self) -> None:
+        await db.init_db()
+        await migrate_prefixes_json()
+        for ext in COGS:
+            await self.load_extension(ext)
+
+
+bot = CattoBot(command_prefix=get_prefix, intents=intents, help_command=None)
 bot.remove_command("help")
 
 
@@ -218,9 +235,6 @@ bot.add_command(avatar.avatar)
 
 bot.add_command(anime.animeQuote)
 bot.add_command(anime.something)
-
-bot.add_command(prefix.setprefix)
-bot.add_command(prefix.prefix)
 
 bot.add_command(moderation.mute)
 bot.add_command(moderation.kick)

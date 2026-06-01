@@ -5,6 +5,8 @@ import discord
 from discord import SyncWebhook
 from dotenv import load_dotenv
 
+from core import db
+
 load_dotenv()
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
@@ -78,11 +80,8 @@ async def on_message(member):
     content = member.content.lower()
 
     if content == "cattoprefix":
-        with open("prefixes.json") as f:
-            prefixes = json.load(f)
-            await member.channel.send(
-                f"The Prefix Set For This Server Is: '{prefixes[str(member.guild.id)]}'"
-            )
+        prefix = await db.get_prefix(member.guild.id)
+        await member.channel.send(f"The Prefix Set For This Server Is: '{prefix}'")
 
     if content == "gn" or content == "goodnight":
         mention = member.author.mention
@@ -161,13 +160,7 @@ async def on_message(member):
 
 async def on_guild_join(guild):
     print("Bot joined")
-    with open("prefixes.json") as f:
-        prefixes = json.load(f)
-
-    prefixes[str(guild.id)] = "!"
-
-    with open("prefixes.json", "w") as f:
-        json.dump(prefixes, f, indent=4)
+    await db.set_prefix(guild.id, db.DEFAULT_PREFIX)
 
     channel = discord.utils.get(guild.text_channels)
     if channel is not None:
@@ -207,13 +200,7 @@ async def on_guild_join(guild):
 
 async def on_guild_remove(guild):
     print("bot left")
-    with open("prefixes.json") as f:
-        prefixes = json.load(f)
-
-    prefixes.pop(str(guild.id))
-
-    with open("prefixes.json", "w") as f:
-        json.dump(prefixes, f, indent=4)
+    await db.delete_prefix(guild.id)
     if WEBHOOK_URL:
         webhook = SyncWebhook.from_url(WEBHOOK_URL)
         webhook.send(
