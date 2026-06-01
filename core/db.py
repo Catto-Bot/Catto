@@ -31,6 +31,14 @@ CREATE TABLE IF NOT EXISTS chat_response (
 CREATE TABLE IF NOT EXISTS ai_allowed_user (
     user_id INTEGER PRIMARY KEY
 );
+
+CREATE TABLE IF NOT EXISTS wallet (
+    user_id      INTEGER PRIMARY KEY,
+    username     TEXT,
+    coins        INTEGER NOT NULL DEFAULT 0,
+    last_daily   INTEGER NOT NULL DEFAULT 0,
+    last_weekly  INTEGER NOT NULL DEFAULT 0
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -163,3 +171,75 @@ async def add_ai_allowed(user_id: int) -> None:
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute("INSERT OR IGNORE INTO ai_allowed_user (user_id) VALUES (?)", (user_id,))
         await db.commit()
+
+
+async def wallet_exists(user_id: int) -> bool:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT 1 FROM wallet WHERE user_id = ?", (user_id,)
+    ) as cur:
+        return (await cur.fetchone()) is not None
+
+
+async def create_wallet(user_id: int, username: str) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT OR IGNORE INTO wallet (user_id, username, coins) VALUES (?, ?, 0)",
+            (user_id, username),
+        )
+        await db.commit()
+
+
+async def get_wallet(user_id: int) -> dict | None:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT user_id, username, coins, last_daily, last_weekly FROM wallet WHERE user_id = ?",
+        (user_id,),
+    ) as cur:
+        row = await cur.fetchone()
+    if not row:
+        return None
+    return {
+        "user_id": row[0],
+        "username": row[1],
+        "coins": row[2],
+        "last_daily": row[3],
+        "last_weekly": row[4],
+    }
+
+
+async def update_coins(user_id: int, delta: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("UPDATE wallet SET coins = coins + ? WHERE user_id = ?", (delta, user_id))
+        await db.commit()
+
+
+async def claim_daily(user_id: int, now: int, amount: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "UPDATE wallet SET coins = coins + ?, last_daily = ? WHERE user_id = ?",
+            (amount, now, user_id),
+        )
+        await db.commit()
+
+
+async def claim_weekly(user_id: int, now: int, amount: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "UPDATE wallet SET coins = coins + ?, last_weekly = ? WHERE user_id = ?",
+            (amount, now, user_id),
+        )
+        await db.commit()
+
+
+async def transfer(sender_id: int, receiver_id: int, amount: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("UPDATE wallet SET coins = coins - ? WHERE user_id = ?", (amount, sender_id))
+        await db.execute("UPDATE wallet SET coins = coins + ? WHERE user_id = ?", (amount, receiver_id))
+        await db.commit()
+
+
+async def top_wallets(limit: int = 10) -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT username, coins FROM wallet ORDER BY coins DESC LIMIT ?", (limit,)
+    ) as cur:
+        rows = await cur.fetchall()
+    return [{"username": r[0], "coins": r[1]} for r in rows]

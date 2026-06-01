@@ -15,7 +15,6 @@ from core import db
 from core.logging import configure as configure_logging
 from events import events
 from modules import (
-    gambler,
     ticket,
     valostats,
 )
@@ -45,6 +44,7 @@ COGS = [
     "cogs.gifs",
     "cogs.chat",
     "cogs.ai",
+    "cogs.gambler",
 ]
 
 
@@ -102,6 +102,34 @@ async def migrate_ai_allowed_txt() -> None:
             await db.add_ai_allowed(int(line))
 
 
+async def migrate_gambler_json() -> None:
+    path = Path("gamblerdata/catomonie.json")
+    if not path.exists():
+        return
+    with path.open() as f:
+        data = json.load(f)
+    for user_id_str, w in data.items():
+        user_id = int(user_id_str)
+        username = w.get("Username", "")
+        await db.create_wallet(user_id, username)
+        wallet = await db.get_wallet(user_id)
+        delta = w.get("coins", 0) - wallet["coins"]
+        if delta:
+            await db.update_coins(user_id, delta)
+        # set last_daily and last_weekly
+        async with __import__("aiosqlite").connect(db.DB_PATH) as conn:
+            await conn.execute(
+                "UPDATE wallet SET last_daily = ?, last_weekly = ?, username = ? WHERE user_id = ?",
+                (
+                    int(w.get("last_claimed", 0)),
+                    int(w.get("last_claimed_weekly", 0)),
+                    username,
+                    user_id,
+                ),
+            )
+            await conn.commit()
+
+
 start_time = time.time()
 
 
@@ -117,6 +145,7 @@ class CattoBot(commands.Bot):
         await migrate_channel_json("channeleave.json", db.set_leave_channel)
         await migrate_confession_json()
         await migrate_ai_allowed_txt()
+        await migrate_gambler_json()
         for ext in COGS:
             await self.load_extension(ext)
 
@@ -228,17 +257,6 @@ async def test_slash(interaction: discord.Interaction):
 
 bot.add_command(vote)
 bot.add_command(uptime)
-# gmabler
-bot.add_command(gambler.daily)
-bot.add_command(gambler.weekly)
-bot.add_command(gambler.balance)
-bot.add_command(gambler.monie)
-bot.add_command(gambler.bet)
-bot.add_command(gambler.steal)
-bot.add_command(gambler.leaderboard)
-bot.add_command(gambler.give)
-
-
 bot.add_command(ticket.ticketsetup)
 bot.add_command(ticket.deleteticket)
 
