@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS leave_channel (
     guild_id   INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS confession_channel (
+    guild_id   INTEGER PRIMARY KEY,
+    channel_id INTEGER NOT NULL
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -98,3 +103,15 @@ async def set_leave_channel(guild_id: int, channel_id: int) -> None:
 
 async def delete_leave_channel(guild_id: int) -> None:
     await _delete_channel("leave_channel", guild_id)
+
+
+async def get_confession_channel(guild_id: int) -> int | None:
+    return await _get_channel("confession_channel", guild_id)
+
+
+async def set_confession_channel(guild_id: int, channel_id: int) -> None:
+    await _set_channel("confession_channel", guild_id, channel_id)
+
+
+async def delete_confession_channel(guild_id: int) -> None:
+    await _delete_channel("confession_channel", guild_id)

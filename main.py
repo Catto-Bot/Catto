@@ -18,7 +18,6 @@ from modules import (
     avatar,
     chat,
     coinflip,
-    conf,
     dice,
     emoji,
     fakeinfo,
@@ -40,7 +39,7 @@ from modules import (
 load_dotenv()
 
 DISCORD_KEY = os.getenv("DISCORD_ID")
-COGS = ["cogs.prefix", "cogs.greet"]
+COGS = ["cogs.prefix", "cogs.greet", "cogs.conf"]
 
 
 async def get_prefix(bot, message):
@@ -69,6 +68,17 @@ async def migrate_channel_json(filename: str, setter) -> None:
         await setter(int(guild_id), int(channel_id))
 
 
+async def migrate_confession_json() -> None:
+    path = Path("conf.json")
+    if not path.exists():
+        return
+    with path.open() as f:
+        data = json.load(f)
+    for guild_id, mention in data.items():
+        channel_id = int(str(mention).strip("<#>"))
+        await db.set_confession_channel(int(guild_id), channel_id)
+
+
 start_time = time.time()
 
 
@@ -82,6 +92,7 @@ class CattoBot(commands.Bot):
         await migrate_prefixes_json()
         await migrate_channel_json("channelgreet.json", db.set_welcome_channel)
         await migrate_channel_json("channeleave.json", db.set_leave_channel)
+        await migrate_confession_json()
         for ext in COGS:
             await self.load_extension(ext)
 
@@ -278,10 +289,6 @@ bot.add_command(emoji.emojify)
 
 bot.add_command(help.help)
 bot.add_command(ship.ship)
-
-bot.add_command(conf.confessionsetup)
-bot.add_command(conf.ch)
-
 
 bot.add_command(image_generation.ai)
 bot.add_command(image_generation.aiterms)
