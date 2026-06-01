@@ -23,7 +23,6 @@ from modules import (
     image_generation,
     moderation,
     qutoes,
-    roles,
     ticket,
     valostats,
 )
@@ -45,6 +44,7 @@ COGS = [
     "cogs.ship",
     "cogs.avatar",
     "cogs.fakeinfo",
+    "cogs.roles",
 ]
 
 
@@ -272,11 +272,6 @@ bot.add_command(moderation.mute)
 bot.add_command(moderation.kick)
 bot.add_command(moderation.ban)
 bot.add_command(moderation.unmute)
-
-bot.add_command(roles.setuprole)
-bot.add_command(roles.createrole)
-bot.add_command(roles.removerole)
-bot.add_command(roles.deleterole)
 
 bot.add_command(admin.ping)
 bot.add_command(admin.servers)
