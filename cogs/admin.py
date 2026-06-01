@@ -131,6 +131,19 @@ class Admin(commands.Cog):
         await db.add_ai_allowed(int(user_id))
         await ctx.send("done")
 
+    @commands.command(name="sync")
+    @is_owner()
+    async def sync(self, ctx: commands.Context, scope: str = "guild"):
+        """Sync slash commands. scope=guild (default, instant) or global (slow)."""
+        log_command(ctx)
+        if scope == "global":
+            synced = await ctx.bot.tree.sync()
+            await ctx.send(f"Synced {len(synced)} commands globally (may take up to 1h to appear).")
+            return
+        ctx.bot.tree.copy_global_to(guild=ctx.guild)
+        synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        await ctx.send(f"Synced {len(synced)} commands to this guild.")
+
     @servers.error
     async def servers_error(self, ctx, error):
         if isinstance(error, commands.CheckFailure):
