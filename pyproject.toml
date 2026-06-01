@@ -1,0 +1,13 @@
+[project]
+name = "catto"
+version = "0.0.0"
+description = "Multipurpose Discord bot"
+requires-python = ">=3.11"
+dependencies = [
+    "discord.py>=2.4",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+    "psutil>=5.9",
+    "Faker>=18",
+    "Pillow>=10",
+]

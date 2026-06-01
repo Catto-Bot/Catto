@@ -1,4 +1,5 @@
 .env
+.venv/
 modules/__pycache__/
 gamblerdata
 __pycache__/
@@ -12,3 +13,6 @@ logs.txt
 responses.db
 ai_allowed.txt
 output.png
+output2.png
+temp_image.png
+server_info.txt

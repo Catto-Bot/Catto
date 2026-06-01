@@ -1,6 +1,0 @@
-discord.py @ git+https://github.com/Rapptz/discord.py@23352fba7949a491257cc06d2d88377035f0a39f
-python-dotenv==1.0.0
-requests==2.31.0
-psutil==5.9.6
-Faker==18.7.0
-Pillow==10.2.0
