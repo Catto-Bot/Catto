@@ -147,7 +147,7 @@ class CattoBot(commands.Bot):
         print("The bot is ready", flush=True)
         await self.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType.watching, name="!help"
+                type=discord.ActivityType.watching, name="/help"
             )
         )
 

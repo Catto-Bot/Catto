@@ -9,6 +9,46 @@ from core.http import get_session
 from core.logging import log_command
 
 
+class TriviaView(discord.ui.View):
+    def __init__(self, correct: bool, *, timeout: float = 20.0):
+        super().__init__(timeout=timeout)
+        self.correct = correct
+        self.answered: set[int] = set()
+        self.message: discord.Message | None = None
+
+    async def _answer(self, interaction: discord.Interaction, guess: bool) -> None:
+        if interaction.user.id in self.answered:
+            await interaction.response.send_message("You already answered.", ephemeral=True)
+            return
+        self.answered.add(interaction.user.id)
+        right = guess == self.correct
+        verdict = (
+            f"{interaction.user.mention} was right"
+            if right
+            else f"{interaction.user.mention} was wrong"
+        )
+        color = 0x00FF00 if right else 0xFF0000
+        await interaction.response.send_message(
+            embed=discord.Embed(description=verdict, color=color)
+        )
+
+    @discord.ui.button(label="True", style=discord.ButtonStyle.success)
+    async def true_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._answer(interaction, True)
+
+    @discord.ui.button(label="False", style=discord.ButtonStyle.danger)
+    async def false_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
+        await self._answer(interaction, False)
+
+    async def on_timeout(self) -> None:
+        if self.message is None:
+            return
+        for child in self.children:
+            child.disabled = True
+        with contextlib.suppress(discord.NotFound):
+            await self.message.edit(view=self)
+
+
 class Quotes(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -85,46 +125,6 @@ class Quotes(commands.Cog):
         )
         view = TriviaView(correct_value)
         view.message = await ctx.send(embed=embed, view=view)
-
-
-class TriviaView(discord.ui.View):
-    def __init__(self, correct: bool, *, timeout: float = 20.0):
-        super().__init__(timeout=timeout)
-        self.correct = correct
-        self.answered: set[int] = set()
-        self.message: discord.Message | None = None
-
-    async def _answer(self, interaction: discord.Interaction, guess: bool) -> None:
-        if interaction.user.id in self.answered:
-            await interaction.response.send_message("You already answered.", ephemeral=True)
-            return
-        self.answered.add(interaction.user.id)
-        right = guess == self.correct
-        verdict = (
-            f"{interaction.user.mention} was right"
-            if right
-            else f"{interaction.user.mention} was wrong"
-        )
-        color = 0x00FF00 if right else 0xFF0000
-        await interaction.response.send_message(
-            embed=discord.Embed(description=verdict, color=color)
-        )
-
-    @discord.ui.button(label="True", style=discord.ButtonStyle.success)
-    async def true_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
-        await self._answer(interaction, True)
-
-    @discord.ui.button(label="False", style=discord.ButtonStyle.danger)
-    async def false_btn(self, interaction: discord.Interaction, _: discord.ui.Button) -> None:
-        await self._answer(interaction, False)
-
-    async def on_timeout(self) -> None:
-        if self.message is None:
-            return
-        for child in self.children:
-            child.disabled = True
-        with contextlib.suppress(discord.NotFound):
-            await self.message.edit(view=self)
 
     @commands.hybrid_command(name="insult", description="Get a random insult (for entertainment only)")
     async def insult(self, ctx: commands.Context):
