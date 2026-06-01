@@ -20,7 +20,6 @@ from modules import (
     gifs,
     hangman,
     image_generation,
-    moderation,
     ticket,
     valostats,
 )
@@ -45,6 +44,7 @@ COGS = [
     "cogs.roles",
     "cogs.quotes",
     "cogs.help",
+    "cogs.moderation",
 ]
 
 
@@ -258,11 +258,6 @@ bot.add_command(ticket.deleteticket)
 bot.add_command(valostats.vstats)
 bot.add_command(valostats.valofight)
 
-
-bot.add_command(moderation.mute)
-bot.add_command(moderation.kick)
-bot.add_command(moderation.ban)
-bot.add_command(moderation.unmute)
 
 bot.add_command(admin.ping)
 bot.add_command(admin.servers)
