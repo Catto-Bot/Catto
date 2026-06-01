@@ -57,6 +57,14 @@ async def delete_prefix(guild_id: int) -> None:
         await db.commit()
 
 
+async def all_prefixes() -> dict[int, str]:
+    async with aiosqlite.connect(DB_PATH) as db, db.execute(
+        "SELECT guild_id, prefix FROM guild_prefix"
+    ) as cur:
+        rows = await cur.fetchall()
+    return {row[0]: row[1] for row in rows}
+
+
 async def _get_channel(table: str, guild_id: int) -> int | None:
     async with aiosqlite.connect(DB_PATH) as db, db.execute(
         f"SELECT channel_id FROM {table} WHERE guild_id = ?", (guild_id,)

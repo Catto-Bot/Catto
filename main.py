@@ -58,6 +58,13 @@ async def migrate_prefixes_json() -> None:
         await db.set_prefix(int(guild_id), prefix)
 
 
+async def dump_prefixes_json() -> None:
+    """Mirror DB prefixes to prefixes.json so legacy modules keep working."""
+    prefixes = await db.all_prefixes()
+    with Path("prefixes.json").open("w") as f:
+        json.dump({str(k): v for k, v in prefixes.items()}, f, indent=4)
+
+
 async def migrate_channel_json(filename: str, setter) -> None:
     path = Path(filename)
     if not path.exists():
@@ -96,6 +103,22 @@ class CattoBot(commands.Bot):
         for ext in COGS:
             await self.load_extension(ext)
 
+    async def on_ready(self):  # type: ignore[override]
+        # Ensure every joined guild has a DB prefix, then mirror to prefixes.json
+        # for the legacy modules that still read the file. Remove once all
+        # commands are migrated.
+        for guild in self.guilds:
+            if await db.get_prefix(guild.id) == db.DEFAULT_PREFIX:
+                await db.set_prefix(guild.id, db.DEFAULT_PREFIX)
+        await dump_prefixes_json()
+        await self.tree.sync()
+        print("The bot is ready", flush=True)
+        await self.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.watching, name="!help & cattoprefix"
+            )
+        )
+
     async def close(self) -> None:
         from core.http import close_session
 
@@ -105,16 +128,6 @@ class CattoBot(commands.Bot):
 
 bot = CattoBot(command_prefix=get_prefix, intents=intents, help_command=None)
 bot.remove_command("help")
-
-
-@bot.event
-async def on_ready():
-    await bot.tree.sync()
-    print("The bot is ready")
-
-    await bot.change_presence(
-        activity=discord.Activity(type=discord.ActivityType.watching, name="!help & cattoprefix")
-    )
 
 
 events.setup(bot)

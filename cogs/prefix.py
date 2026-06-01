@@ -12,6 +12,9 @@ class Prefix(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def setprefix(self, ctx: commands.Context, prefix: str):
         await db.set_prefix(ctx.guild.id, prefix)
+        from main import dump_prefixes_json
+
+        await dump_prefixes_json()
         await ctx.send(f"Prefix changed to: {prefix}")
 
     @commands.hybrid_command(name="prefix")
