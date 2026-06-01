@@ -41,11 +41,17 @@ COG_DISPLAY: dict[str, str] = {
     "AniCat": "AniCat",
     "FakeInfo": "Fake Info",
     "Valostats": "Valorant",
+    "Gambler": "Economy",
+    "Greet": "Welcome",
+    "Moderation": "Moderation",
 }
+
+# Discord limits
+MAX_FIELDS = 25
+MAX_SELECT_OPTIONS = 25
 
 
 def _expand(cmd: commands.Command, prefix: str = "") -> list[tuple[str, str]]:
-    """Flatten a command (and any subcommands) into [(name, description), ...]."""
     name = f"{prefix}{cmd.name}".strip()
     desc = cmd.description or cmd.help or ""
     if isinstance(cmd, commands.Group | commands.HybridGroup):
@@ -57,7 +63,6 @@ def _expand(cmd: commands.Command, prefix: str = "") -> list[tuple[str, str]]:
 
 
 def _collect(bot: commands.Bot) -> dict[str, list[tuple[str, str]]]:
-    """Group every visible command by cog name, expanding hybrid groups."""
     groups: dict[str, list[tuple[str, str]]] = {}
     for cmd in bot.commands:
         if cmd.hidden or cmd.cog_name in (None, "Help"):
@@ -76,24 +81,46 @@ class HelpSelect(discord.ui.Select):
     def __init__(self, groups: dict[str, list[tuple[str, str]]], prefix: str):
         self.groups = groups
         self.prefix = prefix
+        # Sort by command count desc, take top 24, group rest as Misc
+        by_size = sorted(groups.items(), key=lambda kv: -len(kv[1]))
+        top = by_size[: MAX_SELECT_OPTIONS - 1]
+        rest = by_size[MAX_SELECT_OPTIONS - 1 :]
+        self.misc: list[tuple[str, str]] = []
+        for cog, cmds in rest:
+            self.misc.extend(cmds)
+        self.misc.sort()
         options = [
             discord.SelectOption(
-                label=_display_name(cog),
+                label=_display_name(cog)[:25],
                 value=cog,
                 emoji=COG_EMOJI.get(cog),
-                description=f"{len(cmds)} command(s)",
+                description=f"{len(cmds)} commands"[:50],
             )
-            for cog, cmds in sorted(groups.items())
+            for cog, cmds in top
         ]
+        if self.misc:
+            options.append(
+                discord.SelectOption(
+                    label="Other",
+                    value="__misc__",
+                    emoji="✨",
+                    description=f"{len(self.misc)} commands",
+                )
+            )
         super().__init__(placeholder="Pick a category for details", options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
         cog = self.values[0]
-        embed = discord.Embed(
-            title=f"{COG_EMOJI.get(cog, '•')} {_display_name(cog)}",
-            color=discord.Color.blurple(),
-        )
-        for name, desc in self.groups[cog]:
+        if cog == "__misc__":
+            cmds = self.misc
+            title = "✨ Other"
+            color = discord.Color.greyple()
+        else:
+            cmds = self.groups[cog]
+            title = f"{COG_EMOJI.get(cog, '•')} {_display_name(cog)}"
+            color = discord.Color.blurple()
+        embed = discord.Embed(title=title, color=color)
+        for name, desc in cmds[:MAX_FIELDS]:
             embed.add_field(name=f"/{name}", value=desc or "No description.", inline=False)
         embed.set_footer(text=f"Prefix: {self.prefix} . Pick another category below.")
         await interaction.response.edit_message(embed=embed, view=self.view)
@@ -141,24 +168,26 @@ class Help(commands.Cog):
             return
 
         total = sum(len(v) for v in groups.values())
+        lines: list[str] = []
+        for cog in sorted(groups):
+            emoji = COG_EMOJI.get(cog, "•")
+            names = ", ".join(f"`/{n}`" for n, _ in groups[cog])
+            if len(names) > 240:
+                names = names[:237] + "..."
+            lines.append(f"{emoji} **{_display_name(cog)}** ({len(groups[cog])}): {names}")
+        description = (
+            f"Server prefix: `{prefix}`. Slash variants also work.\n"
+            f"Total commands: **{total}** across {len(groups)} categories.\n"
+            f"Use `/help <command>` for details, or pick a category below.\n\n"
+            + "\n".join(lines)
+        )
+        if len(description) > 4000:
+            description = description[:3997] + "..."
         embed = discord.Embed(
             title="Catto Commands",
-            description=(
-                f"Server prefix: `{prefix}` . Slash variants also work.\n"
-                f"Total commands: **{total}** across {len(groups)} categories.\n"
-                f"Pick a category below to see details, or run `/help <command>`."
-            ),
+            description=description,
             color=discord.Color.blue(),
         )
-        for cog in sorted(groups):
-            names = ", ".join(f"`/{n}`" for n, _ in groups[cog])
-            if len(names) > 256:
-                names = names[:253] + "..."
-            embed.add_field(
-                name=f"{COG_EMOJI.get(cog, '•')} {_display_name(cog)}",
-                value=names,
-                inline=False,
-            )
         view = HelpView(ctx.author.id, groups, prefix)
         await ctx.send(embed=embed, view=view)
 
