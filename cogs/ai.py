@@ -1,10 +1,10 @@
 import asyncio
 import io
-import os
+from urllib.parse import quote
 
+import aiohttp
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 from PIL import Image
 
 from core import db
@@ -12,9 +12,10 @@ from core.http import get_session
 from core.logging import log_command
 from core.views import ConfirmView
 
-load_dotenv()
-HUGGING_FACE_KEY = os.getenv("HUGGING_FACE_KEY")
-SD_MODEL_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
+# Pollinations: free, keyless text-to-image (FLUX under the hood).
+IMAGE_API = (
+    "https://image.pollinations.ai/prompt/{prompt}?width=768&height=768&nologo=true&model=flux"
+)
 
 
 class AIImage(commands.Cog):
@@ -22,7 +23,9 @@ class AIImage(commands.Cog):
         self.bot = bot
         self.lock = asyncio.Lock()
 
-    @commands.hybrid_command(name="aiterms", description="Read and accept the terms before using the AI image generator")
+    @commands.hybrid_command(
+        name="aiterms", description="Read and accept the terms before using the AI image generator"
+    )
     async def aiterms(self, ctx: commands.Context):
         log_command(ctx)
         if await db.is_ai_allowed(ctx.author.id):
@@ -71,20 +74,19 @@ class AIImage(commands.Cog):
             return
 
         if self.lock.locked():
-            await ctx.reply(
-                f"Hi {ctx.author.name}, the command is in use. Please wait."
-            )
+            await ctx.reply(f"Hi {ctx.author.name}, the command is in use. Please wait.")
             return
 
         async with self.lock:
             ret = await ctx.send("Generating image...")
             session = await get_session()
             try:
-                async with session.post(
-                    SD_MODEL_URL,
-                    headers={"Authorization": HUGGING_FACE_KEY},
-                    json={"inputs": msg},
-                ) as resp:
+                url = IMAGE_API.format(prompt=quote(msg))
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=120)) as resp:
+                    if resp.status != 200 or "image" not in resp.headers.get("Content-Type", ""):
+                        detail = (await resp.text())[:300]
+                        await ret.edit(content=f"Image generation failed ({resp.status}): {detail}")
+                        return
                     image_bytes = await resp.read()
                 image = Image.open(io.BytesIO(image_bytes))
                 buf = io.BytesIO()
