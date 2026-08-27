@@ -63,10 +63,36 @@ STATION_SEEDS = [
 
 TALK_EVERY = 4  # DJ speaks before every Nth track
 
+# `/dj vibe <mood>` steer options (all English or instrumental).
+VIBE_SEEDS = {
+    "chill": [
+        "lofi hip hop beats to relax",
+        "chillhop instrumental mix",
+        "ambient instrumental focus music",
+    ],
+    "hype": ["2010s edm festival hits", "future bass mix", "phonk mix"],
+    "throwback": [
+        "80s synthwave retrowave mix",
+        "classic rock greatest hits",
+        "2000s pop punk hits",
+    ],
+    "focus": [
+        "study lofi instrumental beats",
+        "ambient instrumental focus music",
+        "smooth jazz instrumental",
+    ],
+    "party": ["top pop hits playlist", "deep house mix", "electro swing mix"],
+}
+
 
 def _clean_title(title: str) -> str:
     """Trim common YouTube noise so spoken lines read naturally."""
-    cleaned = re.sub(r"\s*[\(\[][^)\]]*?(official|video|audio|lyric|hd|4k|mv|remaster)[^)\]]*?[\)\]]", "", title, flags=re.I)
+    cleaned = re.sub(
+        r"\s*[\(\[][^)\]]*?(official|video|audio|lyric|hd|4k|mv|remaster)[^)\]]*?[\)\]]",
+        "",
+        title,
+        flags=re.I,
+    )
     return cleaned.strip(" -") or title
 
 
@@ -82,6 +108,28 @@ def _make_patter(upcoming: "Track") -> str:
         f"Nice and easy now. {up}, coming your way.",
     ]
     return random.choice(lines)
+
+
+def _make_dedication(upcoming: "Track") -> str:
+    up = _clean_title(upcoming.title)
+    return random.choice(
+        [
+            f"This one goes out to {upcoming.dedication}. {up}.",
+            f"For {upcoming.dedication}, here's {up}.",
+            f"A little dedication for {upcoming.dedication}. {up}.",
+        ]
+    )
+
+
+def _make_greeting(names: list[str]) -> str:
+    who = names[0] if len(names) == 1 else ", ".join(names[:-1]) + f" and {names[-1]}"
+    return random.choice(
+        [
+            f"Welcome back, {who}. Good to have you.",
+            f"Hey {who}, glad you're here. Let's keep it going.",
+            f"Look who it is. Welcome in, {who}.",
+        ]
+    )
 
 
 def _fmt_duration(secs: int | None) -> str:
@@ -102,6 +150,7 @@ class Track:
     thumbnail: str | None = None
     video_id: str | None = None
     source: str = "user"  # "user" for requested tracks, "mix" for DJ Catto radio
+    dedication: str | None = None  # display name this track is dedicated to
 
 
 @dataclass
@@ -117,6 +166,8 @@ class GuildPlayer:
     station_paused: bool = False  # paused because the channel emptied
     dj_quiet: bool = False  # suppress the DJ's spoken lines
     songs_since_talk: int = 0  # tracks since the DJ last spoke
+    vibe: str | None = None  # current steered mood
+    pending_greets: list[str] = field(default_factory=list)  # names to shout out next
     started_at: float = 0.0  # monotonic time the current track began
     fails: int = 0  # consecutive tracks that died almost immediately
     skipping: bool = False  # set when a manual skip triggers the next track
@@ -231,20 +282,29 @@ class Music(commands.Cog):
         await self._advance(guild_id)
 
     async def _advance(self, guild_id: int) -> None:
-        """Start the next track, optionally with a spoken DJ intro first."""
+        """Start the next track, optionally with a spoken DJ line first."""
         player = self._player(guild_id)
-        if (
+        can_talk = (
             player.queue
             and player.voice is not None
             and player.voice.is_connected()
             and not player.dj_quiet
-            and player.songs_since_talk >= TALK_EVERY
-        ):
-            path = await self.tts.synth(_make_patter(player.queue[0]))
-            if path is not None:
-                player.songs_since_talk = 0
-                self._play_tts_then_next(guild_id, path)
-                return
+        )
+        if can_talk:
+            line = None
+            if player.pending_greets:
+                line = _make_greeting(player.pending_greets)
+                player.pending_greets = []
+            elif player.queue[0].dedication:
+                line = _make_dedication(player.queue[0])
+            elif player.songs_since_talk >= TALK_EVERY:
+                line = _make_patter(player.queue[0])
+            if line is not None:
+                path = await self.tts.synth(line)
+                if path is not None:
+                    player.songs_since_talk = 0
+                    self._play_tts_then_next(guild_id, path)
+                    return
         self._start_next(guild_id)
         player.songs_since_talk += 1
 
@@ -280,18 +340,26 @@ class Music(commands.Cog):
             return
         if not await db.get_dj_mode(guild_id):
             return
+        # Read the room: sometimes seed from a track someone currently in the
+        # voice channel requested, so the station reflects who's actually here.
+        seed_id = seed.video_id
+        humans = [m.id for m in player.voice.channel.members if not m.bot]
+        if humans and random.random() < 0.5:
+            alt = await db.random_recent_user_track(guild_id, humans)
+            if alt:
+                seed_id = alt
         try:
             recent = await db.recent_play_ids(guild_id, 50)
-            candidates = await asyncio.to_thread(self._mix_candidates, seed.video_id)
+            candidates = await asyncio.to_thread(self._mix_candidates, seed_id)
         except Exception as err:
             print(f"music: autoplay lookup failed: {err}")
             return
         pick = next(
-            (vid for vid, _ in candidates if vid and vid != seed.video_id and vid not in recent),
+            (vid for vid, _ in candidates if vid and vid != seed_id and vid not in recent),
             None,
         )
         if pick is None:  # everything recent (or empty) → take the first fresh candidate
-            pick = next((vid for vid, _ in candidates if vid and vid != seed.video_id), None)
+            pick = next((vid for vid, _ in candidates if vid and vid != seed_id), None)
         if pick is None:
             return
         try:
@@ -447,7 +515,9 @@ class Music(commands.Cog):
         del player.queue[index - 1]
         await ctx.send(f"🗑 Removed **{track.title}** from the queue.")
 
-    @music.command(name="clearqueue", description="Empty the queue without stopping the current track")
+    @music.command(
+        name="clearqueue", description="Empty the queue without stopping the current track"
+    )
     async def clearqueue(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -455,7 +525,9 @@ class Music(commands.Cog):
         player.queue.clear()
         await ctx.send(f"🧹 Cleared {n} track(s) from the queue.")
 
-    @music.command(name="volume", aliases=["vol"], description="Set playback volume (0-100, default 50)")
+    @music.command(
+        name="volume", aliases=["vol"], description="Set playback volume (0-100, default 50)"
+    )
     async def volume(self, ctx: commands.Context, level: int):
         log_command(ctx)
         if level < 0 or level > 100:
@@ -477,7 +549,9 @@ class Music(commands.Cog):
         self._player(ctx.guild.id).loop_mode = mode
         await ctx.send(f"🔁 Loop mode → **{mode}**.")
 
-    @music.command(name="leave", aliases=["disconnect", "dc"], description="Disconnect the bot from voice")
+    @music.command(
+        name="leave", aliases=["disconnect", "dc"], description="Disconnect the bot from voice"
+    )
     async def leave(self, ctx: commands.Context):
         log_command(ctx)
         player = self._player(ctx.guild.id)
@@ -525,6 +599,57 @@ class Music(commands.Cog):
         self._player(ctx.guild.id).dj_mode = False
         await ctx.send("🎧 DJ Catto radio is **OFF**. The queue will stop when it empties.")
 
+    @dj.command(name="dedicate", description="Dedicate a song to someone (plays next)")
+    async def dj_dedicate(self, ctx: commands.Context, member: discord.Member, *, query: str):
+        log_command(ctx)
+        if ctx.interaction is not None:
+            await ctx.defer()
+        voice = await self._ensure_voice(ctx)
+        if voice is None:
+            return
+        try:
+            track = await self._extract(query, ctx.author)
+        except Exception as err:
+            await ctx.send(f"Could not fetch that track: {err}")
+            return
+        track.dedication = member.display_name
+        player = self._player(ctx.guild.id)
+        player.queue.appendleft(track)
+        if not voice.is_playing() and not voice.is_paused():
+            self._start_next(ctx.guild.id)
+        await ctx.send(f"💌 Dedicating **{track.title}** to **{member.display_name}** up next.")
+
+    @dj.command(
+        name="vibe",
+        description="Steer the station's mood: chill | hype | throwback | focus | party",
+    )
+    async def dj_vibe(self, ctx: commands.Context, mood: str):
+        log_command(ctx)
+        mood = mood.lower()
+        if mood not in VIBE_SEEDS:
+            await ctx.send(f"Pick a mood: {', '.join(VIBE_SEEDS)}.")
+            return
+        if ctx.interaction is not None:
+            await ctx.defer()
+        voice = await self._ensure_voice(ctx)
+        if voice is None:
+            return
+        try:
+            track = await self._extract(random.choice(VIBE_SEEDS[mood]), self.bot.user)
+        except Exception as err:
+            await ctx.send(f"Could not switch vibe: {err}")
+            return
+        track.source = "mix"
+        player = self._player(ctx.guild.id)
+        player.vibe = mood
+        player.queue.appendleft(track)
+        if voice.is_playing():
+            player.skipping = True
+            voice.stop()  # transitions into the new vibe
+        else:
+            self._start_next(ctx.guild.id)
+        await ctx.send(f"🎚️ Switching the vibe to **{mood}**.")
+
     @dj.command(name="quiet", description="Toggle the DJ's spoken lines between songs")
     async def dj_quiet(self, ctx: commands.Context):
         log_command(ctx)
@@ -563,6 +688,43 @@ class Music(commands.Cog):
             "Use `/music np` to see what's playing, `/dj stop` to end."
         )
 
+    @dj.command(name="recap", description="A recap of what the server has been listening to")
+    async def dj_recap(self, ctx: commands.Context, days: int = 7):
+        log_command(ctx)
+        days = max(1, min(days, 90))
+        since = int(time.time()) - days * 86400
+        stats = await db.play_stats(ctx.guild.id, since)
+        if not stats["total"]:
+            await ctx.send(f"No plays logged in the last {days} day(s) yet. Put something on!")
+            return
+        top = await db.top_played_titles(ctx.guild.id, since, 5)
+        requesters = await db.top_requesters(ctx.guild.id, since, 3)
+        embed = discord.Embed(
+            title=f"🎧 DJ Catto recap - last {days} day(s)",
+            description=(
+                f"**{stats['total']}** tracks played "
+                f"({stats['requested']} requested, {stats['radio']} from the radio)."
+            ),
+            color=discord.Color.purple(),
+        )
+        if top:
+            embed.add_field(
+                name="Top tracks",
+                value="\n".join(
+                    f"`{i}.` {_clean_title(t['title'])} ({t['count']}x)"
+                    for i, t in enumerate(top, 1)
+                ),
+                inline=False,
+            )
+        if requesters:
+            lines = []
+            for i, r in enumerate(requesters, 1):
+                user = self.bot.get_user(r["user_id"])
+                name = user.display_name if user else f"user {r['user_id']}"
+                lines.append(f"`{i}.` {name} ({r['count']} requests)")
+            embed.add_field(name="Top requesters", value="\n".join(lines), inline=False)
+        await ctx.send(embed=embed)
+
     @dj.command(name="stop", description="Stop the 24/7 DJ station and leave voice")
     async def dj_stop(self, ctx: commands.Context):
         log_command(ctx)
@@ -594,6 +756,12 @@ class Music(commands.Cog):
             channel = player.voice.channel
             humans = [m for m in channel.members if not m.bot]
             if player.station:
+                # Shout out anyone who just joined the station's channel.
+                if after.channel == channel and before.channel != channel:
+                    name = member.display_name
+                    if name not in player.pending_greets:
+                        player.pending_greets.append(name)
+                        player.pending_greets = player.pending_greets[-3:]
                 # 24/7 station: pause when the channel empties, resume when
                 # someone comes back, and never disconnect.
                 if not humans and player.voice.is_playing():

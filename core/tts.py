@@ -20,9 +20,7 @@ log = logging.getLogger("catto")
 EDGE_VOICE = "en-US-EricNeural"  # calm, laid-back
 OPENAI_MODEL = "gpt-4o-mini-tts"
 OPENAI_VOICE = "ash"
-OPENAI_INSTRUCTIONS = (
-    "Speak like a chill, laid-back late-night radio DJ: warm, relaxed, unhurried."
-)
+OPENAI_INSTRUCTIONS = "Speak like a chill, laid-back late-night radio DJ: warm, relaxed, unhurried."
 USD_PER_CHAR = 0.00002  # conservative estimate for gpt-4o-mini-tts
 MONTHLY_CAP_USD = 2.00
 ALERT_USER_ID = 1331907055635796022
@@ -66,18 +64,21 @@ class TTSEngine:
 
     async def _openai(self, text: str, path: str) -> bool:
         try:
-            async with aiohttp.ClientSession() as session, session.post(
-                "https://api.openai.com/v1/audio/speech",
-                headers={"Authorization": f"Bearer {self.openai_key}"},
-                json={
-                    "model": OPENAI_MODEL,
-                    "voice": OPENAI_VOICE,
-                    "input": text,
-                    "instructions": OPENAI_INSTRUCTIONS,
-                    "response_format": "mp3",
-                },
-                timeout=aiohttp.ClientTimeout(total=20),
-            ) as resp:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.post(
+                    "https://api.openai.com/v1/audio/speech",
+                    headers={"Authorization": f"Bearer {self.openai_key}"},
+                    json={
+                        "model": OPENAI_MODEL,
+                        "voice": OPENAI_VOICE,
+                        "input": text,
+                        "instructions": OPENAI_INSTRUCTIONS,
+                        "response_format": "mp3",
+                    },
+                    timeout=aiohttp.ClientTimeout(total=20),
+                ) as resp,
+            ):
                 if resp.status != 200:
                     log.warning("OpenAI TTS failed: HTTP %s", resp.status)
                     return False

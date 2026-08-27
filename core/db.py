@@ -1,3 +1,5 @@
+import random
+
 import aiosqlite
 
 DB_PATH = "catto.db"
@@ -161,9 +163,7 @@ async def all_prefixes() -> dict[int, str]:
 
 
 async def get_meta(key: str) -> str | None:
-    async with conn().execute(
-        "SELECT value FROM bot_meta WHERE key = ?", (key,)
-    ) as cur:
+    async with conn().execute("SELECT value FROM bot_meta WHERE key = ?", (key,)) as cur:
         row = await cur.fetchone()
     return row[0] if row else None
 
@@ -253,9 +253,7 @@ async def get_chat_response(input_text: str) -> str | None:
 
 
 async def is_ai_allowed(user_id: int) -> bool:
-    async with conn().execute(
-        "SELECT 1 FROM ai_allowed_user WHERE user_id = ?", (user_id,)
-    ) as cur:
+    async with conn().execute("SELECT 1 FROM ai_allowed_user WHERE user_id = ?", (user_id,)) as cur:
         return (await cur.fetchone()) is not None
 
 
@@ -265,9 +263,7 @@ async def add_ai_allowed(user_id: int) -> None:
 
 
 async def wallet_exists(user_id: int) -> bool:
-    async with conn().execute(
-        "SELECT 1 FROM wallet WHERE user_id = ?", (user_id,)
-    ) as cur:
+    async with conn().execute("SELECT 1 FROM wallet WHERE user_id = ?", (user_id,)) as cur:
         return (await cur.fetchone()) is not None
 
 
@@ -297,9 +293,7 @@ async def get_wallet(user_id: int) -> dict | None:
 
 
 async def update_coins(user_id: int, delta: int) -> None:
-    await conn().execute(
-        "UPDATE wallet SET coins = coins + ? WHERE user_id = ?", (delta, user_id)
-    )
+    await conn().execute("UPDATE wallet SET coins = coins + ? WHERE user_id = ?", (delta, user_id))
     await conn().commit()
 
 
@@ -396,9 +390,7 @@ async def bump_message_count(user_id: int, username: str) -> int:
         (user_id, username),
     )
     await db.commit()
-    async with db.execute(
-        "SELECT total FROM message_count WHERE user_id = ?", (user_id,)
-    ) as cur:
+    async with db.execute("SELECT total FROM message_count WHERE user_id = ?", (user_id,)) as cur:
         row = await cur.fetchone()
     return row[0]
 
@@ -438,6 +430,52 @@ async def recent_play_ids(guild_id: int, limit: int = 50) -> set[str]:
     ) as cur:
         rows = await cur.fetchall()
     return {r[0] for r in rows}
+
+
+async def random_recent_user_track(
+    guild_id: int, user_ids: list[int], limit: int = 40
+) -> str | None:
+    """A YouTube id one of these users requested recently (for room-aware autoplay)."""
+    if not user_ids:
+        return None
+    marks = ",".join("?" for _ in user_ids)
+    async with conn().execute(
+        f"SELECT DISTINCT yt_id FROM plays WHERE guild_id = ? AND source = 'user' "
+        f"AND user_id IN ({marks}) ORDER BY played_at DESC LIMIT ?",
+        (guild_id, *user_ids, limit),
+    ) as cur:
+        rows = await cur.fetchall()
+    return random.choice(rows)[0] if rows else None
+
+
+async def top_played_titles(guild_id: int, since: int, limit: int = 5) -> list[dict]:
+    async with conn().execute(
+        "SELECT title, COUNT(*) AS n FROM plays WHERE guild_id = ? AND played_at >= ? "
+        "GROUP BY yt_id ORDER BY n DESC LIMIT ?",
+        (guild_id, since, limit),
+    ) as cur:
+        rows = await cur.fetchall()
+    return [{"title": r[0], "count": r[1]} for r in rows]
+
+
+async def play_stats(guild_id: int, since: int) -> dict:
+    async with conn().execute(
+        "SELECT COUNT(*), SUM(source = 'user'), SUM(source = 'mix') "
+        "FROM plays WHERE guild_id = ? AND played_at >= ?",
+        (guild_id, since),
+    ) as cur:
+        row = await cur.fetchone()
+    return {"total": row[0] or 0, "requested": row[1] or 0, "radio": row[2] or 0}
+
+
+async def top_requesters(guild_id: int, since: int, limit: int = 3) -> list[dict]:
+    async with conn().execute(
+        "SELECT user_id, COUNT(*) AS n FROM plays WHERE guild_id = ? AND played_at >= ? "
+        "AND source = 'user' AND user_id IS NOT NULL GROUP BY user_id ORDER BY n DESC LIMIT ?",
+        (guild_id, since, limit),
+    ) as cur:
+        rows = await cur.fetchall()
+    return [{"user_id": r[0], "count": r[1]} for r in rows]
 
 
 async def get_dj_mode(guild_id: int) -> bool:
