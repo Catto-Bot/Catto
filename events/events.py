@@ -115,25 +115,38 @@ async def on_guild_join(guild):
     channel = discord.utils.get(guild.text_channels)
     if channel is not None:
         embed = discord.Embed(
-            title="Thank you for inviting me!",
-            description="I'm here to assist you.",
+            title="Thanks for adding Catto!",
+            description="Hey! I do music, games, moderation and a lot more. Here is a quick start to get going.",
             color=discord.Color.green(),
         )
-        embed.set_thumbnail(
-            url="https://cdn.discordapp.com/avatars/1108380972950491146/7349e4327248b681dcbfc171091aca07.png"
+        if guild.me is not None:
+            embed.set_thumbnail(url=guild.me.display_avatar.url)
+        embed.add_field(
+            name="🎧 /dj start",
+            value="Start a 24/7 DJ radio in your voice channel.",
+            inline=False,
         )
         embed.add_field(
-            name="Basic Commands", value="Here are some basic commands you can use:", inline=False
+            name="🎵 /music play <song>",
+            value="Play any song from YouTube.",
+            inline=False,
         )
         embed.add_field(
-            name="!setprefix <new_prefix>", value="Change the bot's command prefix.", inline=False
+            name="🖼️ /ai <prompt>",
+            value="Generate an image from text.",
+            inline=False,
         )
-        embed.add_field(name="!ai <prompt>", value="Generate AI images.", inline=False)
-        embed.add_field(name="!anicat", value="Display waifus.", inline=False)
         embed.add_field(
-            name="!help", value="Display the full list of available commands.", inline=False
+            name="⚙️ /setprefix <prefix>",
+            value="Change my command prefix. The default is !.",
+            inline=False,
         )
-        embed.set_footer(text="Powered by Catto0")
+        embed.add_field(
+            name="📖 /help",
+            value="See everything I can do.",
+            inline=False,
+        )
+        embed.set_footer(text="Catto V3")
         await channel.send(embed=embed)
     else:
         print("The specified channel does not exist in the guild.")
