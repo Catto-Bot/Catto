@@ -5,7 +5,9 @@ Requires ffmpeg on the host (`pacman -S ffmpeg`, `apt install ffmpeg`, etc.).
 
 import asyncio
 import contextlib
+import os
 import random
+import re
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -17,6 +19,7 @@ from yt_dlp import YoutubeDL
 
 from core import db
 from core.logging import log_command
+from core.tts import TTSEngine
 
 YDL_OPTS = {
     "format": "bestaudio/best",
@@ -58,6 +61,29 @@ STATION_SEEDS = [
 ]
 
 
+TALK_EVERY = 4  # DJ speaks before every Nth track
+
+
+def _clean_title(title: str) -> str:
+    """Trim common YouTube noise so spoken lines read naturally."""
+    cleaned = re.sub(r"\s*[\(\[][^)\]]*?(official|video|audio|lyric|hd|4k|mv|remaster)[^)\]]*?[\)\]]", "", title, flags=re.I)
+    return cleaned.strip(" -") or title
+
+
+def _make_patter(upcoming: "Track") -> str:
+    up = _clean_title(upcoming.title)
+    lines = [
+        f"Keeping it smooth. Up next, {up}.",
+        f"Alright, easing into {up}. Stay with me.",
+        f"Here's a nice one for you. {up}.",
+        f"Let's keep the vibe rolling with {up}.",
+        f"Sit back and relax. This is {up}.",
+        f"Coming up on DJ Catto, {up}.",
+        f"Nice and easy now. {up}, coming your way.",
+    ]
+    return random.choice(lines)
+
+
 def _fmt_duration(secs: int | None) -> str:
     if not secs:
         return "?:??"
@@ -89,6 +115,8 @@ class GuildPlayer:
     dj_mode: bool = False
     station: bool = False  # 24/7 `/dj start` mode: quiet, pause-when-empty
     station_paused: bool = False  # paused because the channel emptied
+    dj_quiet: bool = False  # suppress the DJ's spoken lines
+    songs_since_talk: int = 0  # tracks since the DJ last spoke
     started_at: float = 0.0  # monotonic time the current track began
     fails: int = 0  # consecutive tracks that died almost immediately
     skipping: bool = False  # set when a manual skip triggers the next track
@@ -98,6 +126,7 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.players: dict[int, GuildPlayer] = {}
+        self.tts = TTSEngine(bot)
 
     def _player(self, guild_id: int) -> GuildPlayer:
         return self.players.setdefault(guild_id, GuildPlayer())
@@ -199,6 +228,47 @@ class Music(commands.Cog):
         # DJ Catto radio: if the queue emptied and DJ mode is on, keep it going.
         if not player.queue and player.loop_mode == "off":
             await self._maybe_autoplay(guild_id)
+        await self._advance(guild_id)
+
+    async def _advance(self, guild_id: int) -> None:
+        """Start the next track, optionally with a spoken DJ intro first."""
+        player = self._player(guild_id)
+        if (
+            player.queue
+            and player.voice is not None
+            and player.voice.is_connected()
+            and not player.dj_quiet
+            and player.songs_since_talk >= TALK_EVERY
+        ):
+            path = await self.tts.synth(_make_patter(player.queue[0]))
+            if path is not None:
+                player.songs_since_talk = 0
+                self._play_tts_then_next(guild_id, path)
+                return
+        self._start_next(guild_id)
+        player.songs_since_talk += 1
+
+    def _play_tts_then_next(self, guild_id: int, path: str) -> None:
+        player = self._player(guild_id)
+        if player.voice is None or not player.voice.is_connected():
+            with contextlib.suppress(Exception):
+                os.remove(path)
+            self._start_next(guild_id)
+            return
+
+        def after(_error: Exception | None) -> None:
+            with contextlib.suppress(Exception):
+                os.remove(path)
+            asyncio.run_coroutine_threadsafe(self._after_tts(guild_id), self.bot.loop)
+
+        try:
+            player.voice.play(discord.FFmpegPCMAudio(path), after=after)
+        except Exception:
+            with contextlib.suppress(Exception):
+                os.remove(path)
+            self._start_next(guild_id)
+
+    async def _after_tts(self, guild_id: int) -> None:
         self._start_next(guild_id)
 
     async def _maybe_autoplay(self, guild_id: int) -> None:
@@ -454,6 +524,14 @@ class Music(commands.Cog):
         await db.set_dj_mode(ctx.guild.id, False)
         self._player(ctx.guild.id).dj_mode = False
         await ctx.send("🎧 DJ Catto radio is **OFF**. The queue will stop when it empties.")
+
+    @dj.command(name="quiet", description="Toggle the DJ's spoken lines between songs")
+    async def dj_quiet(self, ctx: commands.Context):
+        log_command(ctx)
+        player = self._player(ctx.guild.id)
+        player.dj_quiet = not player.dj_quiet
+        state = "quiet 🤫" if player.dj_quiet else "chatty 🎙️"
+        await ctx.send(f"DJ Catto is now **{state}**.")
 
     @dj.command(name="start", description="Start the 24/7 DJ station in your voice channel")
     async def dj_start(self, ctx: commands.Context):

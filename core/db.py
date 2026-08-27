@@ -88,6 +88,12 @@ CREATE TABLE IF NOT EXISTS dj_settings (
     guild_id INTEGER PRIMARY KEY,
     dj_mode  INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS tts_budget (
+    period    TEXT PRIMARY KEY,       -- 'YYYY-MM'
+    spent_usd REAL NOT NULL DEFAULT 0,
+    alerted   INTEGER NOT NULL DEFAULT 0
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -447,6 +453,32 @@ async def set_dj_mode(guild_id: int, on: bool) -> None:
         "INSERT INTO dj_settings (guild_id, dj_mode) VALUES (?, ?) "
         "ON CONFLICT(guild_id) DO UPDATE SET dj_mode = excluded.dj_mode",
         (guild_id, 1 if on else 0),
+    )
+    await conn().commit()
+
+
+async def tts_spend_get(period: str) -> tuple[float, bool]:
+    async with conn().execute(
+        "SELECT spent_usd, alerted FROM tts_budget WHERE period = ?", (period,)
+    ) as cur:
+        row = await cur.fetchone()
+    return (row[0], bool(row[1])) if row else (0.0, False)
+
+
+async def tts_spend_add(period: str, usd: float) -> None:
+    await conn().execute(
+        "INSERT INTO tts_budget (period, spent_usd) VALUES (?, ?) "
+        "ON CONFLICT(period) DO UPDATE SET spent_usd = spent_usd + excluded.spent_usd",
+        (period, usd),
+    )
+    await conn().commit()
+
+
+async def tts_set_alerted(period: str) -> None:
+    await conn().execute(
+        "INSERT INTO tts_budget (period, alerted) VALUES (?, 1) "
+        "ON CONFLICT(period) DO UPDATE SET alerted = 1",
+        (period,),
     )
     await conn().commit()
 
