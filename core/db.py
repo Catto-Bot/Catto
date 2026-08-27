@@ -71,6 +71,23 @@ CREATE TABLE IF NOT EXISTS bot_meta (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS plays (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id   INTEGER NOT NULL,
+    user_id    INTEGER,
+    yt_id      TEXT NOT NULL,
+    title      TEXT,
+    source     TEXT NOT NULL DEFAULT 'user',
+    played_at  INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ix_plays_guild ON plays(guild_id, played_at);
+
+CREATE TABLE IF NOT EXISTS dj_settings (
+    guild_id INTEGER PRIMARY KEY,
+    dj_mode  INTEGER NOT NULL DEFAULT 0
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -394,6 +411,44 @@ async def top_messages(limit: int = 10) -> list[dict]:
     ) as cur:
         rows = await cur.fetchall()
     return [{"username": r[0], "total": r[1]} for r in rows]
+
+
+async def record_play(
+    guild_id: int, user_id: int | None, yt_id: str, title: str, source: str, now: int
+) -> None:
+    await conn().execute(
+        "INSERT INTO plays (guild_id, user_id, yt_id, title, source, played_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (guild_id, user_id, yt_id, title, source, now),
+    )
+    await conn().commit()
+
+
+async def recent_play_ids(guild_id: int, limit: int = 50) -> set[str]:
+    """The most recently played YouTube ids in a guild, used to avoid repeats."""
+    async with conn().execute(
+        "SELECT yt_id FROM plays WHERE guild_id = ? ORDER BY played_at DESC LIMIT ?",
+        (guild_id, limit),
+    ) as cur:
+        rows = await cur.fetchall()
+    return {r[0] for r in rows}
+
+
+async def get_dj_mode(guild_id: int) -> bool:
+    async with conn().execute(
+        "SELECT dj_mode FROM dj_settings WHERE guild_id = ?", (guild_id,)
+    ) as cur:
+        row = await cur.fetchone()
+    return bool(row[0]) if row else False
+
+
+async def set_dj_mode(guild_id: int, on: bool) -> None:
+    await conn().execute(
+        "INSERT INTO dj_settings (guild_id, dj_mode) VALUES (?, ?) "
+        "ON CONFLICT(guild_id) DO UPDATE SET dj_mode = excluded.dj_mode",
+        (guild_id, 1 if on else 0),
+    )
+    await conn().commit()
 
 
 async def add_reminder(user_id: int, channel_id: int, due_at: int, message: str) -> int:

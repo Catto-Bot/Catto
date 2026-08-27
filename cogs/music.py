@@ -5,6 +5,7 @@ Requires ffmpeg on the host (`pacman -S ffmpeg`, `apt install ffmpeg`, etc.).
 
 import asyncio
 import contextlib
+import time
 from collections import deque
 from dataclasses import dataclass, field
 from typing import Literal
@@ -13,6 +14,7 @@ import discord
 from discord.ext import commands
 from yt_dlp import YoutubeDL
 
+from core import db
 from core.logging import log_command
 
 YDL_OPTS = {
@@ -43,6 +45,8 @@ class Track:
     duration: int | None
     requester: discord.abc.User
     thumbnail: str | None = None
+    video_id: str | None = None
+    source: str = "user"  # "user" for requested tracks, "mix" for DJ Catto radio
 
 
 @dataclass
@@ -52,6 +56,7 @@ class GuildPlayer:
     voice: discord.VoiceClient | None = None
     loop_mode: Literal["off", "track", "queue"] = "off"
     text_channel: discord.abc.Messageable | None = None
+    dj_mode: bool = False
 
 
 class Music(commands.Cog):
@@ -80,6 +85,7 @@ class Music(commands.Cog):
             duration=info.get("duration"),
             requester=requester,
             thumbnail=info.get("thumbnail"),
+            video_id=info.get("id"),
         )
 
     def _start_next(self, guild_id: int) -> None:
@@ -93,16 +99,24 @@ class Music(commands.Cog):
             track.stream_url, before_options=FFMPEG_BEFORE, options=FFMPEG_OPTS
         )
         player.voice.play(source, after=lambda e: self._after_play(guild_id, e))
+        asyncio.run_coroutine_threadsafe(self._record_play(guild_id, track), self.bot.loop)
         if player.text_channel is not None:
-            asyncio.run_coroutine_threadsafe(
-                player.text_channel.send(
-                    embed=discord.Embed(
-                        title="🎵 Now playing",
-                        description=f"[{track.title}]({track.web_url}) `{_fmt_duration(track.duration)}`",
-                        color=discord.Color.green(),
-                    )
-                ),
-                self.bot.loop,
+            embed = discord.Embed(
+                title="🎵 Now playing",
+                description=f"[{track.title}]({track.web_url}) `{_fmt_duration(track.duration)}`",
+                color=discord.Color.green(),
+            )
+            if track.source == "mix":
+                embed.set_footer(text="🎧 added by DJ Catto radio")
+            asyncio.run_coroutine_threadsafe(player.text_channel.send(embed=embed), self.bot.loop)
+
+    async def _record_play(self, guild_id: int, track: Track) -> None:
+        with contextlib.suppress(Exception):
+            if not track.video_id:
+                return
+            user_id = track.requester.id if track.source == "user" else None
+            await db.record_play(
+                guild_id, user_id, track.video_id, track.title, track.source, int(time.time())
             )
 
     def _after_play(self, guild_id: int, error: Exception | None) -> None:
@@ -117,7 +131,51 @@ class Music(commands.Cog):
             player.queue.appendleft(player.current)
         elif player.loop_mode == "queue" and player.current:
             player.queue.append(player.current)
+        # DJ Catto radio: if the queue emptied and DJ mode is on, keep it going.
+        if not player.queue and player.loop_mode == "off":
+            await self._maybe_autoplay(guild_id)
         self._start_next(guild_id)
+
+    async def _maybe_autoplay(self, guild_id: int) -> None:
+        player = self._player(guild_id)
+        if player.voice is None or not player.voice.is_connected():
+            return
+        seed = player.current
+        if seed is None or not seed.video_id:
+            return
+        if not await db.get_dj_mode(guild_id):
+            return
+        try:
+            recent = await db.recent_play_ids(guild_id, 50)
+            candidates = await asyncio.to_thread(self._mix_candidates, seed.video_id)
+        except Exception as err:
+            print(f"music: autoplay lookup failed: {err}")
+            return
+        pick = next(
+            (vid for vid, _ in candidates if vid and vid != seed.video_id and vid not in recent),
+            None,
+        )
+        if pick is None:  # everything recent (or empty) → take the first fresh candidate
+            pick = next((vid for vid, _ in candidates if vid and vid != seed.video_id), None)
+        if pick is None:
+            return
+        try:
+            track = await self._extract(f"https://www.youtube.com/watch?v={pick}", self.bot.user)
+        except Exception as err:
+            print(f"music: autoplay extract failed: {err}")
+            return
+        track.source = "mix"
+        player.queue.append(track)
+
+    @staticmethod
+    def _mix_candidates(video_id: str) -> list[tuple[str, str | None]]:
+        """Pull a YouTube Mix (radio) playlist seeded from a video, flat + cheap."""
+        opts = {**YDL_OPTS, "noplaylist": False, "extract_flat": True, "playlist_items": "1-25"}
+        url = f"https://www.youtube.com/watch?v={video_id}&list=RD{video_id}"
+        with YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+        entries = info.get("entries") or []
+        return [(e["id"], e.get("title")) for e in entries if e and e.get("id")]
 
     async def _ensure_voice(self, ctx: commands.Context) -> discord.VoiceClient | None:
         if ctx.author.voice is None or ctx.author.voice.channel is None:
@@ -279,6 +337,43 @@ class Music(commands.Cog):
         player.queue.clear()
         player.current = None
         await ctx.send("👋 Left voice.")
+
+    @commands.hybrid_group(
+        name="dj", fallback="status", description="DJ Catto radio: never-ending autoplay"
+    )
+    async def dj(self, ctx: commands.Context):
+        """Default: show whether DJ Catto radio is on."""
+        log_command(ctx)
+        on = await db.get_dj_mode(ctx.guild.id)
+        player = self._player(ctx.guild.id)
+        desc = f"DJ Catto radio is **{'ON' if on else 'OFF'}**."
+        if on:
+            desc += "\nWhen the queue runs dry, I keep the music going based on what's been played."
+            if player.current is None:
+                desc += "\nPlay a song to seed the radio: `/music play <song>`."
+        else:
+            desc += "\nTurn it on with `/dj on` and the music never stops."
+        await ctx.send(
+            embed=discord.Embed(title="🎧 DJ Catto", description=desc, color=discord.Color.purple())
+        )
+
+    @dj.command(name="on", description="Turn on never-ending autoplay radio")
+    async def dj_on(self, ctx: commands.Context):
+        log_command(ctx)
+        await db.set_dj_mode(ctx.guild.id, True)
+        player = self._player(ctx.guild.id)
+        player.dj_mode = True
+        msg = "🎧 DJ Catto radio is **ON**. I'll keep the music flowing when the queue empties."
+        if player.current is None:
+            msg += "\nPlay something to get me started: `/music play <song>`."
+        await ctx.send(msg)
+
+    @dj.command(name="off", description="Turn off autoplay radio")
+    async def dj_off(self, ctx: commands.Context):
+        log_command(ctx)
+        await db.set_dj_mode(ctx.guild.id, False)
+        self._player(ctx.guild.id).dj_mode = False
+        await ctx.send("🎧 DJ Catto radio is **OFF**. The queue will stop when it empties.")
 
     @commands.Cog.listener()
     async def on_voice_state_update(
