@@ -30,6 +30,7 @@ YDL_OPTS = {
 }
 FFMPEG_BEFORE = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
 FFMPEG_OPTS = "-vn"
+DEFAULT_VOLUME = 0.5  # 50%
 
 
 def _fmt_duration(secs: int | None) -> str:
@@ -59,6 +60,7 @@ class GuildPlayer:
     voice: discord.VoiceClient | None = None
     loop_mode: Literal["off", "track", "queue"] = "off"
     text_channel: discord.abc.Messageable | None = None
+    volume: float = DEFAULT_VOLUME
     dj_mode: bool = False
     started_at: float = 0.0  # monotonic time the current track began
     fails: int = 0  # consecutive tracks that died almost immediately
@@ -102,8 +104,11 @@ class Music(commands.Cog):
         track = player.queue.popleft()
         player.current = track
         player.started_at = time.monotonic()
-        source = discord.FFmpegPCMAudio(
-            track.stream_url, before_options=FFMPEG_BEFORE, options=FFMPEG_OPTS
+        source = discord.PCMVolumeTransformer(
+            discord.FFmpegPCMAudio(
+                track.stream_url, before_options=FFMPEG_BEFORE, options=FFMPEG_OPTS
+            ),
+            volume=player.volume,
         )
         player.voice.play(source, after=lambda e: self._after_play(guild_id, e))
         asyncio.run_coroutine_threadsafe(self._record_play(guild_id, track), self.bot.loop)
@@ -352,6 +357,18 @@ class Music(commands.Cog):
         n = len(player.queue)
         player.queue.clear()
         await ctx.send(f"🧹 Cleared {n} track(s) from the queue.")
+
+    @music.command(name="volume", aliases=["vol"], description="Set playback volume (0-100, default 50)")
+    async def volume(self, ctx: commands.Context, level: int):
+        log_command(ctx)
+        if level < 0 or level > 100:
+            await ctx.send("Volume must be between 0 and 100.")
+            return
+        player = self._player(ctx.guild.id)
+        player.volume = level / 100
+        if player.voice is not None and player.voice.source is not None:
+            player.voice.source.volume = player.volume
+        await ctx.send(f"🔊 Volume set to **{level}%**.")
 
     @music.command(name="loop", description="Set loop mode: off | track | queue")
     async def loop(self, ctx: commands.Context, mode: str):
