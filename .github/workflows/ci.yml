@@ -23,3 +23,32 @@ jobs:
         run: uv run ruff format --check .
       - name: Tests
         run: uv run pytest -q
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: [self-hosted, arch]
+    concurrency:
+      group: deploy-arch
+      cancel-in-progress: false
+    steps:
+      - name: Pull latest and restart bot
+        run: |
+          set -euo pipefail
+          APP="$HOME/catto"
+          echo "Deploying $(git -C "$APP" rev-parse --short origin/main 2>/dev/null || echo '?') to $APP"
+          /usr/bin/git -C "$APP" fetch --quiet origin main
+          /usr/bin/git -C "$APP" reset --hard origin/main
+          cd "$APP"
+          /usr/bin/uv sync
+          systemctl --user restart catto.service
+          echo "Deployed $(git -C "$APP" rev-parse --short HEAD)"
+      - name: Report service health
+        run: |
+          sleep 5
+          if systemctl --user is-active --quiet catto.service; then
+            echo "catto.service is active"
+          else
+            echo "::warning::catto.service is not active after deploy (likely the DISCORD_ID token in ~/catto/.env). Recent logs:"
+            journalctl --user -u catto.service -n 20 --no-pager || true
+          fi
