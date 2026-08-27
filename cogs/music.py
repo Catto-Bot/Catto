@@ -24,6 +24,9 @@ YDL_OPTS = {
     "no_warnings": True,
     "default_search": "ytsearch1",
     "source_address": "0.0.0.0",
+    # YouTube's default (android_vr) client hands ffmpeg URLs that 403; the
+    # "android" client yields stream URLs ffmpeg can actually play.
+    "extractor_args": {"youtube": {"player_client": ["android"]}},
 }
 FFMPEG_BEFORE = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
 FFMPEG_OPTS = "-vn"
@@ -57,6 +60,9 @@ class GuildPlayer:
     loop_mode: Literal["off", "track", "queue"] = "off"
     text_channel: discord.abc.Messageable | None = None
     dj_mode: bool = False
+    started_at: float = 0.0  # monotonic time the current track began
+    fails: int = 0  # consecutive tracks that died almost immediately
+    skipping: bool = False  # set when a manual skip triggers the next track
 
 
 class Music(commands.Cog):
@@ -95,6 +101,7 @@ class Music(commands.Cog):
             return
         track = player.queue.popleft()
         player.current = track
+        player.started_at = time.monotonic()
         source = discord.FFmpegPCMAudio(
             track.stream_url, before_options=FFMPEG_BEFORE, options=FFMPEG_OPTS
         )
@@ -127,10 +134,36 @@ class Music(commands.Cog):
         player = self._player(guild_id)
         if error is not None:
             print(f"music: ffmpeg error: {error}")
+        # Count tracks that died almost immediately (e.g. a 403 stream). ffmpeg
+        # errors end "cleanly" as far as discord.py knows, so we detect them by
+        # how quickly the track ended. Manual skips don't count as failures.
+        elapsed = time.monotonic() - player.started_at if player.started_at else 999.0
+        if player.skipping:
+            player.skipping = False
+            player.fails = 0
+        elif error is not None or elapsed < 5.0:
+            player.fails += 1
+        else:
+            player.fails = 0
         if player.loop_mode == "track" and player.current:
             player.queue.appendleft(player.current)
         elif player.loop_mode == "queue" and player.current:
             player.queue.append(player.current)
+        # Circuit breaker: if several tracks in a row fail instantly, stop rather
+        # than spamming the channel with a rapid-fire "now playing" loop.
+        if player.fails >= 3:
+            player.queue.clear()
+            player.current = None
+            player.fails = 0
+            if player.text_channel is not None:
+                asyncio.run_coroutine_threadsafe(
+                    player.text_channel.send(
+                        "⚠️ I couldn't play audio for several tracks in a row, so I stopped. "
+                        "Please try again in a bit."
+                    ),
+                    self.bot.loop,
+                )
+            return
         # DJ Catto radio: if the queue emptied and DJ mode is on, keep it going.
         if not player.queue and player.loop_mode == "off":
             await self._maybe_autoplay(guild_id)
@@ -262,6 +295,7 @@ class Music(commands.Cog):
         if player.voice is None or not player.voice.is_playing():
             await ctx.send("Nothing to skip.")
             return
+        player.skipping = True
         player.voice.stop()  # triggers _after_play → _start_next
         await ctx.send("⏭ Skipped.")
 
@@ -272,6 +306,8 @@ class Music(commands.Cog):
         player.queue.clear()
         player.current = None
         player.loop_mode = "off"
+        player.fails = 0
+        player.skipping = True
         if player.voice and player.voice.is_connected():
             player.voice.stop()
             await player.voice.disconnect()
