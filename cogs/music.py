@@ -5,6 +5,7 @@ Requires ffmpeg on the host (`pacman -S ffmpeg`, `apt install ffmpeg`, etc.).
 
 import asyncio
 import contextlib
+import random
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -31,6 +32,30 @@ YDL_OPTS = {
 FFMPEG_BEFORE = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
 FFMPEG_OPTS = "-vn"
 DEFAULT_VOLUME = 0.5  # 50%
+
+# Random genre seeds for `/dj start` (all English or instrumental).
+STATION_SEEDS = [
+    "lofi hip hop beats to relax",
+    "80s synthwave retrowave mix",
+    "classic rock greatest hits",
+    "top pop hits playlist",
+    "epic cinematic instrumental music",
+    "chillhop instrumental mix",
+    "2010s edm festival hits",
+    "acoustic covers playlist",
+    "smooth jazz instrumental",
+    "indie rock playlist",
+    "phonk mix",
+    "deep house mix",
+    "rnb slow jams playlist",
+    "study lofi instrumental beats",
+    "future bass mix",
+    "classic soul motown hits",
+    "ambient instrumental focus music",
+    "2000s pop punk hits",
+    "funk instrumental groove",
+    "electro swing mix",
+]
 
 
 def _fmt_duration(secs: int | None) -> str:
@@ -62,6 +87,8 @@ class GuildPlayer:
     text_channel: discord.abc.Messageable | None = None
     volume: float = DEFAULT_VOLUME
     dj_mode: bool = False
+    station: bool = False  # 24/7 `/dj start` mode: quiet, pause-when-empty
+    station_paused: bool = False  # paused because the channel emptied
     started_at: float = 0.0  # monotonic time the current track began
     fails: int = 0  # consecutive tracks that died almost immediately
     skipping: bool = False  # set when a manual skip triggers the next track
@@ -112,7 +139,7 @@ class Music(commands.Cog):
         )
         player.voice.play(source, after=lambda e: self._after_play(guild_id, e))
         asyncio.run_coroutine_threadsafe(self._record_play(guild_id, track), self.bot.loop)
-        if player.text_channel is not None:
+        if player.text_channel is not None and not player.station:
             embed = discord.Embed(
                 title="🎵 Now playing",
                 description=f"[{track.title}]({track.web_url}) `{_fmt_duration(track.duration)}`",
@@ -428,6 +455,52 @@ class Music(commands.Cog):
         self._player(ctx.guild.id).dj_mode = False
         await ctx.send("🎧 DJ Catto radio is **OFF**. The queue will stop when it empties.")
 
+    @dj.command(name="start", description="Start the 24/7 DJ station in your voice channel")
+    async def dj_start(self, ctx: commands.Context):
+        log_command(ctx)
+        if ctx.interaction is not None:
+            await ctx.defer()
+        voice = await self._ensure_voice(ctx)
+        if voice is None:
+            return
+        player = self._player(ctx.guild.id)
+        player.station = True
+        player.station_paused = False
+        player.dj_mode = True
+        await db.set_dj_mode(ctx.guild.id, True)
+        seed = random.choice(STATION_SEEDS)
+        try:
+            track = await self._extract(seed, self.bot.user)
+        except Exception as err:
+            player.station = False
+            await ctx.send(f"Couldn't start the station: {err}")
+            return
+        track.source = "mix"
+        player.queue.append(track)
+        if not voice.is_playing() and not voice.is_paused():
+            self._start_next(ctx.guild.id)
+        await ctx.send(
+            "🎧 **DJ Catto is live 24/7.** Spinning a random set and keeping it going.\n"
+            "I'll pause when everyone leaves and pick right back up when you return. "
+            "Use `/music np` to see what's playing, `/dj stop` to end."
+        )
+
+    @dj.command(name="stop", description="Stop the 24/7 DJ station and leave voice")
+    async def dj_stop(self, ctx: commands.Context):
+        log_command(ctx)
+        player = self._player(ctx.guild.id)
+        player.station = False
+        player.station_paused = False
+        player.dj_mode = False
+        await db.set_dj_mode(ctx.guild.id, False)
+        player.queue.clear()
+        player.current = None
+        if player.voice and player.voice.is_connected():
+            player.voice.stop()
+            await player.voice.disconnect()
+        player.voice = None
+        await ctx.send("🎧 DJ Catto station stopped. See you next time.")
+
     @commands.Cog.listener()
     async def on_voice_state_update(
         self,
@@ -435,7 +508,6 @@ class Music(commands.Cog):
         before: discord.VoiceState,
         after: discord.VoiceState,
     ) -> None:
-        # Auto-disconnect if the bot is left alone in voice.
         if member.bot:
             return
         for _guild_id, player in self.players.items():
@@ -443,6 +515,17 @@ class Music(commands.Cog):
                 continue
             channel = player.voice.channel
             humans = [m for m in channel.members if not m.bot]
+            if player.station:
+                # 24/7 station: pause when the channel empties, resume when
+                # someone comes back, and never disconnect.
+                if not humans and player.voice.is_playing():
+                    player.voice.pause()
+                    player.station_paused = True
+                elif humans and player.station_paused and player.voice.is_paused():
+                    player.voice.resume()
+                    player.station_paused = False
+                continue
+            # Non-station: auto-disconnect if the bot is left alone in voice.
             if not humans:
                 await asyncio.sleep(60)
                 humans = [m for m in channel.members if not m.bot]
