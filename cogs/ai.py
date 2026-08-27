@@ -59,6 +59,8 @@ class AIImage(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def ai(self, ctx: commands.Context, *, msg: str):
         log_command(ctx)
+        if ctx.interaction is not None:
+            await ctx.defer()
         if not await db.is_ai_allowed(ctx.author.id):
             embed = discord.Embed(
                 title="Error",

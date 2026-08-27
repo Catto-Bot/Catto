@@ -13,7 +13,13 @@ from core.views import Paginator
 DATA_PATH = Path("data/data.json")
 COOLDOWN = 60 * 60
 PAGE_SIZE = 10
-CLAIM_EMOJI = "<:anicat:1105722682160447550>"
+CLAIM_EMOJI = "🐾"
+
+
+def _set_image(embed: discord.Embed, url: object) -> None:
+    """Only attach an image if the source is a usable URL (avoids 400s)."""
+    if isinstance(url, str) and url.startswith(("http://", "https://")):
+        embed.set_image(url=url)
 
 # (label, color, emoji, weight, points_range_inclusive)
 RARITY_TIERS = [
@@ -69,7 +75,7 @@ class ClaimView(discord.ui.View):
             description=f"{emoji} **{label}** card",
             color=color,
         )
-        embed.set_image(url=self.card["Source"])
+        _set_image(embed, self.card["Source"])
         embed.set_author(name=self.card["Name"])
         embed.set_footer(text=f"+{self.card['Points']} AniPoints")
         for child in self.children:
@@ -81,7 +87,7 @@ class ClaimView(discord.ui.View):
         if self.claimed is not None or self.message is None:
             return
         embed = discord.Embed(title="Expired!", description="Nobody claimed in time.")
-        embed.set_image(url=self.card["Source"])
+        _set_image(embed, self.card["Source"])
         embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
         for child in self.children:
             child.disabled = True
@@ -108,7 +114,7 @@ class AniCat(commands.Cog):
             description=f"**{label}** card",
             color=color,
         )
-        embed.set_image(url=card["Source"])
+        _set_image(embed, card["Source"])
         embed.set_footer(text=f"Points: {card['Points']}  •  click below to claim")
         view = ClaimView(card)
         msg = await ctx.send(embed=embed, view=view)
@@ -151,7 +157,7 @@ class AniCat(commands.Cog):
             await ctx.send("Not found")
             return
         embed = discord.Embed(title="MATCH FOUND!", description=match["Name"])
-        embed.set_image(url=match["Source"])
+        _set_image(embed, match["Source"])
         embed.set_footer(text="Thank you for using Catto Bot (AniCat)")
         await ctx.send(embed=embed)
 
