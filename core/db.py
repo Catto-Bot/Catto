@@ -66,6 +66,11 @@ CREATE TABLE IF NOT EXISTS reminder (
     due_at     INTEGER NOT NULL,
     message    TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS bot_meta (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
 """
 
 DEFAULT_PREFIX = "!"
@@ -130,6 +135,23 @@ async def all_prefixes() -> dict[int, str]:
     async with conn().execute("SELECT guild_id, prefix FROM guild_prefix") as cur:
         rows = await cur.fetchall()
     return {row[0]: row[1] for row in rows}
+
+
+async def get_meta(key: str) -> str | None:
+    async with conn().execute(
+        "SELECT value FROM bot_meta WHERE key = ?", (key,)
+    ) as cur:
+        row = await cur.fetchone()
+    return row[0] if row else None
+
+
+async def set_meta(key: str, value: str) -> None:
+    await conn().execute(
+        "INSERT INTO bot_meta (key, value) VALUES (?, ?) "
+        "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        (key, value),
+    )
+    await conn().commit()
 
 
 async def _get_channel(table: str, guild_id: int) -> int | None:

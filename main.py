@@ -1,4 +1,6 @@
+import hashlib
 import json
+import logging
 import os
 from pathlib import Path
 
@@ -140,10 +142,39 @@ class CattoBot(commands.Bot):
         await migrate_gambler_json()
         for ext in COGS:
             await self.load_extension(ext)
+        await self.auto_sync()
+
+    def _command_signature(self) -> str:
+        """A stable hash of the global slash-command tree."""
+        payload = [cmd.to_dict(self.tree) for cmd in self.tree.get_commands()]
+        blob = json.dumps(payload, sort_keys=True, default=str)
+        return hashlib.sha256(blob.encode()).hexdigest()
+
+    async def auto_sync(self) -> None:
+        """Register slash commands globally on startup, but only call Discord
+        when the command set changed since the last sync (avoids the global
+        sync rate limit on frequent restarts). Global commands take up to ~1h
+        to propagate; the manual `!sync` command still does instant per-guild
+        syncs when you need them immediately."""
+        log = logging.getLogger("catto")
+        try:
+            signature = self._command_signature()
+        except Exception:
+            log.exception("Could not compute command signature; forcing sync")
+            signature = None
+        if signature is not None and signature == await db.get_meta("command_signature"):
+            log.info("Slash commands unchanged since last sync; skipping")
+            return
+        try:
+            synced = await self.tree.sync()
+        except Exception:
+            log.exception("Global slash command sync failed")
+            return
+        if signature is not None:
+            await db.set_meta("command_signature", signature)
+        log.info("Auto-synced %d slash commands globally", len(synced))
 
     async def on_ready(self):  # type: ignore[override]
-        # Note: no automatic tree.sync(). Use the /sync command to register
-        # slash commands per-guild (instant) or globally (slow propagation).
         print("The bot is ready", flush=True)
         await self.change_presence(
             activity=discord.Activity(

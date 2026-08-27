@@ -74,7 +74,7 @@ class Admin(commands.Cog):
         log_command(ctx)
         embed = discord.Embed(
             title="Invite Catto",
-            description="https://discord.com/oauth2/authorize?client_id=1108380972950491146&permissions=8&scope=bot",
+            description="https://discord.com/oauth2/authorize?client_id=1108380972950491146&permissions=8&scope=bot+applications.commands",
         )
         embed.set_footer(text="Thank you for using Catto!")
         await ctx.send(embed=embed)
