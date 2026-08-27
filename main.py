@@ -162,7 +162,11 @@ class CattoBot(commands.Bot):
         except Exception:
             log.exception("Could not compute command signature; forcing sync")
             signature = None
-        if signature is not None and signature == await db.get_meta("command_signature"):
+        # Key the "already synced" state to THIS application id, so swapping the
+        # bot token (a different application, but a reused database) always forces
+        # a fresh sync instead of wrongly assuming the new bot is already synced.
+        meta_key = f"command_signature:{self.application_id}"
+        if signature is not None and signature == await db.get_meta(meta_key):
             log.info("Slash commands unchanged since last sync; skipping")
             return
         try:
@@ -171,7 +175,7 @@ class CattoBot(commands.Bot):
             log.exception("Global slash command sync failed")
             return
         if signature is not None:
-            await db.set_meta("command_signature", signature)
+            await db.set_meta(meta_key, signature)
         log.info("Auto-synced %d slash commands globally", len(synced))
 
     async def on_ready(self):  # type: ignore[override]
